@@ -1,0 +1,12 @@
+/**
+ * Main Stylesheet
+ * Punto de entrada principal. Orquesta la inyección de Tailwind, 
+ * animaciones y configuración del sistema de diseño.
+ */
+
+@import 'tailwindcss' source(none);
+@source '../../**/*.{js,ts,jsx,tsx}';
+
+@import 'tw-animate-css';
+@import './default_theme.css';
+@import './globals.css';
