@@ -3,7 +3,9 @@ import { User, Mail, Lock, Eye, EyeOff, Building2, CheckCircle2, ArrowLeft } fro
 import { LogoBrand } from './LogoMark';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
+import { FirebaseError } from 'firebase/app';
 import { auth, db } from '../config/firebase';
+import type { PerfilUsuario } from '../types';
 
 interface RegisterScreenProps {
   onNavigateToLogin: () => void;
@@ -22,8 +24,19 @@ const DEPARTMENTS = [
   'Dirección General',
 ];
 
+interface InputFieldProps {
+  label: string;
+  icon: React.ReactNode;
+  type?: string;
+  placeholder?: string;
+  rightElement?: React.ReactNode;
+  value: string;
+  error?: string;
+  onChange: (value: string) => void;
+}
+
 // Componente auxiliar de input encapsulado
-const InputField = ({ label, icon, type = 'text', placeholder, rightElement, value, error, onChange }: any) => (
+const InputField = ({ label, icon, type = 'text', placeholder, rightElement, value, error, onChange }: InputFieldProps) => (
   <div>
     <label className="block text-gray-700 text-[13px] font-semibold mb-1.5">{label}</label>
     <div className="relative">
@@ -89,14 +102,16 @@ export function RegisterScreen({ onNavigateToLogin }: RegisterScreenProps) {
         departamento: form.department,
         rol: 'usuario',
         fechaRegistro: new Date()
-      });
+      } satisfies PerfilUsuario);
 
       setSuccess(true);
       setTimeout(() => onNavigateToLogin(), 2500);
-    } catch (error: any) {
+    } catch (error) {
       console.error("Registro fallido:", error);
       let msj = "Error en la creación de cuenta.";
-      if (error.code === 'auth/email-already-in-use') msj = "Usuario ya registrado.";
+      if (error instanceof FirebaseError && error.code === 'auth/email-already-in-use') {
+        msj = "Usuario ya registrado.";
+      }
       setErrors({ general: msj });
     } finally {
       setLoading(false);

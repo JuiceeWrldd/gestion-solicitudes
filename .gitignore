@@ -68,5 +68,8 @@ node_modules/
 # dataconnect generated files
 .dataconnect
 
+# TypeScript incremental build cache
+*.tsbuildinfo
+
 # Carpeta de producción de Vite
 dist/

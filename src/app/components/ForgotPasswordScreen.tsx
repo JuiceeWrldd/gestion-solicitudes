@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Mail, ArrowLeft, CheckCircle2 } from 'lucide-react';
 import { sendPasswordResetEmail } from 'firebase/auth';
+import { FirebaseError } from 'firebase/app';
 import { auth } from '../config/firebase';
 import { LogoBrand } from './LogoMark';
 
@@ -29,10 +30,10 @@ export function ForgotPasswordScreen({ onNavigateToLogin }: ForgotPasswordScreen
     try {
       await sendPasswordResetEmail(auth, email);
       setSuccess(true);
-    } catch (err: any) {
-      if (err.code === 'auth/user-not-found') {
+    } catch (err) {
+      if (err instanceof FirebaseError && err.code === 'auth/user-not-found') {
         setError('No hay ninguna cuenta registrada con este correo.');
-      } else if (err.code === 'auth/invalid-email') {
+      } else if (err instanceof FirebaseError && err.code === 'auth/invalid-email') {
         setError('El formato del correo electrónico no es válido.');
       } else {
         setError('Ocurrió un error al procesar la solicitud. Intente más tarde.');
