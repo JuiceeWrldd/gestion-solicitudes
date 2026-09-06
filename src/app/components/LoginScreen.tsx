@@ -9,6 +9,7 @@ import {
   GoogleAuthProvider,
   signInWithPopup
 } from 'firebase/auth';
+import { FirebaseError } from 'firebase/app';
 import { auth } from '../config/firebase';
 
 interface LoginScreenProps {
@@ -18,7 +19,7 @@ interface LoginScreenProps {
   onNavigateToForgot: () => void;
 }
 
-export function LoginScreen({ onNavigateToRegister, onNavigateToDashboard, onNavigateToForgot }: LoginScreenProps) {
+export function LoginScreen({ onNavigateToRegister, onNavigateToForgot }: LoginScreenProps) {
   // Estados locales
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -50,13 +51,15 @@ export function LoginScreen({ onNavigateToRegister, onNavigateToDashboard, onNav
     try {
       await setPersistence(auth, rememberMe ? browserLocalPersistence : browserSessionPersistence);
       await signInWithEmailAndPassword(auth, email, password);
-    } catch (error: any) {
+    } catch (error) {
       setLoading(false);
       let mensajeError = "Ocurrió un error de autenticación.";
-      if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
-        mensajeError = "Credenciales inválidas.";
-      } else if (error.code === 'auth/too-many-requests') {
-        mensajeError = "Demasiados intentos. Intente más tarde.";
+      if (error instanceof FirebaseError) {
+        if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+          mensajeError = "Credenciales inválidas.";
+        } else if (error.code === 'auth/too-many-requests') {
+          mensajeError = "Demasiados intentos. Intente más tarde.";
+        }
       }
       setErrors({ general: mensajeError });
     }

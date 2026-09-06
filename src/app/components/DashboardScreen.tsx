@@ -7,10 +7,6 @@ import {
   FileText,
   User,
   LogOut,
-  Menu,
-  X,
-  Send,
-  Bell,
   ChevronDown,
   CheckCircle2,
   Clock,
@@ -20,8 +16,9 @@ import {
   Pencil,
   Trash2
 } from 'lucide-react';
-import { LogoBrandWhite, LogoIcon } from './LogoMark';
+import { LogoBrandWhite } from './LogoMark';
 import { signOut } from 'firebase/auth';
+import type { PerfilUsuario, Solicitud, EstadoSolicitud, Prioridad } from '../types';
 
 interface DashboardScreenProps {
   onNavigateToLogin: () => void;
@@ -31,7 +28,7 @@ interface DashboardScreenProps {
 type NavItem = 'inicio' | 'nueva' | 'mis' | 'perfil';
 
 const TIPOS = ['Soporte Técnico', 'Administrativa', 'Recursos Humanos', 'Financiera', 'Logística', 'Otro'];
-const PRIORIDADES = ['Alta', 'Media', 'Baja'];
+const PRIORIDADES: Prioridad[] = ['Alta', 'Media', 'Baja'];
 
 // Configuración de UI para estados
 const statusConfig: Record<string, { color: string; bg: string; icon: React.ReactNode }> = {
@@ -49,16 +46,15 @@ const getPriorityColors = (p: string, isActive: boolean) => {
   return { border: '#E5E7EB', bg: '#F9FAFB', text: '#374151' };
 };
 
-export function DashboardScreen({ onNavigateToLogin, onNavigateToError }: DashboardScreenProps) {
+export function DashboardScreen({ onNavigateToLogin }: DashboardScreenProps) {
   // Estados de navegación
   const [activeNav, setActiveNav] = useState<NavItem>('nueva');
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   
   // Estados de datos
-  const [solicitudes, setSolicitudes] = useState<any[]>([]);
+  const [solicitudes, setSolicitudes] = useState<Solicitud[]>([]);
   const [cargando, setCargando] = useState(true);
-  const [perfilUsuario, setPerfilUsuario] = useState<any>(null);
+  const [perfilUsuario, setPerfilUsuario] = useState<PerfilUsuario | null>(null);
   
   // Estados de formularios y acciones
   const [respuestaLocal, setRespuestaLocal] = useState('');
@@ -78,8 +74,9 @@ export function DashboardScreen({ onNavigateToLogin, onNavigateToError }: Dashbo
         
         let rolUsuario = 'usuario';
         if (docSnap.exists()) {
-          setPerfilUsuario(docSnap.data());
-          rolUsuario = docSnap.data().rol;
+          const perfil = docSnap.data() as PerfilUsuario;
+          setPerfilUsuario(perfil);
+          rolUsuario = perfil.rol;
         }
         
         cargarSolicitudes(rolUsuario);
@@ -101,22 +98,21 @@ export function DashboardScreen({ onNavigateToLogin, onNavigateToError }: Dashbo
         : query(collection(db, 'solicitudes'), where('usuarioId', '==', user.uid), orderBy('fecha', 'desc'));
 
       const querySnapshot = await getDocs(q);
-      const lista = querySnapshot.docs.map(doc => {
+      const lista: Solicitud[] = querySnapshot.docs.map(doc => {
         const data = doc.data();
         const fechaObj = data.fecha?.toDate();
         return {
           id: doc.id,
-          ...data,
           title: data.titulo || 'Sin título',
           type: data.tipo || 'Sin tipo',
-          status: data.estado || 'En revisión',
+          status: (data.estado || 'En revisión') as EstadoSolicitud,
           date: fechaObj ? fechaObj.toLocaleDateString('es-CO') : 'Reciente',
           time: fechaObj ? fechaObj.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' }) : '',
           autorNombre: data.autorNombre || 'Usuario',
           autorEmail: data.autorEmail || '',
           descripcion: data.descripcion || 'Sin descripción detallada.',
-          prioridad: data.prioridad || 'Media',
-          respuestaAdmin: data.respuestaAdmin || null 
+          prioridad: (data.prioridad || 'Media') as Prioridad,
+          respuestaAdmin: data.respuestaAdmin || null
         };
       });
       setSolicitudes(lista);
@@ -129,10 +125,10 @@ export function DashboardScreen({ onNavigateToLogin, onNavigateToError }: Dashbo
 
   // --- Funciones de Administrador ---
   
-  const actualizarEstado = async (id: string, nuevoEstado: string) => {
+  const actualizarEstado = async (id: string, nuevoEstado: EstadoSolicitud) => {
     try {
       await updateDoc(doc(db, 'solicitudes', id), { estado: nuevoEstado });
-      setSolicitudes(prev => prev.map(s => s.id === id ? { ...s, status: nuevoEstado, estado: nuevoEstado } : s));
+      setSolicitudes(prev => prev.map(s => s.id === id ? { ...s, status: nuevoEstado } : s));
     } catch (error) {
       console.error("Error actualizando estado:", error);
     }
@@ -163,7 +159,7 @@ export function DashboardScreen({ onNavigateToLogin, onNavigateToError }: Dashbo
     }
   };
 
-  const iniciarEdicion = (req: any) => {
+  const iniciarEdicion = (req: Solicitud) => {
     setForm({ title: req.title, type: req.type, description: req.descripcion, priority: req.prioridad });
     setEditingId(req.id);
     setActiveNav('nueva');
@@ -254,9 +250,8 @@ export function DashboardScreen({ onNavigateToLogin, onNavigateToError }: Dashbo
         {navItems.map((item) => (
           <button
             key={item.id}
-            onClick={() => { 
-              setActiveNav(item.id); 
-              setSidebarOpen(false); 
+            onClick={() => {
+              setActiveNav(item.id);
               if (item.id === 'nueva' && !editingId) resetForm();
             }}
             className="flex items-center gap-3 w-full px-4 py-3 rounded-xl mb-1 transition-all"
