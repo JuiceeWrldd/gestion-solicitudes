@@ -25,6 +25,9 @@ function figmaAssetResolver(): Plugin {
 }
 
 export default defineConfig({
+
+  base: '/gestion-solicitudes/',
+  
   plugins: [
     figmaAssetResolver(),
     react(),
