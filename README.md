@@ -78,4 +78,4 @@ src/
 
 ## Autor
 
-Jose — Proyecto final SENA.
+Jose Ramirez— Proyecto final SENA.
