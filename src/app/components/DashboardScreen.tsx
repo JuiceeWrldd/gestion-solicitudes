@@ -7,6 +7,8 @@ import {
   FileText,
   User,
   LogOut,
+  Menu,
+  X,
   ChevronDown,
   CheckCircle2,
   Clock,
@@ -49,6 +51,7 @@ const getPriorityColors = (p: string, isActive: boolean) => {
 export function DashboardScreen({ onNavigateToLogin }: DashboardScreenProps) {
   // Estados de navegación
   const [activeNav, setActiveNav] = useState<NavItem>('nueva');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   
   // Estados de datos
@@ -252,6 +255,7 @@ export function DashboardScreen({ onNavigateToLogin }: DashboardScreenProps) {
             key={item.id}
             onClick={() => {
               setActiveNav(item.id);
+              setSidebarOpen(false);
               if (item.id === 'nueva' && !editingId) resetForm();
             }}
             className="flex items-center gap-3 w-full px-4 py-3 rounded-xl mb-1 transition-all"
@@ -568,8 +572,36 @@ export function DashboardScreen({ onNavigateToLogin }: DashboardScreenProps) {
       <aside className="hidden lg:flex flex-col w-64 shrink-0 fixed top-0 left-0 h-full bg-gradient-to-br from-indigo-700 to-indigo-900">
         <SidebarContent />
       </aside>
-      <main className="flex-1 lg:ml-64 flex flex-col min-h-screen">
-        <header className="sticky top-0 z-40 flex items-center justify-between px-8 h-16 bg-white border-b border-gray-100 shadow-sm">
+
+      {/* Menú lateral deslizable (celular y tablet) */}
+      <div
+        className={`lg:hidden fixed inset-0 z-50 bg-black/40 transition-opacity duration-200 ${sidebarOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+        onClick={() => setSidebarOpen(false)}
+        aria-hidden="true"
+      />
+      <aside
+        className={`lg:hidden fixed top-0 left-0 z-50 h-full w-64 flex flex-col bg-gradient-to-br from-indigo-700 to-indigo-900 transition-transform duration-200 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}
+      >
+        <button
+          onClick={() => setSidebarOpen(false)}
+          aria-label="Cerrar menú"
+          className="absolute top-4 right-4 text-white/70 hover:text-white"
+        >
+          <X size={22} />
+        </button>
+        <SidebarContent />
+      </aside>
+
+      <main className="flex-1 lg:ml-64 flex flex-col min-h-screen min-w-0">
+        <header className="sticky top-0 z-40 flex items-center gap-3 px-4 sm:px-8 h-16 bg-white border-b border-gray-100 shadow-sm">
+          <button
+            onClick={() => setSidebarOpen(true)}
+            aria-label="Abrir menú"
+            className="lg:hidden p-2 -ml-2 rounded-lg text-gray-600 hover:bg-gray-100"
+          >
+            <Menu size={22} />
+          </button>
+          <span className="lg:hidden text-gray-900 text-sm font-semibold">{navItems.find((n) => n.id === activeNav)?.label}</span>
           <div className="hidden lg:flex items-center gap-2 text-sm">
             <span className="text-gray-400">Workspace</span>
             <span className="text-gray-300">/</span>
