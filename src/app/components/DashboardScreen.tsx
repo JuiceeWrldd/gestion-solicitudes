@@ -414,7 +414,7 @@ export function DashboardScreen({ onNavigateToLogin }: DashboardScreenProps) {
         </div>
 
         <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100">
-          <div className="flex items-center px-5 py-3 bg-gray-50 border-b border-gray-100">
+          <div className="hidden sm:flex items-center px-5 py-3 bg-gray-50 border-b border-gray-100">
             <span className="text-gray-500 text-xs font-semibold flex-1">Referencia</span>
             <span className="text-gray-500 text-xs font-semibold w-[120px]">Status</span>
             {isAdmin && <span className="text-gray-500 text-xs font-semibold w-[90px] text-right">Control</span>}
@@ -434,44 +434,50 @@ export function DashboardScreen({ onNavigateToLogin }: DashboardScreenProps) {
                   {/* Fila compacta */}
                   <div 
                     onClick={() => { setExpandedId(isExpanded ? null : req.id); setRespuestaLocal(''); }}
-                    className={`flex items-center gap-4 p-5 cursor-pointer transition-colors ${isExpanded ? 'bg-indigo-50/20' : 'hover:bg-gray-50'}`}
+                    className={`flex flex-wrap sm:flex-nowrap items-center gap-x-3 gap-y-3 sm:gap-4 p-4 sm:p-5 cursor-pointer transition-colors ${isExpanded ? 'bg-indigo-50/20' : 'hover:bg-gray-50'}`}
                   >
-                    <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-indigo-50 shrink-0">
+                    <div className="hidden sm:flex w-10 h-10 rounded-lg items-center justify-center bg-indigo-50 shrink-0">
                       <FileText size={18} className="text-indigo-600" />
                     </div>
-                    
-                    <div className="flex-1 min-w-0">
-                      <div className="text-gray-900 text-sm font-semibold truncate">{req.title}</div>
-                      <div className="text-gray-400 text-xs mt-0.5">
+
+                    {/* Título y datos: arriba en celular, junto a la flecha */}
+                    <div className="order-1 flex-1 min-w-0">
+                      <div className="text-gray-900 text-sm font-semibold leading-snug break-words sm:truncate">{req.title}</div>
+                      <div className="text-gray-400 text-xs mt-1">
                         <span className="font-medium">{req.id.slice(0, 8)}</span> · {req.type}
-                        {isAdmin && <span className="ml-2 text-indigo-500 font-medium bg-indigo-50 px-1.5 rounded">De: {req.autorNombre}</span>}
                       </div>
+                      {isAdmin && (
+                        <span className="block w-fit mt-1.5 text-indigo-500 text-xs font-medium bg-indigo-50 px-1.5 py-0.5 rounded max-w-full truncate">De: {req.autorNombre}</span>
+                      )}
                     </div>
 
-                    <div className="flex items-center gap-1 px-3 py-1 rounded-full shrink-0 w-[120px] justify-center text-xs font-semibold" style={{ background: statusConfig[req.status]?.bg, color: statusConfig[req.status]?.color }}>
-                      {statusConfig[req.status]?.icon} {req.status}
-                    </div>
-
-                    {isAdmin && (
-                      <div className="flex items-center justify-end gap-2 w-[90px] shrink-0">
-                        {req.status === 'En revisión' ? (
-                          <>
-                            <button onClick={(e) => { e.stopPropagation(); actualizarEstado(req.id, 'Aprobada'); }} className="w-8 h-8 rounded border border-green-200 text-green-600 bg-green-50 hover:bg-green-100 flex justify-center items-center"><CheckCircle2 size={16} /></button>
-                            <button onClick={(e) => { e.stopPropagation(); actualizarEstado(req.id, 'Rechazada'); }} className="w-8 h-8 rounded border border-red-200 text-red-600 bg-red-50 hover:bg-red-100 flex justify-center items-center"><AlertTriangle size={16} /></button>
-                          </>
-                        ) : <span className="text-xs font-medium text-gray-300 mr-2">Auditado</span>}
-                      </div>
-                    )}
-                    
-                    <div className="w-8 flex justify-end text-gray-300">
+                    <div className="order-2 sm:order-4 w-8 flex justify-end text-gray-300 shrink-0">
                       <ChevronDown size={18} className={`transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`} />
+                    </div>
+
+                    {/* Estado y acciones: en celular van en su propia línea, debajo del título */}
+                    <div className="order-3 w-full sm:w-auto flex items-center justify-between sm:justify-start gap-3 sm:gap-4">
+                      <div className="flex items-center gap-1 px-3 py-1 rounded-full shrink-0 sm:w-[120px] justify-center text-xs font-semibold" style={{ background: statusConfig[req.status]?.bg, color: statusConfig[req.status]?.color }}>
+                        {statusConfig[req.status]?.icon} {req.status}
+                      </div>
+
+                      {isAdmin && (
+                        <div className="flex items-center justify-end gap-2 sm:w-[90px] shrink-0">
+                          {req.status === 'En revisión' ? (
+                            <>
+                              <button onClick={(e) => { e.stopPropagation(); actualizarEstado(req.id, 'Aprobada'); }} className="w-9 h-9 sm:w-8 sm:h-8 rounded border border-green-200 text-green-600 bg-green-50 hover:bg-green-100 flex justify-center items-center"><CheckCircle2 size={16} /></button>
+                              <button onClick={(e) => { e.stopPropagation(); actualizarEstado(req.id, 'Rechazada'); }} className="w-9 h-9 sm:w-8 sm:h-8 rounded border border-red-200 text-red-600 bg-red-50 hover:bg-red-100 flex justify-center items-center"><AlertTriangle size={16} /></button>
+                            </>
+                          ) : <span className="text-xs font-medium text-gray-300 sm:mr-2">Auditado</span>}
+                        </div>
+                      )}
                     </div>
                   </div>
 
                   {/* Detalle expandido */}
                   {isExpanded && (
-                    <div className="px-5 pb-5 bg-indigo-50/10">
-                      <div className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="px-3 sm:px-5 pb-4 sm:pb-5 bg-indigo-50/10">
+                      <div className="bg-white p-4 sm:p-5 rounded-xl border border-gray-100 shadow-sm grid grid-cols-1 md:grid-cols-3 gap-6">
                         
                         <div className="md:col-span-2">
                           <h4 className="text-gray-400 text-[11px] font-bold uppercase tracking-wider mb-2">Desglose</h4>
@@ -492,7 +498,7 @@ export function DashboardScreen({ onNavigateToLogin }: DashboardScreenProps) {
                           </div>
                           
                           {!isAdmin && req.status === 'En revisión' && (
-                            <div className="mt-6 pt-5 border-t border-gray-100 flex justify-end gap-3">
+                            <div className="mt-6 pt-5 border-t border-gray-100 flex flex-wrap justify-end gap-3">
                               <button onClick={() => iniciarEdicion(req)} className="px-4 py-2 border border-gray-300 text-sm font-semibold rounded-lg hover:bg-gray-50 flex items-center gap-2"><Pencil size={14} /> Modificar</button>
                               <button onClick={() => eliminarSolicitud(req.id)} className="px-4 py-2 bg-red-50 text-red-600 border border-red-100 text-sm font-semibold rounded-lg hover:bg-red-100 flex items-center gap-2"><Trash2 size={14} /> Eliminar</button>
                             </div>
@@ -608,7 +614,7 @@ export function DashboardScreen({ onNavigateToLogin }: DashboardScreenProps) {
             <span className="text-gray-900 font-semibold">{navItems.find((n) => n.id === activeNav)?.label}</span>
           </div>
         </header>
-        <div className="flex-1 p-8">
+        <div className="flex-1 p-4 sm:p-8">
           {contentMap[activeNav]}
         </div>
       </main>
