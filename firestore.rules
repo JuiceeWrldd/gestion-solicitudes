@@ -1,0 +1,61 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function estaAutenticado() {
+      return request.auth != null;
+    }
+
+    // mira el rol en la base de datos, no lo que mande el navegador
+    function esAdmin() {
+      return estaAutenticado()
+        && exists(/databases/$(database)/documents/usuarios/$(request.auth.uid))
+        && get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.rol == 'admin';
+    }
+
+    match /usuarios/{uid} {
+      // cada uno ve su perfil, el admin ve todos
+      allow read: if estaAutenticado() && (request.auth.uid == uid || esAdmin());
+
+      // al registrarse solo puede crear su propio perfil y como "usuario"
+      allow create: if estaAutenticado()
+        && request.auth.uid == uid
+        && request.resource.data.rol == 'usuario';
+
+      // nadie se cambia su rol ni su departamento, solo el admin
+      allow update: if esAdmin()
+        || (estaAutenticado()
+            && request.auth.uid == uid
+            && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['rol', 'departamento']));
+
+      allow delete: if false;
+    }
+
+    match /solicitudes/{id} {
+      // cada uno ve las suyas, el admin ve todas
+      allow read: if estaAutenticado()
+        && (resource.data.usuarioId == request.auth.uid || esAdmin());
+
+      // al crear, la solicitud tiene que ser suya y empezar "En revisión"
+      allow create: if estaAutenticado()
+        && request.resource.data.usuarioId == request.auth.uid
+        && request.resource.data.estado == 'En revisión'
+        && !('respuestaAdmin' in request.resource.data);
+
+      allow update: if
+        // el admin solo cambia el estado y la respuesta
+        (esAdmin()
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['estado', 'respuestaAdmin']))
+        // el dueño solo edita mientras siga en revisión
+        || (estaAutenticado()
+          && resource.data.usuarioId == request.auth.uid
+          && resource.data.estado == 'En revisión'
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['titulo', 'tipo', 'descripcion', 'prioridad']));
+
+      // solo el dueño borra, y solo si sigue en revisión
+      allow delete: if estaAutenticado()
+        && resource.data.usuarioId == request.auth.uid
+        && resource.data.estado == 'En revisión';
+    }
+  }
+}
