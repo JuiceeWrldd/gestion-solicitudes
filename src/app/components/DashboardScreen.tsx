@@ -64,6 +64,7 @@ export function DashboardScreen({ onNavigateToLogin }: DashboardScreenProps) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   
   const [form, setForm] = useState({ title: '', type: 'Soporte Técnico', description: '', priority: 'Media' });
   const [formErrors, setFormErrors] = useState<Partial<typeof form>>({});
@@ -121,6 +122,7 @@ export function DashboardScreen({ onNavigateToLogin }: DashboardScreenProps) {
       setSolicitudes(lista);
     } catch (error) {
       console.error("Error al obtener datos:", error);
+      setErrorMsg('No se pudieron cargar las solicitudes. Intenta de nuevo.');
     } finally {
       setCargando(false);
     }
@@ -134,6 +136,7 @@ export function DashboardScreen({ onNavigateToLogin }: DashboardScreenProps) {
       setSolicitudes(prev => prev.map(s => s.id === id ? { ...s, status: nuevoEstado } : s));
     } catch (error) {
       console.error("Error actualizando estado:", error);
+      setErrorMsg('No se pudo cambiar el estado de la solicitud.');
     }
   };
 
@@ -145,6 +148,7 @@ export function DashboardScreen({ onNavigateToLogin }: DashboardScreenProps) {
       setRespuestaLocal('');
     } catch (error) {
       console.error("Error al responder:", error);
+      setErrorMsg('No se pudo enviar la respuesta.');
     }
   };
 
@@ -158,6 +162,7 @@ export function DashboardScreen({ onNavigateToLogin }: DashboardScreenProps) {
         setExpandedId(null);
       } catch (error) {
         console.error("Error eliminando documento:", error);
+        setErrorMsg('No se pudo eliminar la solicitud.');
       }
     }
   };
@@ -224,6 +229,7 @@ export function DashboardScreen({ onNavigateToLogin }: DashboardScreenProps) {
 
     } catch (error) {
       console.error("Error de escritura:", error);
+      setErrorMsg('No se pudo guardar la solicitud. Revisa tu conexión e intenta de nuevo.');
       setSubmitting(false);
     }
   };
@@ -256,6 +262,7 @@ export function DashboardScreen({ onNavigateToLogin }: DashboardScreenProps) {
             onClick={() => {
               setActiveNav(item.id);
               setSidebarOpen(false);
+              setErrorMsg(null);
               if (item.id === 'nueva' && !editingId) resetForm();
             }}
             className="flex items-center gap-3 w-full px-4 py-3 rounded-xl mb-1 transition-all"
@@ -615,6 +622,14 @@ export function DashboardScreen({ onNavigateToLogin }: DashboardScreenProps) {
           </div>
         </header>
         <div className="flex-1 p-4 sm:p-8">
+          {errorMsg && (
+            <div role="alert" className="mb-5 flex items-start justify-between gap-3 rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm font-medium text-red-600">
+              <span>{errorMsg}</span>
+              <button onClick={() => setErrorMsg(null)} aria-label="Cerrar aviso" className="shrink-0 text-red-400 hover:text-red-600">
+                <X size={18} />
+              </button>
+            </div>
+          )}
           {contentMap[activeNav]}
         </div>
       </main>
