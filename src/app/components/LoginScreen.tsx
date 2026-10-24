@@ -13,13 +13,12 @@ import { FirebaseError } from 'firebase/app';
 import { auth } from '../config/firebase';
 
 interface LoginScreenProps {
-  onNavigateToRegister: () => void;
   onNavigateToError: () => void;
   onNavigateToDashboard: () => void;
   onNavigateToForgot: () => void;
 }
 
-export function LoginScreen({ onNavigateToRegister, onNavigateToForgot }: LoginScreenProps) {
+export function LoginScreen({ onNavigateToForgot }: LoginScreenProps) {
   // Estados locales
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -189,11 +188,9 @@ export function LoginScreen({ onNavigateToRegister, onNavigateToForgot }: LoginS
             </div>
           </div>
 
-          <div className="text-center mt-6">
-            <button onClick={onNavigateToRegister} className="text-indigo-600 text-sm font-semibold hover:underline">
-              ¿No tiene cuenta? Solicite acceso
-            </button>
-          </div>
+          <p className="text-center text-gray-500 text-sm mt-6">
+            ¿No tienes cuenta? Pídele a tu administrador que te agregue.
+          </p>
         </div>
       </div>
     </div>

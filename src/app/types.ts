@@ -12,6 +12,18 @@ export interface PerfilUsuario {
   departamento: string;
   rol: Rol;
   fechaRegistro: Date;
+  orgId?: string; // empresa a la que pertenece (el uid del admin dueño)
+  activo?: boolean; // false cuando el admin lo desactiva
+  debeCambiarClave?: boolean; // true hasta que cambie la clave temporal
+}
+
+// Perfil con su id (el uid), para las listas
+export type Integrante = PerfilUsuario & { id: string };
+
+// Empresa: organizaciones/{orgId}. El orgId (ej. "gestiosync") es el id del documento
+export interface Organizacion {
+  nombre: string;
+  adminId: string;
 }
 
 // Documento tal como se guarda en la colección "solicitudes" de Firestore
@@ -22,6 +34,7 @@ export interface SolicitudDoc {
   prioridad: Prioridad;
   estado: EstadoSolicitud;
   usuarioId: string;
+  orgId: string;
   autorNombre: string;
   autorEmail: string;
   respuestaAdmin: string | null;

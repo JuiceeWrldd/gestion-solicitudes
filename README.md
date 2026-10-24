@@ -4,10 +4,12 @@ Proyecto final del SENA: una aplicación web para la gestión de solicitudes, co
 
 ## Funcionalidades
 
-- Registro e inicio de sesión con correo/contraseña y con Google.
+- Inicio de sesión con correo y contraseña. No hay registro libre: las cuentas las crea el administrador de cada empresa.
 - Recuperación de contraseña.
 - Rol de **usuario**: crear, editar y eliminar sus propias solicitudes.
-- Rol de **administrador**: ver todas las solicitudes, aprobarlas o rechazarlas, y responder a ellas.
+- Rol de **administrador**: ver las solicitudes de su empresa, aprobarlas o rechazarlas, y responder a ellas.
+- El administrador también agrega integrantes a su empresa (con una contraseña temporal que cada persona cambia en su primer ingreso), define en qué oficina está cada uno y puede desactivarlos.
+- Cada empresa ve solo sus propios datos.
 - Pantalla de manejo de errores (404/401/500).
 
 ## Tecnologías
@@ -73,8 +75,11 @@ src/
 
 ## Modelo de datos (Firestore)
 
-- **usuarios/{uid}**: perfil del usuario, incluye el campo `rol` (`usuario` | `admin`).
-- **solicitudes/{id}**: solicitudes creadas por los usuarios, con su estado (pendiente/aprobada/rechazada) y respuesta del administrador.
+- **organizaciones/{orgId}**: la empresa (`nombre`, `adminId`). Se crea a mano desde la consola de Firebase.
+- **usuarios/{uid}**: perfil del usuario, con `rol` (`usuario` | `admin`), `orgId` (su empresa), `departamento`, `activo` y `debeCambiarClave`.
+- **solicitudes/{id}**: solicitudes creadas por los usuarios, con su `orgId`, su estado y la respuesta del administrador.
+
+Las reglas de seguridad están en `firestore.rules`.
 
 ## Autor
 

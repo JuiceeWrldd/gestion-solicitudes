@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { collection, addDoc, getDocs, serverTimestamp, query, orderBy, doc, getDoc, where, updateDoc, deleteDoc } from 'firebase/firestore';
+import { collection, addDoc, getDocs, serverTimestamp, query, doc, getDoc, where, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db, auth } from '../config/firebase'; 
 import {
   Home,
@@ -7,6 +7,7 @@ import {
   FileText,
   User,
   LogOut,
+  Users,
   Menu,
   X,
   ChevronDown,
@@ -20,15 +21,18 @@ import {
 } from 'lucide-react';
 import { LogoBrandWhite } from './LogoMark';
 import { signOut } from 'firebase/auth';
-import type { PerfilUsuario, Solicitud, EstadoSolicitud, Prioridad } from '../types';
+import type { PerfilUsuario, Solicitud, EstadoSolicitud, Prioridad, Organizacion } from '../types';
 import { TIPOS, PRIORIDADES, statusConfig, getPriorityColors } from '../config/solicitudes';
+import { IntegrantesScreen } from './IntegrantesScreen';
+import { CambiarClaveScreen } from './CambiarClaveScreen';
+import { AvisoCuentaScreen } from './AvisoCuentaScreen';
 
 interface DashboardScreenProps {
   onNavigateToLogin: () => void;
   onNavigateToError: () => void;
 }
 
-type NavItem = 'inicio' | 'nueva' | 'mis' | 'perfil';
+type NavItem = 'inicio' | 'nueva' | 'mis' | 'integrantes' | 'perfil';
 
 export function DashboardScreen({ onNavigateToLogin }: DashboardScreenProps) {
   // Estados de navegación
@@ -40,7 +44,9 @@ export function DashboardScreen({ onNavigateToLogin }: DashboardScreenProps) {
   const [solicitudes, setSolicitudes] = useState<Solicitud[]>([]);
   const [cargando, setCargando] = useState(true);
   const [perfilUsuario, setPerfilUsuario] = useState<PerfilUsuario | null>(null);
-  
+  const [organizacion, setOrganizacion] = useState<Organizacion | null>(null);
+  const [sinPerfil, setSinPerfil] = useState(false);
+
   // Estados de formularios y acciones
   const [respuestaLocal, setRespuestaLocal] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -58,33 +64,55 @@ export function DashboardScreen({ onNavigateToLogin }: DashboardScreenProps) {
         const docRef = doc(db, 'usuarios', auth.currentUser.uid);
         const docSnap = await getDoc(docRef);
         
-        let rolUsuario = 'usuario';
-        if (docSnap.exists()) {
-          const perfil = docSnap.data() as PerfilUsuario;
-          setPerfilUsuario(perfil);
-          rolUsuario = perfil.rol;
+        if (!docSnap.exists()) {
+          setSinPerfil(true);
+          return;
         }
-        
-        cargarSolicitudes(rolUsuario);
+
+        const perfil = docSnap.data() as PerfilUsuario;
+        setPerfilUsuario(perfil);
+        if (perfil.activo === false) return;
+
+        cargarSolicitudes(perfil.rol, perfil.orgId);
+        if (perfil.orgId) cargarOrganizacion(perfil.orgId);
       }
     };
     inicializarDatos();
   }, []);
 
-  // Fetch de solicitudes según el rol (Admin ve global, Usuario ve personal)
-  const cargarSolicitudes = async (rolActual?: string) => {
-    const user = auth.currentUser; 
+  const cargarOrganizacion = async (orgId: string) => {
+    try {
+      const snap = await getDoc(doc(db, 'organizaciones', orgId));
+      if (snap.exists()) setOrganizacion(snap.data() as Organizacion);
+    } catch (error) {
+      console.error("Error al cargar la organización:", error);
+    }
+  };
+
+  // El admin ve las solicitudes de su empresa; el usuario, solo las suyas
+  const cargarSolicitudes = async (rolActual?: string, orgId?: string) => {
+    const user = auth.currentUser;
     if (!user) return;
 
     setCargando(true);
     try {
       const esAdmin = rolActual === 'admin';
-      const q = esAdmin 
-        ? query(collection(db, 'solicitudes'), orderBy('fecha', 'desc'))
-        : query(collection(db, 'solicitudes'), where('usuarioId', '==', user.uid), orderBy('fecha', 'desc'));
+      if (esAdmin && !orgId) {
+        setSolicitudes([]);
+        setErrorMsg('Tu cuenta no tiene una empresa asignada.');
+        return;
+      }
+
+      const q = esAdmin
+        ? query(collection(db, 'solicitudes'), where('orgId', '==', orgId))
+        : query(collection(db, 'solicitudes'), where('usuarioId', '==', user.uid));
 
       const querySnapshot = await getDocs(q);
-      const lista: Solicitud[] = querySnapshot.docs.map(doc => {
+      // Más recientes primero (se ordena aquí para no depender de índices en Firestore)
+      const docs = querySnapshot.docs.sort(
+        (a, b) => (b.data().fecha?.toMillis() ?? Date.now()) - (a.data().fecha?.toMillis() ?? Date.now())
+      );
+      const lista: Solicitud[] = docs.map(doc => {
         const data = doc.data();
         const fechaObj = data.fecha?.toDate();
         return {
@@ -189,17 +217,23 @@ export function DashboardScreen({ onNavigateToLogin }: DashboardScreenProps) {
       if (editingId) {
         await updateDoc(doc(db, 'solicitudes', editingId), baseData);
       } else {
+        if (!perfilUsuario?.orgId) {
+          setErrorMsg('Tu cuenta no tiene una empresa asignada. Pídele a tu administrador que la configure.');
+          setSubmitting(false);
+          return;
+        }
         await addDoc(collection(db, 'solicitudes'), {
           ...baseData,
           estado: 'En revisión',
-          usuarioId: auth.currentUser?.uid, 
+          usuarioId: auth.currentUser?.uid,
+          orgId: perfilUsuario.orgId,
           autorNombre: auth.currentUser?.displayName || 'Usuario',
           autorEmail: auth.currentUser?.email || '',
           fecha: serverTimestamp()
         });
       }
 
-      await cargarSolicitudes(perfilUsuario?.rol); 
+      await cargarSolicitudes(perfilUsuario?.rol, perfilUsuario?.orgId);
       setSubmitting(false);
       setSubmitted(true);
       setEditingId(null);
@@ -229,6 +263,7 @@ export function DashboardScreen({ onNavigateToLogin }: DashboardScreenProps) {
     { id: 'inicio', label: 'Inicio', icon: <Home size={20} /> },
     { id: 'nueva', label: 'Nueva Solicitud', icon: <FilePlus size={20} /> },
     { id: 'mis', label: perfilUsuario?.rol === 'admin' ? 'Gestión Solicitudes' : 'Mis Solicitudes', icon: <FileText size={20} /> },
+    ...(perfilUsuario?.rol === 'admin' ? [{ id: 'integrantes' as const, label: 'Integrantes', icon: <Users size={20} /> }] : []),
     { id: 'perfil', label: 'Perfil', icon: <User size={20} /> },
   ];
 
@@ -349,6 +384,7 @@ export function DashboardScreen({ onNavigateToLogin }: DashboardScreenProps) {
             <div>
               <label style={{ display: 'block', color: '#374151', fontSize: '13px', fontWeight: 600, marginBottom: '6px' }}>Título</label>
               <input type="text" value={form.title} onChange={(e) => updateForm('title', e.target.value)} style={{ width: '100%', padding: '12px 14px', border: `1.5px solid ${formErrors.title ? '#DC3545' : '#E5E7EB'}`, borderRadius: '8px', outline: 'none' }} />
+              {formErrors.title && <p className="text-red-500 text-xs mt-1 font-medium">{formErrors.title}</p>}
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
@@ -376,6 +412,7 @@ export function DashboardScreen({ onNavigateToLogin }: DashboardScreenProps) {
             <div>
               <label style={{ display: 'block', color: '#374151', fontSize: '13px', fontWeight: 600, marginBottom: '6px' }}>Detalles</label>
               <textarea rows={5} value={form.description} onChange={(e) => updateForm('description', e.target.value)} style={{ width: '100%', padding: '12px 14px', border: `1.5px solid ${formErrors.description ? '#DC3545' : '#E5E7EB'}`, borderRadius: '8px', outline: 'none', resize: 'vertical' }} />
+              {formErrors.description && <p className="text-red-500 text-xs mt-1 font-medium">{formErrors.description}</p>}
             </div>
             <div className="flex justify-end gap-3 pt-2">
               {editingId && (
@@ -543,6 +580,7 @@ export function DashboardScreen({ onNavigateToLogin }: DashboardScreenProps) {
           {[
             { label: 'ID Interno', value: auth.currentUser?.uid },
             { label: 'Rol del sistema', value: perfilUsuario?.rol === 'admin' ? 'Administrador' : 'Usuario estándar' },
+            { label: 'Empresa', value: organizacion?.nombre || 'N/A' },
             { label: 'División', value: perfilUsuario?.departamento || 'N/A' },
           ].map((f, i) => (
             <div key={i} className="flex justify-between items-center py-2 border-b border-gray-50 last:border-0">
@@ -559,8 +597,45 @@ export function DashboardScreen({ onNavigateToLogin }: DashboardScreenProps) {
     inicio: renderInicio(),
     nueva: renderFormulario(),
     mis: renderTabla(),
+    integrantes: perfilUsuario?.rol === 'admin' && perfilUsuario.orgId && auth.currentUser
+      ? <IntegrantesScreen orgId={perfilUsuario.orgId} adminUid={auth.currentUser.uid} />
+      : null,
     perfil: renderPerfil(),
   };
+
+  const cerrarSesion = () => {
+    signOut(auth);
+    onNavigateToLogin();
+  };
+
+  if (sinPerfil) {
+    return (
+      <AvisoCuentaScreen
+        titulo="Tu cuenta no pertenece a ninguna empresa"
+        mensaje="Pídele a tu administrador que te agregue desde la sección Integrantes."
+        onCerrarSesion={cerrarSesion}
+      />
+    );
+  }
+
+  if (perfilUsuario?.activo === false) {
+    return (
+      <AvisoCuentaScreen
+        titulo="Cuenta desactivada"
+        mensaje="Tu administrador desactivó tu acceso. Si crees que es un error, habla con él."
+        onCerrarSesion={cerrarSesion}
+      />
+    );
+  }
+
+  if (perfilUsuario?.debeCambiarClave) {
+    return (
+      <CambiarClaveScreen
+        onListo={() => setPerfilUsuario((p) => (p ? { ...p, debeCambiarClave: false } : p))}
+        onCerrarSesion={cerrarSesion}
+      />
+    );
+  }
 
   return (
     <div className="flex min-h-screen font-sans bg-slate-50">
@@ -598,7 +673,7 @@ export function DashboardScreen({ onNavigateToLogin }: DashboardScreenProps) {
           </button>
           <span className="lg:hidden text-gray-900 text-sm font-semibold">{navItems.find((n) => n.id === activeNav)?.label}</span>
           <div className="hidden lg:flex items-center gap-2 text-sm">
-            <span className="text-gray-400">Workspace</span>
+            <span className="text-gray-400">{organizacion?.nombre ?? 'Workspace'}</span>
             <span className="text-gray-300">/</span>
             <span className="text-gray-900 font-semibold">{navItems.find((n) => n.id === activeNav)?.label}</span>
           </div>
