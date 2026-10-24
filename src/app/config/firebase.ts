@@ -1,6 +1,6 @@
-import { initializeApp } from "firebase/app";
+import { initializeApp, getApps } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
-import { getAuth } from "firebase/auth"; 
+import { getAuth } from "firebase/auth";
 
 // Configuración inyectada vía variables de entorno (.env)
 const firebaseConfig = {
@@ -15,3 +15,10 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 export const auth = getAuth(app);
+
+// Segunda instancia solo para crear cuentas de integrantes: al crear un usuario
+// Firebase inicia sesión con él, y así no se cierra la sesión del admin.
+export const getAuthSecundario = () => {
+  const secundaria = getApps().find((a) => a.name === 'secundaria') ?? initializeApp(firebaseConfig, 'secundaria');
+  return getAuth(secundaria);
+};

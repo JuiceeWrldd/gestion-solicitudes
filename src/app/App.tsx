@@ -2,12 +2,11 @@ import { useState, useEffect } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './config/firebase';
 import { LoginScreen } from './components/LoginScreen';
-import { RegisterScreen } from './components/RegisterScreen';
 import { DashboardScreen } from './components/DashboardScreen';
 import { ErrorScreen } from './components/ErrorScreen';
 import { ForgotPasswordScreen } from './components/ForgotPasswordScreen';
 
-type Screen = 'login' | 'register' | 'dashboard' | 'error' | 'forgot';
+type Screen = 'login' | 'dashboard' | 'error' | 'forgot';
 type ErrorType = '404' | 'session' | 'general';
 
 export default function App() {
@@ -48,17 +47,9 @@ export default function App() {
     <>
       {currentScreen === 'login' && (
         <LoginScreen
-          onNavigateToRegister={() => setCurrentScreen('register')}
           onNavigateToError={() => goToError('general')}
           onNavigateToDashboard={() => setCurrentScreen('dashboard')}
           onNavigateToForgot={() => setCurrentScreen('forgot')}
-        />
-      )}
-
-      {currentScreen === 'register' && (
-        <RegisterScreen
-          onNavigateToLogin={() => setCurrentScreen('login')}
-          onNavigateToError={() => goToError('general')}
         />
       )}
 
