@@ -126,11 +126,11 @@ export function LoginScreen({ onNavigateToForgot }: LoginScreenProps) {
 
             <div className="flex flex-col gap-5">
               <div>
-                <label className="block text-gray-700 text-[13px] font-semibold mb-1.5">Correo Institucional</label>
+                <label htmlFor="login-email" className="block text-gray-700 text-[13px] font-semibold mb-1.5">Correo Institucional</label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><Mail size={18} /></span>
                   <input
-                    type="email"
+                    id="login-email" type="email"
                     value={email}
                     onChange={(e) => { setEmail(e.target.value); setErrors(p => ({ ...p, email: undefined })); }}
                     className={`w-full py-3 pl-10 pr-3 border ${errors.email ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-slate-50'} rounded-lg text-sm outline-none focus:border-indigo-600 focus:bg-white transition-colors`}
@@ -141,13 +141,13 @@ export function LoginScreen({ onNavigateToForgot }: LoginScreenProps) {
 
               <div>
                 <div className="flex items-center justify-between mb-1.5">
-                  <label className="text-gray-700 text-[13px] font-semibold">Contraseña</label>
+                  <label htmlFor="login-password" className="text-gray-700 text-[13px] font-semibold">Contraseña</label>
                   <button onClick={onNavigateToForgot} className="text-indigo-600 text-xs font-semibold hover:underline">¿Olvidó su clave?</button>
                 </div>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><Lock size={18} /></span>
                   <input
-                    type={showPassword ? 'text' : 'password'}
+                    id="login-password" type={showPassword ? 'text' : 'password'}
                     value={password}
                     onChange={(e) => { setPassword(e.target.value); setErrors(p => ({ ...p, password: undefined })); }}
                     className={`w-full py-3 pl-10 pr-10 border ${errors.password ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-slate-50'} rounded-lg text-sm outline-none focus:border-indigo-600 focus:bg-white transition-colors`}
