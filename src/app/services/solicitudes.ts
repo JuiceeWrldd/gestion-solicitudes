@@ -24,7 +24,7 @@ export interface DatosSolicitud {
 
 // Convierte los documentos de Firestore en solicitudes listas para mostrar, las más recientes primero
 // (se ordena aquí para no depender de índices en Firestore)
-function aSolicitudes(docs: QueryDocumentSnapshot<DocumentData>[]): Solicitud[] {
+export function aSolicitudes(docs: QueryDocumentSnapshot<DocumentData>[]): Solicitud[] {
   const ahora = Date.now();
   const ordenados = [...docs].sort(
     (a, b) => (b.data().fecha?.toMillis() ?? ahora) - (a.data().fecha?.toMillis() ?? ahora)

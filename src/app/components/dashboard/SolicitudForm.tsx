@@ -102,14 +102,14 @@ export function SolicitudForm({ inicial, onGuardar, onCancelar, onTerminado }: S
       <div className="bg-white rounded-2xl p-6 lg:p-8 max-w-2xl" style={{ boxShadow: '0 2px 20px rgba(30,63,174,0.08)' }}>
         <div className="flex flex-col gap-5">
           <div>
-            <label style={etiqueta}>Título</label>
-            <input type="text" value={form.title} onChange={(e) => updateForm('title', e.target.value)} style={campo(formErrors.title)} />
+            <label htmlFor="sol-titulo" style={etiqueta}>Título</label>
+            <input id="sol-titulo" type="text" value={form.title} onChange={(e) => updateForm('title', e.target.value)} style={campo(formErrors.title)} />
             {formErrors.title && <p className="text-red-500 text-xs mt-1 font-medium">{formErrors.title}</p>}
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label style={etiqueta}>Categoría</label>
-              <select value={form.type} onChange={(e) => updateForm('type', e.target.value)} style={campo(formErrors.type)}>
+              <label htmlFor="sol-tipo" style={etiqueta}>Categoría</label>
+              <select id="sol-tipo" value={form.type} onChange={(e) => updateForm('type', e.target.value)} style={campo(formErrors.type)}>
                 <option value="" disabled>Seleccione</option>
                 {TIPOS.map((t) => <option key={t} value={t}>{t}</option>)}
               </select>
@@ -130,8 +130,8 @@ export function SolicitudForm({ inicial, onGuardar, onCancelar, onTerminado }: S
             </div>
           </div>
           <div>
-            <label style={etiqueta}>Detalles</label>
-            <textarea rows={5} value={form.description} onChange={(e) => updateForm('description', e.target.value)} style={{ ...campo(formErrors.description), resize: 'vertical' }} />
+            <label htmlFor="sol-detalles" style={etiqueta}>Detalles</label>
+            <textarea id="sol-detalles" rows={5} value={form.description} onChange={(e) => updateForm('description', e.target.value)} style={{ ...campo(formErrors.description), resize: 'vertical' }} />
             {formErrors.description && <p className="text-red-500 text-xs mt-1 font-medium">{formErrors.description}</p>}
           </div>
           <div className="flex justify-end gap-3 pt-2">
