@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { MessageSquare, Pencil, Trash2 } from 'lucide-react';
+import { LIMITES } from '../../config/limites';
+import { limpiarTexto } from '../../utils/texto';
 import type { Solicitud } from '../../types';
 
 interface SolicitudDetalleProps {
@@ -24,8 +26,9 @@ export function SolicitudDetalle({ solicitud: req, esAdmin, onResponder, onEdita
   const [respuesta, setRespuesta] = useState('');
 
   const enviar = async () => {
-    if (!respuesta.trim()) return;
-    if (await onResponder(req.id, respuesta)) setRespuesta('');
+    const limpia = limpiarTexto(respuesta, true);
+    if (!limpia) return;
+    if (await onResponder(req.id, limpia)) setRespuesta('');
   };
 
   return (
@@ -42,7 +45,7 @@ export function SolicitudDetalle({ solicitud: req, esAdmin, onResponder, onEdita
               <div className="bg-blue-50 border border-blue-100 rounded-lg p-4 text-blue-800 text-sm">{req.respuestaAdmin}</div>
             ) : esAdmin ? (
               <div className="flex flex-col gap-3">
-                <textarea placeholder="Anotación interna o respuesta..." value={respuesta} onChange={(e) => setRespuesta(e.target.value)} className="w-full p-3 border border-gray-200 rounded-lg text-sm outline-none focus:border-indigo-500 focus:ring-1" rows={3} />
+                <textarea placeholder="Anotación interna o respuesta..." maxLength={LIMITES.respuesta} value={respuesta} onChange={(e) => setRespuesta(e.target.value)} className="w-full p-3 border border-gray-200 rounded-lg text-sm outline-none focus:border-indigo-500 focus:ring-1" rows={3} />
                 <button onClick={enviar} disabled={!respuesta.trim()} className="self-end px-4 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-lg hover:bg-indigo-700 disabled:opacity-50">Responder</button>
               </div>
             ) : (

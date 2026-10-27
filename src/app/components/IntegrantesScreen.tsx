@@ -5,7 +5,9 @@ import { FirebaseError } from 'firebase/app';
 import { Copy, UserPlus, X } from 'lucide-react';
 import { db, getAuthSecundario } from '../config/firebase';
 import { DEPARTAMENTOS } from '../config/departamentos';
+import { LIMITES } from '../config/limites';
 import { generarClave } from '../utils/clave';
+import { limpiarTexto } from '../utils/texto';
 import type { Integrante, PerfilUsuario } from '../types';
 
 interface IntegrantesScreenProps {
@@ -55,25 +57,26 @@ export function IntegrantesScreen({ orgId, adminUid }: IntegrantesScreenProps) {
     setFormErrors((p) => ({ ...p, [campo]: undefined }));
   };
 
-  const validar = () => {
+  const validar = (nombre: string, email: string) => {
     const e: Partial<typeof FORM_VACIO> = {};
-    if (!form.nombre.trim()) e.nombre = 'Requerido';
-    if (!form.email.trim()) e.email = 'Requerido';
-    else if (!/\S+@\S+\.\S+/.test(form.email)) e.email = 'Formato inválido';
+    if (!nombre) e.nombre = 'Requerido';
+    else if (nombre.length > LIMITES.nombre) e.nombre = `Máximo ${LIMITES.nombre} caracteres`;
+    if (!email) e.email = 'Requerido';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > LIMITES.email) e.email = 'Formato inválido';
     if (!form.departamento) e.departamento = 'Seleccione la oficina';
     return e;
   };
 
   const crearIntegrante = async (e: React.FormEvent) => {
     e.preventDefault();
-    const errores = validar();
+    const nombre = limpiarTexto(form.nombre);
+    const email = limpiarTexto(form.email).toLowerCase();
+    const errores = validar(nombre, email);
     if (Object.keys(errores).length > 0) return setFormErrors(errores);
 
     setCreando(true);
     setError(null);
     const clave = generarClave();
-    const nombre = form.nombre.trim();
-    const email = form.email.trim();
     const authSecundario = getAuthSecundario();
     let cuentaCreada = false;
 
@@ -180,12 +183,12 @@ export function IntegrantesScreen({ orgId, adminUid }: IntegrantesScreenProps) {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <label className="block text-gray-700 text-[13px] font-semibold mb-1.5">Nombre y apellido</label>
-            <input value={form.nombre} onChange={(e) => updateForm('nombre', e.target.value)} className={inputClase(formErrors.nombre)} />
+            <input value={form.nombre} maxLength={LIMITES.nombre} onChange={(e) => updateForm('nombre', e.target.value)} className={inputClase(formErrors.nombre)} />
             {formErrors.nombre && <p className="text-red-500 text-xs mt-1 font-medium">{formErrors.nombre}</p>}
           </div>
           <div>
             <label className="block text-gray-700 text-[13px] font-semibold mb-1.5">Correo</label>
-            <input type="email" value={form.email} onChange={(e) => updateForm('email', e.target.value)} className={inputClase(formErrors.email)} />
+            <input type="email" value={form.email} maxLength={LIMITES.email} onChange={(e) => updateForm('email', e.target.value)} className={inputClase(formErrors.email)} />
             {formErrors.email && <p className="text-red-500 text-xs mt-1 font-medium">{formErrors.email}</p>}
           </div>
           <div>

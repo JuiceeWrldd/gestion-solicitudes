@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { CheckCircle2 } from 'lucide-react';
 import { TIPOS, PRIORIDADES, getPriorityColors } from '../../config/solicitudes';
+import { LIMITES, MIN_DESCRIPCION } from '../../config/limites';
+import { limpiarTexto } from '../../utils/texto';
 import type { DatosSolicitud } from '../../services/solicitudes';
 import type { Prioridad, Solicitud } from '../../types';
 
@@ -50,17 +52,23 @@ export function SolicitudForm({ inicial, onGuardar, onCancelar, onTerminado }: S
     setFormErrors((p) => ({ ...p, [field]: undefined }));
   };
 
-  const validar = () => {
+  // Se valida (y se guarda) el texto ya limpio, sin etiquetas HTML ni caracteres raros
+  const validar = (titulo: string, descripcion: string) => {
     const e: Partial<Record<keyof FormState, string>> = {};
-    if (!form.title.trim()) e.title = 'Requerido';
+    if (!titulo) e.title = 'Requerido';
+    else if (titulo.length > LIMITES.titulo) e.title = `Máximo ${LIMITES.titulo} caracteres`;
     if (!form.type) e.type = 'Requerido';
-    if (!form.description.trim()) e.description = 'Requerido';
-    else if (form.description.trim().length < 20) e.description = 'Mínimo 20 caracteres';
+    if (!descripcion) e.description = 'Requerido';
+    else if (descripcion.length < MIN_DESCRIPCION) e.description = `Mínimo ${MIN_DESCRIPCION} caracteres`;
+    else if (descripcion.length > LIMITES.descripcion) e.description = `Máximo ${LIMITES.descripcion} caracteres`;
     return e;
   };
 
   const handleSubmit = async () => {
-    const errores = validar();
+    const titulo = limpiarTexto(form.title);
+    const descripcion = limpiarTexto(form.description, true);
+
+    const errores = validar(titulo, descripcion);
     if (Object.keys(errores).length > 0) {
       setFormErrors(errores);
       return;
@@ -68,9 +76,9 @@ export function SolicitudForm({ inicial, onGuardar, onCancelar, onTerminado }: S
 
     setSubmitting(true);
     const ok = await onGuardar({
-      titulo: form.title,
+      titulo,
       tipo: form.type,
-      descripcion: form.description,
+      descripcion,
       prioridad: form.priority,
     });
     setSubmitting(false);
@@ -103,7 +111,7 @@ export function SolicitudForm({ inicial, onGuardar, onCancelar, onTerminado }: S
         <div className="flex flex-col gap-5">
           <div>
             <label htmlFor="sol-titulo" style={etiqueta}>Título</label>
-            <input id="sol-titulo" type="text" value={form.title} onChange={(e) => updateForm('title', e.target.value)} style={campo(formErrors.title)} />
+            <input id="sol-titulo" type="text" maxLength={LIMITES.titulo} value={form.title} onChange={(e) => updateForm('title', e.target.value)} style={campo(formErrors.title)} />
             {formErrors.title && <p className="text-red-500 text-xs mt-1 font-medium">{formErrors.title}</p>}
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -131,8 +139,9 @@ export function SolicitudForm({ inicial, onGuardar, onCancelar, onTerminado }: S
           </div>
           <div>
             <label htmlFor="sol-detalles" style={etiqueta}>Detalles</label>
-            <textarea id="sol-detalles" rows={5} value={form.description} onChange={(e) => updateForm('description', e.target.value)} style={{ ...campo(formErrors.description), resize: 'vertical' }} />
+            <textarea id="sol-detalles" rows={5} maxLength={LIMITES.descripcion} value={form.description} onChange={(e) => updateForm('description', e.target.value)} style={{ ...campo(formErrors.description), resize: 'vertical' }} />
             {formErrors.description && <p className="text-red-500 text-xs mt-1 font-medium">{formErrors.description}</p>}
+            <p className="text-gray-400 text-xs mt-1 text-right">{form.description.length}/{LIMITES.descripcion}</p>
           </div>
           <div className="flex justify-end gap-3 pt-2">
             {esEdicion && (
