@@ -52,6 +52,58 @@ describe('SolicitudForm: validaciones', () => {
   });
 });
 
+describe('SolicitudForm: campos de texto', () => {
+  it('limita lo que se puede escribir', () => {
+    render(<SolicitudForm {...props()} />);
+
+    expect(screen.getByLabelText('Título')).toHaveAttribute('maxLength', '100');
+    expect(screen.getByLabelText('Detalles')).toHaveAttribute('maxLength', '2000');
+  });
+
+  it('muestra cuántos caracteres lleva en los detalles', () => {
+    render(<SolicitudForm {...props()} />);
+
+    fireEvent.change(screen.getByLabelText('Detalles'), { target: { value: 'hola' } });
+    expect(screen.getByText('4/2000')).toBeInTheDocument();
+  });
+
+  it('guarda el texto sin etiquetas HTML ni espacios de más', async () => {
+    const p = props();
+    render(<SolicitudForm {...p} />);
+
+    llenar('  <b>Impresora</b>   rota  ', `<script>alert(1)</script>${DETALLE_VALIDO}   `);
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: 'Guardar' }));
+    });
+
+    expect(p.onGuardar).toHaveBeenCalledWith(
+      expect.objectContaining({ titulo: 'Impresora rota', descripcion: `alert(1)${DETALLE_VALIDO}` })
+    );
+  });
+
+  it('cuenta el largo después de limpiar: unas etiquetas no alcanzan para los 20 caracteres', () => {
+    const p = props();
+    render(<SolicitudForm {...p} />);
+
+    llenar('Titulo', '<div>corto</div><span></span><p></p>');
+    fireEvent.click(screen.getByRole('button', { name: 'Guardar' }));
+
+    expect(screen.getByText('Mínimo 20 caracteres')).toBeInTheDocument();
+    expect(p.onGuardar).not.toHaveBeenCalled();
+  });
+
+  it('no guarda si el título solo tenía etiquetas', () => {
+    const p = props();
+    render(<SolicitudForm {...p} />);
+
+    llenar('<script></script>', DETALLE_VALIDO);
+    fireEvent.click(screen.getByRole('button', { name: 'Guardar' }));
+
+    expect(screen.getByText('Requerido')).toBeInTheDocument();
+    expect(p.onGuardar).not.toHaveBeenCalled();
+  });
+});
+
 describe('SolicitudForm: guardar', () => {
   it('envía los datos del formulario con prioridad Media por defecto', async () => {
     const p = props();

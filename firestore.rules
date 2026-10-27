@@ -27,6 +27,39 @@ service cloud.firestore {
         && get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.rol == 'admin';
     }
 
+    // --- validaciones de contenido (los mismos límites están en src/app/config/limites.ts) ---
+
+    function textoEntre(valor, min, max) {
+      return valor is string && valor.size() >= min && valor.size() <= max;
+    }
+
+    function tipoValido(t) {
+      return t in ['Soporte Técnico', 'Administrativa', 'Recursos Humanos', 'Financiera', 'Logística', 'Otro'];
+    }
+
+    function prioridadValida(p) {
+      return p in ['Alta', 'Media', 'Baja'];
+    }
+
+    function estadoValido(e) {
+      return e in ['En revisión', 'Pendiente', 'Aprobada', 'Rechazada'];
+    }
+
+    function departamentoValido(d) {
+      return d in [
+        'Tecnología e Innovación', 'Recursos Humanos', 'Finanzas y Contabilidad', 'Operaciones',
+        'Jurídica y Cumplimiento', 'Comunicaciones', 'Logística', 'Atención al Cliente', 'Dirección General'
+      ];
+    }
+
+    // lo que escribe el usuario en una solicitud
+    function contenidoSolicitudValido(d) {
+      return textoEntre(d.titulo, 1, 100)
+        && textoEntre(d.descripcion, 20, 2000)
+        && tipoValido(d.tipo)
+        && prioridadValida(d.prioridad);
+    }
+
     // cada uno lee solo su empresa; las empresas se crean a mano desde la consola
     match /organizaciones/{orgId} {
       allow read: if estaAutenticado() && miOrg() == orgId;
@@ -39,16 +72,26 @@ service cloud.firestore {
         && (request.auth.uid == uid
             || (esAdmin() && resource.data.get('orgId', null) == miOrg()));
 
-      // solo el admin crea perfiles, y siempre como "usuario" de su propia empresa
+      // solo el admin crea perfiles, como "usuario" de su empresa y con los campos esperados
       allow create: if esAdmin()
+        && request.resource.data.keys().hasOnly(['nombre', 'email', 'departamento', 'rol', 'orgId', 'activo', 'debeCambiarClave', 'fechaRegistro'])
         && request.resource.data.rol == 'usuario'
-        && request.resource.data.orgId == miOrg();
+        && request.resource.data.orgId == miOrg()
+        && request.resource.data.activo == true
+        && request.resource.data.debeCambiarClave == true
+        && textoEntre(request.resource.data.nombre, 1, 80)
+        && textoEntre(request.resource.data.email, 5, 254)
+        && request.resource.data.email.matches('.+@.+\\..+')
+        && departamentoValido(request.resource.data.departamento)
+        && request.resource.data.fechaRegistro is timestamp;
 
       allow update:
         // el admin cambia la oficina y activa o desactiva a los de su empresa (a sí mismo no se desactiva)
         if (esAdmin()
             && resource.data.get('orgId', null) == miOrg()
             && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['departamento', 'activo'])
+            && departamentoValido(request.resource.data.departamento)
+            && request.resource.data.get('activo', true) is bool
             && !(uid == request.auth.uid && request.resource.data.get('activo', true) == false))
         // cada uno puede quitar su propia marca de "cambiar clave", pero no tocar su rol, oficina ni empresa
         || (estaAutenticado()
@@ -65,24 +108,31 @@ service cloud.firestore {
         && (resource.data.usuarioId == request.auth.uid
             || (esAdmin() && resource.data.get('orgId', null) == miOrg()));
 
-      // al crear, tiene que ser suya, de su empresa y empezar "En revisión"
+      // al crear, tiene que ser suya, de su empresa, empezar "En revisión" y no traer campos de más
       allow create: if estaAutenticado()
         && miOrg() != null
+        && request.resource.data.keys().hasOnly(['titulo', 'tipo', 'descripcion', 'prioridad', 'estado', 'usuarioId', 'orgId', 'autorNombre', 'autorEmail', 'fecha'])
         && request.resource.data.usuarioId == request.auth.uid
         && request.resource.data.orgId == miOrg()
         && request.resource.data.estado == 'En revisión'
-        && !('respuestaAdmin' in request.resource.data);
+        && request.resource.data.fecha == request.time
+        && textoEntre(request.resource.data.autorNombre, 1, 80)
+        && textoEntre(request.resource.data.autorEmail, 0, 254)
+        && contenidoSolicitudValido(request.resource.data);
 
       allow update: if
         // el admin solo cambia el estado y la respuesta, y solo en su empresa
         (esAdmin()
           && resource.data.get('orgId', null) == miOrg()
-          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['estado', 'respuestaAdmin']))
-        // el dueño solo edita mientras siga en revisión
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['estado', 'respuestaAdmin'])
+          && estadoValido(request.resource.data.estado)
+          && (!('respuestaAdmin' in request.resource.data) || textoEntre(request.resource.data.respuestaAdmin, 1, 1000)))
+        // el dueño solo edita el contenido mientras siga en revisión
         || (estaAutenticado()
           && resource.data.usuarioId == request.auth.uid
           && resource.data.estado == 'En revisión'
-          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['titulo', 'tipo', 'descripcion', 'prioridad']));
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['titulo', 'tipo', 'descripcion', 'prioridad'])
+          && contenidoSolicitudValido(request.resource.data));
 
       // solo el dueño borra, y solo si sigue en revisión
       allow delete: if estaAutenticado()
