@@ -8,6 +8,7 @@ import { DEPARTAMENTOS } from '../config/departamentos';
 import { LIMITES } from '../config/limites';
 import { generarClave } from '../utils/clave';
 import { limpiarTexto } from '../utils/texto';
+import { esCorreoValido } from '../utils/validaciones';
 import type { Integrante, PerfilUsuario } from '../types';
 
 interface IntegrantesScreenProps {
@@ -62,7 +63,7 @@ export function IntegrantesScreen({ orgId, adminUid }: IntegrantesScreenProps) {
     if (!nombre) e.nombre = 'Requerido';
     else if (nombre.length > LIMITES.nombre) e.nombre = `Máximo ${LIMITES.nombre} caracteres`;
     if (!email) e.email = 'Requerido';
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > LIMITES.email) e.email = 'Formato inválido';
+    else if (!esCorreoValido(email)) e.email = 'Formato inválido';
     if (!form.departamento) e.departamento = 'Seleccione la oficina';
     return e;
   };

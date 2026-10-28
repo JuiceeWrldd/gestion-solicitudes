@@ -4,6 +4,7 @@ export const LIMITES = {
   descripcion: 2000,
   respuesta: 1000,
   nombre: 80,
+  empresa: 80,
   email: 254,
 } as const;
 

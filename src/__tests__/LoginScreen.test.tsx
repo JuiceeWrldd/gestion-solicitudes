@@ -23,12 +23,13 @@ const entrar = () => fireEvent.click(screen.getByRole('button', { name: 'Iniciar
 
 describe('LoginScreen', () => {
   const onNavigateToForgot = vi.fn();
+  const onNavigateToRegister = vi.fn();
 
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(setPersistence).mockResolvedValue(undefined);
     vi.mocked(signInWithEmailAndPassword).mockResolvedValue({} as never);
-    render(<LoginScreen onNavigateToError={vi.fn()} onNavigateToDashboard={vi.fn()} onNavigateToForgot={onNavigateToForgot} />);
+    render(<LoginScreen onNavigateToError={vi.fn()} onNavigateToDashboard={vi.fn()} onNavigateToForgot={onNavigateToForgot} onNavigateToRegister={onNavigateToRegister} />);
   });
 
   it('pide correo y contraseña si se envía vacío', () => {
@@ -99,8 +100,11 @@ describe('LoginScreen', () => {
     expect(onNavigateToForgot).toHaveBeenCalled();
   });
 
-  it('ya no ofrece registro libre', () => {
+  it('ofrece registrar una empresa nueva, y a los integrantes les dice que pidan acceso a su admin', () => {
     expect(screen.queryByText(/Solicite acceso/i)).not.toBeInTheDocument();
     expect(screen.getByText(/Pídele a tu administrador/i)).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Regístrala aquí' }));
+    expect(onNavigateToRegister).toHaveBeenCalledTimes(1);
   });
 });
