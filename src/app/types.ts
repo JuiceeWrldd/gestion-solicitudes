@@ -24,6 +24,7 @@ export type Integrante = PerfilUsuario & { id: string };
 export interface Organizacion {
   nombre: string;
   adminId: string;
+  fechaCreacion?: unknown; // Timestamp de Firestore (las empresas creadas por registro lo traen)
 }
 
 // Documento tal como se guarda en la colección "solicitudes" de Firestore

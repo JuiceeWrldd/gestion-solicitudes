@@ -16,9 +16,10 @@ interface LoginScreenProps {
   onNavigateToError: () => void;
   onNavigateToDashboard: () => void;
   onNavigateToForgot: () => void;
+  onNavigateToRegister: () => void;
 }
 
-export function LoginScreen({ onNavigateToForgot }: LoginScreenProps) {
+export function LoginScreen({ onNavigateToForgot, onNavigateToRegister }: LoginScreenProps) {
   // Estados locales
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -188,9 +189,13 @@ export function LoginScreen({ onNavigateToForgot }: LoginScreenProps) {
             </div>
           </div>
 
-          <p className="text-center text-gray-500 text-sm mt-6">
-            ¿No tienes cuenta? Pídele a tu administrador que te agregue.
-          </p>
+          <div className="text-center text-gray-500 text-sm mt-6 flex flex-col gap-1">
+            <p>¿Eres parte de una empresa? Pídele a tu administrador que te agregue.</p>
+            <p>
+              ¿Vas a administrar una empresa nueva?{' '}
+              <button onClick={onNavigateToRegister} className="text-indigo-600 font-semibold hover:underline">Regístrala aquí</button>
+            </p>
+          </div>
         </div>
       </div>
     </div>
