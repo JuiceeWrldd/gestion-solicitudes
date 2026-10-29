@@ -2,9 +2,14 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { FirebaseError } from 'firebase/app';
 import { RegisterScreen } from '../app/components/RegisterScreen';
-import { registrarAdminConEmpresa } from '../app/services/registro';
+import { cancelarRegistroGoogle, elegirCuentaGoogle, registrarAdminConEmpresa } from '../app/services/registro';
 
-vi.mock('../app/services/registro', () => ({ registrarAdminConEmpresa: vi.fn() }));
+vi.mock('../app/services/registro', () => ({
+  registrarAdminConEmpresa: vi.fn(),
+  elegirCuentaGoogle: vi.fn(),
+  completarRegistroGoogle: vi.fn(),
+  cancelarRegistroGoogle: vi.fn(),
+}));
 
 const llenar = (campos: Partial<Record<'nombre' | 'empresa' | 'email' | 'oficina' | 'clave' | 'confirmar', string>>) => {
   const etiquetas = {
@@ -37,6 +42,7 @@ describe('RegisterScreen', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(registrarAdminConEmpresa).mockResolvedValue(undefined);
+    vi.mocked(cancelarRegistroGoogle).mockResolvedValue(undefined);
     render(<RegisterScreen onNavigateToLogin={onNavigateToLogin} />);
   });
 
@@ -126,6 +132,54 @@ describe('RegisterScreen', () => {
       enviar();
 
       expect(await screen.findByRole('alert')).toHaveTextContent('No se pudo completar el registro');
+    });
+  });
+
+  describe('registro con Google', () => {
+    const cuentaGoogle = { yaRegistrado: false as const, nombre: 'Ana Google', email: 'ana@gmail.com', credencial: {} as never, esNueva: true };
+
+    it('ofrece el botón de Google en el registro', () => {
+      expect(screen.getByRole('button', { name: 'Registrarme con Google' })).toBeInTheDocument();
+    });
+
+    it('al elegir una cuenta nueva pasa al segundo paso, con su correo', async () => {
+      vi.mocked(elegirCuentaGoogle).mockResolvedValue(cuentaGoogle);
+      fireEvent.click(screen.getByRole('button', { name: 'Registrarme con Google' }));
+
+      expect(await screen.findByText(/Elegiste esta cuenta de Google/)).toBeInTheDocument();
+      expect(screen.getByLabelText('Correo (de Google)')).toHaveValue('ana@gmail.com');
+      expect(screen.queryByLabelText('Contraseña')).not.toBeInTheDocument(); // con Google no hay contraseña
+    });
+
+    it('si esa cuenta ya tiene empresa, lo avisa y se queda en el primer paso', async () => {
+      vi.mocked(elegirCuentaGoogle).mockResolvedValue({ yaRegistrado: true });
+      fireEvent.click(screen.getByRole('button', { name: 'Registrarme con Google' }));
+
+      expect(await screen.findByRole('alert')).toHaveTextContent('ya tiene una empresa');
+      expect(screen.getByLabelText('Contraseña')).toBeInTheDocument();
+    });
+
+    it('si cierra la ventana de Google no muestra ningún error', async () => {
+      vi.mocked(elegirCuentaGoogle).mockRejectedValue(new FirebaseError('auth/popup-closed-by-user', 'x'));
+      fireEvent.click(screen.getByRole('button', { name: 'Registrarme con Google' }));
+
+      await waitFor(() => expect(screen.getByRole('button', { name: 'Registrarme con Google' })).toBeEnabled());
+      expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    });
+
+    it('si Google falla por otro motivo, muestra un mensaje', async () => {
+      vi.mocked(elegirCuentaGoogle).mockRejectedValue(new Error('red'));
+      fireEvent.click(screen.getByRole('button', { name: 'Registrarme con Google' }));
+
+      expect(await screen.findByRole('alert')).toHaveTextContent('No se pudo conectar con Google');
+    });
+
+    it('"Usar otra cuenta" vuelve al formulario con correo', async () => {
+      vi.mocked(elegirCuentaGoogle).mockResolvedValue(cuentaGoogle);
+      fireEvent.click(screen.getByRole('button', { name: 'Registrarme con Google' }));
+      fireEvent.click(await screen.findByRole('button', { name: 'Usar otra cuenta' }));
+
+      expect(await screen.findByLabelText('Contraseña')).toBeInTheDocument();
     });
   });
 

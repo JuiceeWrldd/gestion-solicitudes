@@ -2,9 +2,11 @@ import { useState } from 'react';
 import { ArrowLeft, Eye, EyeOff } from 'lucide-react';
 import { FirebaseError } from 'firebase/app';
 import { LogoBrand } from './LogoMark';
+import { GoogleIcon } from './GoogleIcon';
+import { RegistroGoogleForm } from './RegistroGoogleForm';
 import { DEPARTAMENTOS } from '../config/departamentos';
 import { LIMITES } from '../config/limites';
-import { registrarAdminConEmpresa } from '../services/registro';
+import { elegirCuentaGoogle, registrarAdminConEmpresa, type CuentaGoogle } from '../services/registro';
 import { limpiarTexto } from '../utils/texto';
 import { esCorreoValido } from '../utils/validaciones';
 
@@ -18,6 +20,9 @@ type Campos = typeof FORM_VACIO;
 const inputClase = (hayError?: string) =>
   `w-full py-3 px-3 border ${hayError ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-slate-50'} rounded-lg text-sm outline-none focus:border-indigo-600 focus:bg-white transition-colors`;
 
+// Cuando la persona cierra la ventana de Google no hace falta mostrar un error
+const VENTANA_CERRADA = ['auth/popup-closed-by-user', 'auth/cancelled-popup-request'];
+
 // Registro para quien va a administrar una empresa nueva. Los integrantes los agrega después su admin.
 export function RegisterScreen({ onNavigateToLogin }: RegisterScreenProps) {
   const [form, setForm] = useState<Campos>(FORM_VACIO);
@@ -25,6 +30,8 @@ export function RegisterScreen({ onNavigateToLogin }: RegisterScreenProps) {
   const [errorGeneral, setErrorGeneral] = useState<string | null>(null);
   const [mostrarClave, setMostrarClave] = useState(false);
   const [cargando, setCargando] = useState(false);
+  const [cargandoGoogle, setCargandoGoogle] = useState(false);
+  const [cuentaGoogle, setCuentaGoogle] = useState<CuentaGoogle | null>(null);
 
   const update = (campo: keyof Campos, valor: string) => {
     setForm((p) => ({ ...p, [campo]: valor }));
@@ -71,6 +78,26 @@ export function RegisterScreen({ onNavigateToLogin }: RegisterScreenProps) {
     }
   };
 
+  const handleGoogle = async () => {
+    setCargandoGoogle(true);
+    setErrorGeneral(null);
+    try {
+      const resultado = await elegirCuentaGoogle();
+      if (resultado.yaRegistrado) {
+        setErrorGeneral('Esa cuenta de Google ya tiene una empresa. Inicia sesión desde la pantalla de acceso.');
+      } else {
+        setCuentaGoogle(resultado);
+      }
+    } catch (error) {
+      if (!(error instanceof FirebaseError && VENTANA_CERRADA.includes(error.code))) {
+        console.error('Google falló:', error);
+        setErrorGeneral('No se pudo conectar con Google. Intenta de nuevo.');
+      }
+    } finally {
+      setCargandoGoogle(false);
+    }
+  };
+
   const campoTexto = (id: string, etiqueta: string, campo: 'nombre' | 'empresa' | 'email', max: number, tipo = 'text') => (
     <div>
       <label htmlFor={id} className="block text-gray-700 text-[13px] font-semibold mb-1.5">{etiqueta}</label>
@@ -86,7 +113,7 @@ export function RegisterScreen({ onNavigateToLogin }: RegisterScreenProps) {
           <LogoBrand iconSize={44} layout="vertical" />
         </div>
 
-        <form onSubmit={handleSubmit} noValidate className="bg-white rounded-2xl p-8 shadow-[0_8px_40px_rgba(30,63,174,0.12)]">
+        <div className="bg-white rounded-2xl p-8 shadow-[0_8px_40px_rgba(30,63,174,0.12)]">
           <h2 className="text-gray-900 text-2xl font-extrabold mb-1">Registra tu empresa</h2>
           <p className="text-gray-500 text-sm mb-6">Serás el administrador. Después podrás agregar a tu equipo.</p>
 
@@ -94,42 +121,64 @@ export function RegisterScreen({ onNavigateToLogin }: RegisterScreenProps) {
             <div role="alert" className="bg-red-50 text-red-600 p-4 rounded-xl text-sm mb-5 border border-red-100 font-semibold">{errorGeneral}</div>
           )}
 
-          <div className="flex flex-col gap-4">
-            {campoTexto('reg-nombre', 'Tu nombre y apellido', 'nombre', LIMITES.nombre)}
-            {campoTexto('reg-empresa', 'Nombre de la empresa', 'empresa', LIMITES.empresa)}
-            {campoTexto('reg-email', 'Correo', 'email', LIMITES.email, 'email')}
+          {cuentaGoogle ? (
+            <RegistroGoogleForm cuenta={cuentaGoogle} onCancelar={() => setCuentaGoogle(null)} />
+          ) : (
+            <>
+              <button
+                type="button"
+                onClick={handleGoogle}
+                disabled={cargandoGoogle || cargando}
+                className="w-full flex items-center justify-center gap-3 bg-white text-gray-700 border border-gray-200 py-3 rounded-lg text-[14px] font-semibold hover:bg-gray-50 transition-colors shadow-sm disabled:opacity-60"
+              >
+                <GoogleIcon />
+                {cargandoGoogle ? 'Conectando con Google...' : 'Registrarme con Google'}
+              </button>
 
-            <div>
-              <label htmlFor="reg-oficina" className="block text-gray-700 text-[13px] font-semibold mb-1.5">Tu oficina</label>
-              <select id="reg-oficina" value={form.departamento} onChange={(e) => update('departamento', e.target.value)} className={inputClase(errors.departamento)}>
-                <option value="" disabled>Seleccionar...</option>
-                {DEPARTAMENTOS.map((d) => <option key={d} value={d}>{d}</option>)}
-              </select>
-              {errors.departamento && <p className="text-red-500 text-xs mt-1 font-medium">{errors.departamento}</p>}
-            </div>
-
-            <div>
-              <label htmlFor="reg-clave" className="block text-gray-700 text-[13px] font-semibold mb-1.5">Contraseña</label>
-              <div className="relative">
-                <input id="reg-clave" type={mostrarClave ? 'text' : 'password'} value={form.clave} onChange={(e) => update('clave', e.target.value)} placeholder="Mínimo 8 caracteres" className={`${inputClase(errors.clave)} pr-11`} />
-                <button type="button" onClick={() => setMostrarClave(!mostrarClave)} aria-label={mostrarClave ? 'Ocultar contraseña' : 'Mostrar contraseña'} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
-                  {mostrarClave ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
+              <div className="relative flex items-center py-5">
+                <div className="flex-grow border-t border-gray-200"></div>
+                <span className="flex-shrink-0 mx-4 text-gray-400 text-xs font-medium uppercase tracking-wider">o con tu correo</span>
+                <div className="flex-grow border-t border-gray-200"></div>
               </div>
-              {errors.clave && <p className="text-red-500 text-xs mt-1 font-medium">{errors.clave}</p>}
-            </div>
 
-            <div>
-              <label htmlFor="reg-confirmar" className="block text-gray-700 text-[13px] font-semibold mb-1.5">Repite la contraseña</label>
-              <input id="reg-confirmar" type={mostrarClave ? 'text' : 'password'} value={form.confirmar} onChange={(e) => update('confirmar', e.target.value)} className={inputClase(errors.confirmar)} />
-              {errors.confirmar && <p className="text-red-500 text-xs mt-1 font-medium">{errors.confirmar}</p>}
-            </div>
+              <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
+                {campoTexto('reg-nombre', 'Tu nombre y apellido', 'nombre', LIMITES.nombre)}
+                {campoTexto('reg-empresa', 'Nombre de la empresa', 'empresa', LIMITES.empresa)}
+                {campoTexto('reg-email', 'Correo', 'email', LIMITES.email, 'email')}
 
-            <button type="submit" disabled={cargando} className="w-full mt-2 bg-indigo-600 text-white py-3 rounded-lg text-[15px] font-bold hover:bg-indigo-700 disabled:bg-indigo-300 transition-colors">
-              {cargando ? 'Creando tu empresa...' : 'Crear empresa'}
-            </button>
-          </div>
-        </form>
+                <div>
+                  <label htmlFor="reg-oficina" className="block text-gray-700 text-[13px] font-semibold mb-1.5">Tu oficina</label>
+                  <select id="reg-oficina" value={form.departamento} onChange={(e) => update('departamento', e.target.value)} className={inputClase(errors.departamento)}>
+                    <option value="" disabled>Seleccionar...</option>
+                    {DEPARTAMENTOS.map((d) => <option key={d} value={d}>{d}</option>)}
+                  </select>
+                  {errors.departamento && <p className="text-red-500 text-xs mt-1 font-medium">{errors.departamento}</p>}
+                </div>
+
+                <div>
+                  <label htmlFor="reg-clave" className="block text-gray-700 text-[13px] font-semibold mb-1.5">Contraseña</label>
+                  <div className="relative">
+                    <input id="reg-clave" type={mostrarClave ? 'text' : 'password'} value={form.clave} onChange={(e) => update('clave', e.target.value)} placeholder="Mínimo 8 caracteres" className={`${inputClase(errors.clave)} pr-11`} />
+                    <button type="button" onClick={() => setMostrarClave(!mostrarClave)} aria-label={mostrarClave ? 'Ocultar contraseña' : 'Mostrar contraseña'} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
+                      {mostrarClave ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
+                  {errors.clave && <p className="text-red-500 text-xs mt-1 font-medium">{errors.clave}</p>}
+                </div>
+
+                <div>
+                  <label htmlFor="reg-confirmar" className="block text-gray-700 text-[13px] font-semibold mb-1.5">Repite la contraseña</label>
+                  <input id="reg-confirmar" type={mostrarClave ? 'text' : 'password'} value={form.confirmar} onChange={(e) => update('confirmar', e.target.value)} className={inputClase(errors.confirmar)} />
+                  {errors.confirmar && <p className="text-red-500 text-xs mt-1 font-medium">{errors.confirmar}</p>}
+                </div>
+
+                <button type="submit" disabled={cargando} className="w-full mt-2 bg-indigo-600 text-white py-3 rounded-lg text-[15px] font-bold hover:bg-indigo-700 disabled:bg-indigo-300 transition-colors">
+                  {cargando ? 'Creando tu empresa...' : 'Crear empresa'}
+                </button>
+              </form>
+            </>
+          )}
+        </div>
 
         <div className="flex justify-center mt-6">
           <button onClick={onNavigateToLogin} className="flex items-center gap-1.5 text-indigo-600 text-sm font-semibold hover:underline">

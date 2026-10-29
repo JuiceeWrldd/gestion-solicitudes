@@ -69,7 +69,7 @@ export function DashboardScreen({ onNavigateToLogin }: DashboardScreenProps) {
     return (
       <AvisoCuentaScreen
         titulo="Tu cuenta no pertenece a ninguna empresa"
-        mensaje="Pídele a tu administrador que te agregue desde la sección Integrantes."
+        mensaje="Pídele a tu administrador que te agregue desde la sección Integrantes. Si vas a administrar una empresa nueva, cierra sesión y regístrala desde la pantalla de acceso."
         onCerrarSesion={cerrarSesion}
       />
     );
