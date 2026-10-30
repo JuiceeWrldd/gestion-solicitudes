@@ -4,15 +4,12 @@ import { auth } from './config/firebase';
 import { LoginScreen } from './components/LoginScreen';
 import { RegisterScreen } from './components/RegisterScreen';
 import { DashboardScreen } from './components/DashboardScreen';
-import { ErrorScreen } from './components/ErrorScreen';
 import { ForgotPasswordScreen } from './components/ForgotPasswordScreen';
 
-type Screen = 'login' | 'register' | 'dashboard' | 'error' | 'forgot';
-type ErrorType = '404' | 'session' | 'general';
+type Screen = 'login' | 'register' | 'dashboard' | 'forgot';
 
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('login');
-  const [errorType, setErrorType] = useState<ErrorType>('general');
   const [cargandoSesion, setCargandoSesion] = useState(true);
 
   // Listener de autenticación
@@ -25,14 +22,9 @@ export default function App() {
       }
       setCargandoSesion(false);
     });
-    
+
     return () => unsubscribe();
   }, []);
-
-  const goToError = (type: ErrorType = 'general') => {
-    setErrorType(type);
-    setCurrentScreen('error');
-  };
 
   // Splash screen mientras Firebase verifica el token
   if (cargandoSesion) {
@@ -48,8 +40,6 @@ export default function App() {
     <>
       {currentScreen === 'login' && (
         <LoginScreen
-          onNavigateToError={() => goToError('general')}
-          onNavigateToDashboard={() => setCurrentScreen('dashboard')}
           onNavigateToForgot={() => setCurrentScreen('forgot')}
           onNavigateToRegister={() => setCurrentScreen('register')}
         />
@@ -60,17 +50,7 @@ export default function App() {
       )}
 
       {currentScreen === 'dashboard' && (
-        <DashboardScreen
-          onNavigateToLogin={() => setCurrentScreen('login')}
-          onNavigateToError={() => goToError('session')}
-        />
-      )}
-
-      {currentScreen === 'error' && (
-        <ErrorScreen
-          onNavigateBack={() => setCurrentScreen('login')}
-          errorType={errorType}
-        />
+        <DashboardScreen onNavigateToLogin={() => setCurrentScreen('login')} />
       )}
 
       {currentScreen === 'forgot' && (

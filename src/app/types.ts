@@ -27,21 +27,6 @@ export interface Organizacion {
   fechaCreacion?: unknown; // Timestamp de Firestore (las empresas creadas por registro lo traen)
 }
 
-// Documento tal como se guarda en la colección "solicitudes" de Firestore
-export interface SolicitudDoc {
-  titulo: string;
-  tipo: string;
-  descripcion: string;
-  prioridad: Prioridad;
-  estado: EstadoSolicitud;
-  usuarioId: string;
-  orgId: string;
-  autorNombre: string;
-  autorEmail: string;
-  respuestaAdmin: string | null;
-  fecha: unknown; // Timestamp de Firestore (serverTimestamp)
-}
-
 // Solicitud ya normalizada para mostrarse en la UI del dashboard
 export interface Solicitud {
   id: string;

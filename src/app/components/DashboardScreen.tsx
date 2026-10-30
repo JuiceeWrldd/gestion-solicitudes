@@ -17,7 +17,6 @@ import { AvisoCuentaScreen } from './AvisoCuentaScreen';
 
 interface DashboardScreenProps {
   onNavigateToLogin: () => void;
-  onNavigateToError: () => void;
 }
 
 export function DashboardScreen({ onNavigateToLogin }: DashboardScreenProps) {

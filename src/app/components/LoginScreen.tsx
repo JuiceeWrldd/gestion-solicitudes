@@ -14,8 +14,6 @@ import { auth } from '../config/firebase';
 import { GoogleIcon } from './GoogleIcon';
 
 interface LoginScreenProps {
-  onNavigateToError: () => void;
-  onNavigateToDashboard: () => void;
   onNavigateToForgot: () => void;
   onNavigateToRegister: () => void;
 }

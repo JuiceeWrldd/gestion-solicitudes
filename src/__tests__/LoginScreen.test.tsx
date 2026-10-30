@@ -29,7 +29,7 @@ describe('LoginScreen', () => {
     vi.clearAllMocks();
     vi.mocked(setPersistence).mockResolvedValue(undefined);
     vi.mocked(signInWithEmailAndPassword).mockResolvedValue({} as never);
-    render(<LoginScreen onNavigateToError={vi.fn()} onNavigateToDashboard={vi.fn()} onNavigateToForgot={onNavigateToForgot} onNavigateToRegister={onNavigateToRegister} />);
+    render(<LoginScreen onNavigateToForgot={onNavigateToForgot} onNavigateToRegister={onNavigateToRegister} />);
   });
 
   it('pide correo y contraseña si se envía vacío', () => {

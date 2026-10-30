@@ -11,7 +11,6 @@ Proyecto final del SENA: una aplicación web para la gestión de solicitudes, co
 - Rol de **administrador**: ver las solicitudes de su empresa, aprobarlas o rechazarlas, y responder a ellas.
 - El administrador también agrega integrantes a su empresa (con una contraseña temporal que cada persona cambia en su primer ingreso), define en qué oficina está cada uno y puede desactivarlos.
 - Cada empresa ve solo sus propios datos.
-- Pantalla de manejo de errores (404/401/500).
 
 ## Tecnologías
 
