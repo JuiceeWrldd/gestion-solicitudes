@@ -7,7 +7,7 @@ describe('Prueba 2: Validación del Formulario de Recuperación de Contraseña',
     render(<ForgotPasswordScreen onNavigateToLogin={vi.fn()} />);
 
     expect(screen.getByText(/Recuperar contraseña/i)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(/correo@institucion.co/i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/tucorreo@ejemplo.com/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Enviar enlace de recuperación/i })).toBeInTheDocument();
   });
 });

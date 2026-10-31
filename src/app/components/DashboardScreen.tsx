@@ -95,8 +95,8 @@ export function DashboardScreen({ onNavigateToLogin }: DashboardScreenProps) {
 
   const items: ItemMenu[] = [
     { id: 'inicio', label: 'Inicio', icon: <Home size={20} /> },
-    { id: 'nueva', label: 'Nueva Solicitud', icon: <FilePlus size={20} /> },
-    { id: 'mis', label: esAdmin ? 'Gestión Solicitudes' : 'Mis Solicitudes', icon: <FileText size={20} /> },
+    { id: 'nueva', label: 'Nueva solicitud', icon: <FilePlus size={20} /> },
+    { id: 'mis', label: esAdmin ? 'Solicitudes' : 'Mis solicitudes', icon: <FileText size={20} /> },
     ...(esAdmin ? [{ id: 'integrantes' as const, label: 'Integrantes', icon: <Users size={20} /> }] : []),
     { id: 'perfil', label: 'Perfil', icon: <User size={20} /> },
   ];
@@ -177,7 +177,7 @@ export function DashboardScreen({ onNavigateToLogin }: DashboardScreenProps) {
           </button>
           <span className="lg:hidden text-gray-900 text-sm font-semibold">{seccionActual}</span>
           <div className="hidden lg:flex items-center gap-2 text-sm">
-            <span className="text-gray-400">{organizacion?.nombre ?? 'Workspace'}</span>
+            <span className="text-gray-400">{organizacion?.nombre ?? 'GestioSync'}</span>
             <span className="text-gray-300">/</span>
             <span className="text-gray-900 font-semibold">{seccionActual}</span>
           </div>

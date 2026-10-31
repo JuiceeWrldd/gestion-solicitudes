@@ -20,7 +20,7 @@ export function ForgotPasswordScreen({ onNavigateToLogin }: ForgotPasswordScreen
   const handleReset = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) {
-      setError('Por favor, ingrese su correo electrónico.');
+      setError('Escribe tu correo.');
       return;
     }
     
@@ -34,9 +34,9 @@ export function ForgotPasswordScreen({ onNavigateToLogin }: ForgotPasswordScreen
       if (err instanceof FirebaseError && err.code === 'auth/user-not-found') {
         setError('No hay ninguna cuenta registrada con este correo.');
       } else if (err instanceof FirebaseError && err.code === 'auth/invalid-email') {
-        setError('El formato del correo electrónico no es válido.');
+        setError('Ese correo no parece válido.');
       } else {
-        setError('Ocurrió un error al procesar la solicitud. Intente más tarde.');
+        setError('No se pudo enviar el enlace. Intenta de nuevo en un rato.');
       }
     } finally {
       setLoading(false);
@@ -55,7 +55,7 @@ export function ForgotPasswordScreen({ onNavigateToLogin }: ForgotPasswordScreen
             </div>
             <h2 className="text-2xl font-bold text-gray-900 mb-3">Revisa tu correo</h2>
             <p className="text-sm text-gray-500 mb-8 leading-relaxed">
-              Hemos enviado las instrucciones para recuperar tu contraseña a <strong className="text-gray-900">{email}</strong>.
+              Te enviamos un enlace para cambiar tu contraseña a <strong className="text-gray-900">{email}</strong>.
             </p>
             <button
               onClick={onNavigateToLogin}
@@ -91,14 +91,14 @@ export function ForgotPasswordScreen({ onNavigateToLogin }: ForgotPasswordScreen
           <div className="mb-8">
             <h2 className="text-2xl font-bold text-gray-900">Recuperar contraseña</h2>
             <p className="mt-2 text-sm text-gray-500">
-              Ingresa el correo electrónico asociado a tu cuenta para recibir un enlace de recuperación.
+              Escribe el correo de tu cuenta y te enviamos un enlace para crear una nueva.
             </p>
           </div>
 
           <form className="space-y-6" onSubmit={handleReset}>
             <div>
               <label htmlFor="email" className="block text-sm font-semibold text-gray-700">
-                Correo Electrónico
+                Correo
               </label>
               <div className="mt-1 relative rounded-md shadow-sm">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -113,7 +113,7 @@ export function ForgotPasswordScreen({ onNavigateToLogin }: ForgotPasswordScreen
                   className={`block w-full pl-10 py-3 sm:text-sm border rounded-lg outline-none transition-colors ${
                     error ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-200 focus:ring-indigo-500 focus:border-indigo-500'
                   }`}
-                  placeholder="correo@institucion.co"
+                  placeholder="tucorreo@ejemplo.com"
                 />
               </div>
               {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
