@@ -93,7 +93,7 @@ export function SolicitudForm({ inicial, onGuardar, onCancelar, onTerminado }: S
             <CheckCircle2 size={44} style={{ color: '#22C55E' }} />
           </div>
           <h2 style={{ color: '#111827', fontSize: '22px', fontWeight: 800, marginBottom: '5px' }}>
-            {esEdicion ? 'Datos actualizados' : 'Solicitud procesada'}
+            {esEdicion ? 'Solicitud actualizada' : '¡Solicitud enviada!'}
           </h2>
         </div>
       </div>
@@ -104,7 +104,7 @@ export function SolicitudForm({ inicial, onGuardar, onCancelar, onTerminado }: S
     <div>
       <div className="mb-7">
         <h1 style={{ color: '#111827', fontSize: '26px', fontWeight: 800, marginBottom: '5px' }}>
-          {esEdicion ? 'Edición de registro' : 'Nuevo registro'}
+          {esEdicion ? 'Editar solicitud' : 'Nueva solicitud'}
         </h1>
       </div>
       <div className="bg-white rounded-2xl p-6 lg:p-8 max-w-2xl" style={{ boxShadow: '0 2px 20px rgba(30,63,174,0.08)' }}>
@@ -150,7 +150,7 @@ export function SolicitudForm({ inicial, onGuardar, onCancelar, onTerminado }: S
               </button>
             )}
             <button onClick={handleSubmit} disabled={submitting} style={{ padding: '12px 24px', borderRadius: '8px', border: 'none', background: submitting ? '#93A8E8' : '#1E3FAE', color: 'white', fontWeight: 700, cursor: submitting ? 'not-allowed' : 'pointer' }}>
-              {submitting ? 'Procesando...' : 'Guardar'}
+              {submitting ? 'Guardando...' : 'Guardar'}
             </button>
           </div>
         </div>

@@ -146,7 +146,7 @@ describe('SolicitudForm: guardar', () => {
       fireEvent.click(screen.getByRole('button', { name: 'Guardar' }));
     });
 
-    expect(screen.getByText('Solicitud procesada')).toBeInTheDocument();
+    expect(screen.getByText('¡Solicitud enviada!')).toBeInTheDocument();
     expect(p.onTerminado).not.toHaveBeenCalled();
 
     await act(async () => {
@@ -165,7 +165,7 @@ describe('SolicitudForm: guardar', () => {
       fireEvent.click(screen.getByRole('button', { name: 'Guardar' }));
     });
 
-    expect(screen.queryByText('Solicitud procesada')).not.toBeInTheDocument();
+    expect(screen.queryByText('¡Solicitud enviada!')).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Guardar' })).toBeEnabled();
   });
 });
@@ -189,7 +189,7 @@ describe('SolicitudForm: edición', () => {
     const p = { ...props(), inicial: existente };
     render(<SolicitudForm {...p} />);
 
-    expect(screen.getByText('Edición de registro')).toBeInTheDocument();
+    expect(screen.getByText('Editar solicitud')).toBeInTheDocument();
     expect(screen.getByLabelText('Título')).toHaveValue('Teclado roto');
     expect(screen.getByLabelText('Detalles')).toHaveValue('El teclado del puesto 4 no responde');
 
@@ -197,7 +197,7 @@ describe('SolicitudForm: edición', () => {
     expect(p.onCancelar).toHaveBeenCalled();
   });
 
-  it('al guardar dice "Datos actualizados"', async () => {
+  it('al guardar dice "Solicitud actualizada"', async () => {
     const p = { ...props(), inicial: existente };
     render(<SolicitudForm {...p} />);
 
@@ -205,7 +205,7 @@ describe('SolicitudForm: edición', () => {
       fireEvent.click(screen.getByRole('button', { name: 'Guardar' }));
     });
 
-    expect(screen.getByText('Datos actualizados')).toBeInTheDocument();
+    expect(screen.getByText('Solicitud actualizada')).toBeInTheDocument();
   });
 
   it('en una solicitud nueva no hay botón Cancelar', () => {

@@ -30,9 +30,9 @@ export function LoginScreen({ onNavigateToForgot, onNavigateToRegister }: LoginS
   // Validaciones
   const validate = () => {
     const newErrors: typeof errors = {};
-    if (!email) newErrors.email = 'Requerido.';
-    else if (!/\S+@\S+\.\S+/.test(email)) newErrors.email = 'Formato inválido.';
-    if (!password) newErrors.password = 'Requerida.';
+    if (!email) newErrors.email = 'Escribe tu correo.';
+    else if (!/\S+@\S+\.\S+/.test(email)) newErrors.email = 'Ese correo no parece válido.';
+    if (!password) newErrors.password = 'Escribe tu contraseña.';
     return newErrors;
   };
 
@@ -52,12 +52,12 @@ export function LoginScreen({ onNavigateToForgot, onNavigateToRegister }: LoginS
       await signInWithEmailAndPassword(auth, email, password);
     } catch (error) {
       setLoading(false);
-      let mensajeError = "Ocurrió un error de autenticación.";
+      let mensajeError = "No pudimos iniciar sesión. Intenta de nuevo.";
       if (error instanceof FirebaseError) {
         if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
-          mensajeError = "Credenciales inválidas.";
+          mensajeError = "Correo o contraseña incorrectos.";
         } else if (error.code === 'auth/too-many-requests') {
-          mensajeError = "Demasiados intentos. Intente más tarde.";
+          mensajeError = "Demasiados intentos. Espera un momento y vuelve a probar.";
         }
       }
       setErrors({ general: mensajeError });
@@ -69,7 +69,7 @@ export function LoginScreen({ onNavigateToForgot, onNavigateToRegister }: LoginS
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider);
     } catch (error) {
-      setErrors({ general: 'Error en la validación con Google.' });
+      setErrors({ general: 'No se pudo entrar con Google.' });
     }
   };
 
@@ -88,19 +88,19 @@ export function LoginScreen({ onNavigateToForgot, onNavigateToRegister }: LoginS
         <div className="relative z-10">
           <div className="flex items-center gap-2 mb-6">
             <Shield size={18} className="text-white/70" />
-            <span className="text-white/70 text-sm font-medium">Arquitectura Segura</span>
+            <span className="text-white/70 text-sm font-medium">Cada empresa ve solo lo suyo</span>
           </div>
           <h1 className="text-white text-4xl font-extrabold leading-tight mb-4">
             Gestión de Solicitudes<br />
-            <span className="text-white/75 font-normal text-3xl">Plataforma Centralizada</span>
+            <span className="text-white/75 font-normal text-3xl">Todo en un solo lugar</span>
           </h1>
           <p className="text-white/65 text-[15px] leading-relaxed max-w-[380px]">
-            Infraestructura optimizada para el registro, seguimiento y resolución de requerimientos institucionales.
+            Crea una solicitud, mira en qué va y recibe la respuesta de tu administrador, sin correos ni papeles.
           </p>
         </div>
 
         <div className="text-white/35 text-xs">
-          © 2026 GestioSync · Sistema Interno
+          © 2026 GestioSync
         </div>
       </div>
 
@@ -113,8 +113,8 @@ export function LoginScreen({ onNavigateToForgot, onNavigateToRegister }: LoginS
 
           <div className="bg-white rounded-2xl p-8 lg:p-10 shadow-[0_8px_40px_rgba(30,63,174,0.12)]">
             <div className="mb-8">
-              <h2 className="text-gray-900 text-2xl font-extrabold mb-1">Acceso al Sistema</h2>
-              <p className="text-gray-500 text-sm">Ingrese sus credenciales corporativas.</p>
+              <h2 className="text-gray-900 text-2xl font-extrabold mb-1">Bienvenido de nuevo</h2>
+              <p className="text-gray-500 text-sm">Entra con tu correo y tu contraseña.</p>
             </div>
 
             {errors.general && (
@@ -126,7 +126,7 @@ export function LoginScreen({ onNavigateToForgot, onNavigateToRegister }: LoginS
 
             <div className="flex flex-col gap-5">
               <div>
-                <label htmlFor="login-email" className="block text-gray-700 text-[13px] font-semibold mb-1.5">Correo Institucional</label>
+                <label htmlFor="login-email" className="block text-gray-700 text-[13px] font-semibold mb-1.5">Correo</label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><Mail size={18} /></span>
                   <input
@@ -142,7 +142,7 @@ export function LoginScreen({ onNavigateToForgot, onNavigateToRegister }: LoginS
               <div>
                 <div className="flex items-center justify-between mb-1.5">
                   <label htmlFor="login-password" className="text-gray-700 text-[13px] font-semibold">Contraseña</label>
-                  <button onClick={onNavigateToForgot} className="text-indigo-600 text-xs font-semibold hover:underline">¿Olvidó su clave?</button>
+                  <button onClick={onNavigateToForgot} className="text-indigo-600 text-xs font-semibold hover:underline">¿Olvidaste tu contraseña?</button>
                 </div>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><Lock size={18} /></span>
@@ -169,12 +169,12 @@ export function LoginScreen({ onNavigateToForgot, onNavigateToRegister }: LoginS
                 disabled={loading}
                 className="w-full bg-indigo-600 text-white py-3 rounded-lg text-[15px] font-bold hover:bg-indigo-700 disabled:bg-indigo-300 transition-colors mt-2"
               >
-                {loading ? 'Validando...' : 'Iniciar Sesión'}
+                {loading ? 'Entrando...' : 'Entrar'}
               </button>
 
               <div className="relative flex items-center py-2">
                 <div className="flex-grow border-t border-gray-200"></div>
-                <span className="flex-shrink-0 mx-4 text-gray-400 text-xs font-medium uppercase tracking-wider">Acceso Integrado</span>
+                <span className="flex-shrink-0 mx-4 text-gray-400 text-xs font-medium uppercase tracking-wider">o</span>
                 <div className="flex-grow border-t border-gray-200"></div>
               </div>
 

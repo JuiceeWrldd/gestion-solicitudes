@@ -12,17 +12,17 @@ export function InicioSection({ solicitudes, esAdmin }: InicioSectionProps) {
   const completadas = solicitudes.filter((req) => req.status === 'Aprobada' || req.status === 'Rechazada').length;
 
   const tarjetas = [
-    { label: 'Total Registros', value: total, icon: <FileText size={20} />, color: '#1E3FAE', bg: '#EEF2FF' },
-    { label: 'En Proceso', value: pendientes, icon: <Clock size={20} />, color: '#D97706', bg: '#FEF3C7' },
-    { label: 'Finalizadas', value: completadas, icon: <CheckCircle2 size={20} />, color: '#059669', bg: '#D1FAE5' },
+    { label: 'Total', value: total, icon: <FileText size={20} />, color: '#1E3FAE', bg: '#EEF2FF' },
+    { label: 'En revisión', value: pendientes, icon: <Clock size={20} />, color: '#D97706', bg: '#FEF3C7' },
+    { label: 'Resueltas', value: completadas, icon: <CheckCircle2 size={20} />, color: '#059669', bg: '#D1FAE5' },
   ];
 
   return (
     <div className="p-8 max-w-7xl mx-auto">
       <div className="mb-8">
-        <h2 style={{ color: '#111827', fontSize: '24px', fontWeight: 700, letterSpacing: '-0.02em' }}>Dashboard</h2>
+        <h2 style={{ color: '#111827', fontSize: '24px', fontWeight: 700, letterSpacing: '-0.02em' }}>Inicio</h2>
         <p style={{ color: '#6B7280', fontSize: '14px', marginTop: '4px' }}>
-          {esAdmin ? 'Resumen operativo general.' : 'Resumen de actividad.'}
+          {esAdmin ? 'Cómo van las solicitudes de tu empresa.' : 'Cómo van tus solicitudes.'}
         </p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">

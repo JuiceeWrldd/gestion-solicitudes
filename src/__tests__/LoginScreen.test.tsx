@@ -15,11 +15,11 @@ vi.mock('firebase/auth', () => ({
 vi.mock('../app/config/firebase', () => ({ auth: { nombre: 'auth-falso' } }));
 
 const llenar = (correo: string, clave: string) => {
-  fireEvent.change(screen.getByLabelText('Correo Institucional'), { target: { value: correo } });
+  fireEvent.change(screen.getByLabelText('Correo'), { target: { value: correo } });
   fireEvent.change(screen.getByLabelText('Contraseña'), { target: { value: clave } });
 };
 
-const entrar = () => fireEvent.click(screen.getByRole('button', { name: 'Iniciar Sesión' }));
+const entrar = () => fireEvent.click(screen.getByRole('button', { name: 'Entrar' }));
 
 describe('LoginScreen', () => {
   const onNavigateToForgot = vi.fn();
@@ -35,8 +35,8 @@ describe('LoginScreen', () => {
   it('pide correo y contraseña si se envía vacío', () => {
     entrar();
 
-    expect(screen.getByText('Requerido.')).toBeInTheDocument();
-    expect(screen.getByText('Requerida.')).toBeInTheDocument();
+    expect(screen.getByText('Escribe tu correo.')).toBeInTheDocument();
+    expect(screen.getByText('Escribe tu contraseña.')).toBeInTheDocument();
     expect(signInWithEmailAndPassword).not.toHaveBeenCalled();
   });
 
@@ -44,7 +44,7 @@ describe('LoginScreen', () => {
     llenar('esto-no-es-un-correo', 'cualquiera');
     entrar();
 
-    expect(screen.getByText('Formato inválido.')).toBeInTheDocument();
+    expect(screen.getByText('Ese correo no parece válido.')).toBeInTheDocument();
     expect(signInWithEmailAndPassword).not.toHaveBeenCalled();
   });
 
@@ -71,12 +71,12 @@ describe('LoginScreen', () => {
     await waitFor(() => expect(setPersistence).toHaveBeenCalledWith(expect.anything(), 'local'));
   });
 
-  it('muestra "Credenciales inválidas." cuando Firebase las rechaza', async () => {
+  it('muestra "Correo o contraseña incorrectos." cuando Firebase los rechaza', async () => {
     vi.mocked(signInWithEmailAndPassword).mockRejectedValue(new FirebaseError('auth/invalid-credential', 'x'));
     llenar('ana@empresa.com', 'incorrecta');
     entrar();
 
-    expect(await screen.findByText('Credenciales inválidas.')).toBeInTheDocument();
+    expect(await screen.findByText('Correo o contraseña incorrectos.')).toBeInTheDocument();
   });
 
   it('avisa cuando hay demasiados intentos', async () => {
@@ -92,11 +92,11 @@ describe('LoginScreen', () => {
     llenar('ana@empresa.com', 'secreta123');
     entrar();
 
-    expect(await screen.findByText('Ocurrió un error de autenticación.')).toBeInTheDocument();
+    expect(await screen.findByText('No pudimos iniciar sesión. Intenta de nuevo.')).toBeInTheDocument();
   });
 
   it('lleva a recuperar la contraseña', () => {
-    fireEvent.click(screen.getByRole('button', { name: '¿Olvidó su clave?' }));
+    fireEvent.click(screen.getByRole('button', { name: '¿Olvidaste tu contraseña?' }));
     expect(onNavigateToForgot).toHaveBeenCalled();
   });
 

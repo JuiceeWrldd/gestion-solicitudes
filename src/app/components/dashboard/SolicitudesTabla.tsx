@@ -18,28 +18,28 @@ export function SolicitudesTabla({ solicitudes, cargando, esAdmin, onCambiarEsta
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const eliminar = async (id: string) => {
-    if (!window.confirm('¿Está seguro de cancelar esta solicitud? La acción es irreversible.')) return;
+    if (!window.confirm('¿Eliminar esta solicitud? No se puede deshacer.')) return;
     if (await onEliminar(id)) setExpandedId(null);
   };
 
   return (
     <div>
       <div className="flex items-center justify-between mb-7">
-        <h1 style={{ color: '#111827', fontSize: '26px', fontWeight: 800 }}>Directorio de Solicitudes</h1>
+        <h1 style={{ color: '#111827', fontSize: '26px', fontWeight: 800 }}>{esAdmin ? 'Solicitudes de la empresa' : 'Mis solicitudes'}</h1>
       </div>
 
       <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100">
         <div className="hidden sm:flex items-center px-5 py-3 bg-gray-50 border-b border-gray-100">
-          <span className="text-gray-500 text-xs font-semibold flex-1">Referencia</span>
-          <span className="text-gray-500 text-xs font-semibold w-[120px]">Status</span>
-          {esAdmin && <span className="text-gray-500 text-xs font-semibold w-[90px] text-right">Control</span>}
+          <span className="text-gray-500 text-xs font-semibold flex-1">Solicitud</span>
+          <span className="text-gray-500 text-xs font-semibold w-[120px]">Estado</span>
+          {esAdmin && <span className="text-gray-500 text-xs font-semibold w-[90px] text-right">Acciones</span>}
           <span className="w-8"></span>
         </div>
 
         {cargando ? (
           <div className="p-10 flex justify-center text-gray-400">Cargando...</div>
         ) : solicitudes.length === 0 ? (
-          <div className="p-10 text-center text-gray-400">Sin registros.</div>
+          <div className="p-10 text-center text-gray-400">Aún no hay solicitudes.</div>
         ) : (
           solicitudes.map((req) => {
             const isExpanded = expandedId === req.id;
@@ -83,7 +83,7 @@ export function SolicitudesTabla({ solicitudes, cargando, esAdmin, onCambiarEsta
                             <button onClick={(e) => { e.stopPropagation(); onCambiarEstado(req.id, 'Aprobada'); }} className="w-9 h-9 sm:w-8 sm:h-8 rounded border border-green-200 text-green-600 bg-green-50 hover:bg-green-100 flex justify-center items-center"><CheckCircle2 size={16} /></button>
                             <button onClick={(e) => { e.stopPropagation(); onCambiarEstado(req.id, 'Rechazada'); }} className="w-9 h-9 sm:w-8 sm:h-8 rounded border border-red-200 text-red-600 bg-red-50 hover:bg-red-100 flex justify-center items-center"><AlertTriangle size={16} /></button>
                           </>
-                        ) : <span className="text-xs font-medium text-gray-300 sm:mr-2">Auditado</span>}
+                        ) : <span className="text-xs font-medium text-gray-300 sm:mr-2">Revisada</span>}
                       </div>
                     )}
                   </div>
