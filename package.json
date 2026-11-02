@@ -10,8 +10,10 @@
     "test": "vitest",
     "preview": "vite preview",
     "typecheck": "tsc",
+    "build:firebase": "tsc && vite build --mode firebase",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist"
+    "deploy": "gh-pages -d dist",
+    "deploy:firebase": "npm run build:firebase && npx firebase deploy --only hosting"
   },
   "dependencies": {
     "firebase": "^12.13.0",

@@ -24,10 +24,11 @@ function figmaAssetResolver(): Plugin {
   };
 }
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
+  // GitHub Pages sirve la app en /gestion-solicitudes/; Firebase Hosting, en la raíz del dominio
+  // (se compila con "vite build --mode firebase")
+  base: mode === 'firebase' ? '/' : '/gestion-solicitudes/',
 
-  base: '/gestion-solicitudes/',
-  
   plugins: [
     figmaAssetResolver(),
     react(),
@@ -44,5 +45,5 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: './src/setupTests.ts',
   },
-});
+}));
 
