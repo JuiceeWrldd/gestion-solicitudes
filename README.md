@@ -61,6 +61,14 @@ Proyecto final del SENA: una aplicación web para la gestión de solicitudes, co
 | `npm run preview`   | Sirve localmente la build de producción.           |
 | `npm test`          | Ejecuta las pruebas unitarias con Vitest.          |
 | `npm run typecheck` | Verifica los tipos de TypeScript sin compilar.     |
+| `npm run deploy`    | Compila y publica la app en GitHub Pages.          |
+| `npm run deploy:firebase` | Compila y publica la app en Firebase Hosting. |
+
+### Despliegue
+
+La app se publica en dos sitios, y cada uno necesita una compilación distinta porque la ruta base cambia
+(`/gestion-solicitudes/` en GitHub Pages y `/` en Firebase). Los dos scripts anteriores ya lo resuelven.
+Las reglas de Firestore (`firestore.rules`) no se publican con estos comandos: se pegan en la consola de Firebase.
 
 ## Estructura del proyecto
 
