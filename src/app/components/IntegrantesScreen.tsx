@@ -179,22 +179,22 @@ export function IntegrantesScreen({ orgId, adminUid }: IntegrantesScreenProps) {
         </div>
       )}
 
-      <form onSubmit={crearIntegrante} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-8">
+      <form onSubmit={crearIntegrante} noValidate className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-8">
         <h2 className="text-gray-900 text-base font-bold mb-4 flex items-center gap-2"><UserPlus size={18} /> Agregar integrante</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label className="block text-gray-700 text-[13px] font-semibold mb-1.5">Nombre y apellido</label>
-            <input value={form.nombre} maxLength={LIMITES.nombre} onChange={(e) => updateForm('nombre', e.target.value)} className={inputClase(formErrors.nombre)} />
+            <label htmlFor="int-nombre" className="block text-gray-700 text-[13px] font-semibold mb-1.5">Nombre y apellido</label>
+            <input id="int-nombre" value={form.nombre} maxLength={LIMITES.nombre} onChange={(e) => updateForm('nombre', e.target.value)} className={inputClase(formErrors.nombre)} />
             {formErrors.nombre && <p className="text-red-500 text-xs mt-1 font-medium">{formErrors.nombre}</p>}
           </div>
           <div>
-            <label className="block text-gray-700 text-[13px] font-semibold mb-1.5">Correo</label>
-            <input type="email" value={form.email} maxLength={LIMITES.email} onChange={(e) => updateForm('email', e.target.value)} className={inputClase(formErrors.email)} />
+            <label htmlFor="int-correo" className="block text-gray-700 text-[13px] font-semibold mb-1.5">Correo</label>
+            <input id="int-correo" type="email" value={form.email} maxLength={LIMITES.email} onChange={(e) => updateForm('email', e.target.value)} className={inputClase(formErrors.email)} />
             {formErrors.email && <p className="text-red-500 text-xs mt-1 font-medium">{formErrors.email}</p>}
           </div>
           <div>
-            <label className="block text-gray-700 text-[13px] font-semibold mb-1.5">Oficina</label>
-            <select value={form.departamento} onChange={(e) => updateForm('departamento', e.target.value)} className={inputClase(formErrors.departamento)}>
+            <label htmlFor="int-oficina" className="block text-gray-700 text-[13px] font-semibold mb-1.5">Oficina</label>
+            <select id="int-oficina" value={form.departamento} onChange={(e) => updateForm('departamento', e.target.value)} className={inputClase(formErrors.departamento)}>
               <option value="" disabled>Seleccionar...</option>
               {DEPARTAMENTOS.map((d) => <option key={d} value={d}>{d}</option>)}
             </select>
