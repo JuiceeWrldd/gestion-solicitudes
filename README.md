@@ -4,7 +4,7 @@ Proyecto final del SENA: una aplicación web para la gestión de solicitudes, co
 
 ## Funcionalidades
 
-- Registro de empresas nuevas, con correo y contraseña o con Google: quien se registra crea su empresa y queda como su administrador.
+- Registro de empresas nuevas, con correo y contraseña o con Google: quien se registra crea su empresa y queda como su administrador. Con correo y contraseña, el administrador debe verificar su correo para poder administrar (con Google ya viene verificado).
 - Inicio de sesión con correo y contraseña o con Google. Los integrantes no se registran solos: los agrega el administrador de su empresa.
 - Recuperación de contraseña.
 - Rol de **usuario**: crear, editar y eliminar sus propias solicitudes.
