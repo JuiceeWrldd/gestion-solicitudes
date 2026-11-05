@@ -20,10 +20,12 @@ service cloud.firestore {
         : null;
     }
 
-    // el rol y la empresa se leen de la base de datos, no de lo que mande el navegador
+    // el rol y la empresa se leen de la base de datos, no de lo que mande el navegador;
+    // y un admin necesita su correo verificado (con Google ya viene verificado)
     function esAdmin() {
       return tienePerfil()
         && miOrg() != null
+        && request.auth.token.email_verified == true
         && get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.rol == 'admin';
     }
 

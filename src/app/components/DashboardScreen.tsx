@@ -14,6 +14,7 @@ import { PerfilSection } from './dashboard/PerfilSection';
 import { IntegrantesScreen } from './IntegrantesScreen';
 import { CambiarClaveScreen } from './CambiarClaveScreen';
 import { AvisoCuentaScreen } from './AvisoCuentaScreen';
+import { VerificarCorreoScreen } from './VerificarCorreoScreen';
 
 interface DashboardScreenProps {
   onNavigateToLogin: () => void;
@@ -27,6 +28,7 @@ export function DashboardScreen({ onNavigateToLogin }: DashboardScreenProps) {
   // Solicitud que se está editando; formKey reinicia el formulario cuando hace falta
   const [editando, setEditando] = useState<Solicitud | null>(null);
   const [formKey, setFormKey] = useState(0);
+  const [correoVerificado, setCorreoVerificado] = useState(auth.currentUser?.emailVerified ?? false);
 
   const { perfil, setPerfil, organizacion, sinPerfil } = usePerfil();
   const { solicitudes, cargando, cambiarEstado, responder, eliminar, guardar } = useSolicitudes(perfil, setErrorMsg);
@@ -88,6 +90,17 @@ export function DashboardScreen({ onNavigateToLogin }: DashboardScreenProps) {
     return (
       <CambiarClaveScreen
         onListo={() => setPerfil((p) => (p ? { ...p, debeCambiarClave: false } : p))}
+        onCerrarSesion={cerrarSesion}
+      />
+    );
+  }
+
+  // Un admin con el correo sin verificar no puede administrar todavía (las reglas del servidor también lo exigen)
+  if (esAdmin && !correoVerificado) {
+    return (
+      <VerificarCorreoScreen
+        email={auth.currentUser?.email ?? ''}
+        onVerificado={() => setCorreoVerificado(true)}
         onCerrarSesion={cerrarSesion}
       />
     );

@@ -3,6 +3,7 @@ import {
   createUserWithEmailAndPassword,
   deleteUser,
   getAdditionalUserInfo,
+  sendEmailVerification,
   signInWithCredential,
   signInWithEmailAndPassword,
   signInWithPopup,
@@ -31,6 +32,7 @@ vi.mock('firebase/auth', () => ({
   signInWithPopup: vi.fn(),
   signInWithCredential: vi.fn(),
   getAdditionalUserInfo: vi.fn(),
+  sendEmailVerification: vi.fn(),
   GoogleAuthProvider: Object.assign(vi.fn(), { credentialFromResult: vi.fn() }),
 }));
 vi.mock('firebase/firestore', () => ({
@@ -67,6 +69,7 @@ beforeEach(() => {
   vi.mocked(signOut).mockResolvedValue(undefined);
   vi.mocked(signInWithEmailAndPassword).mockResolvedValue({} as never);
   vi.mocked(signInWithCredential).mockResolvedValue({} as never);
+  vi.mocked(sendEmailVerification).mockResolvedValue(undefined);
   commit.mockResolvedValue(undefined);
 });
 
@@ -133,6 +136,42 @@ describe('registrarAdminConEmpresa (correo y contraseña)', () => {
     expect(commit).not.toHaveBeenCalled();
     expect(deleteUser).not.toHaveBeenCalled();
     expect(signInWithEmailAndPassword).not.toHaveBeenCalled();
+  });
+
+  describe('verificación del correo', () => {
+    it('envía el correo de verificación en español cuando termina de crear la empresa', async () => {
+      await registrarAdminConEmpresa(datos);
+
+      expect(sendEmailVerification).toHaveBeenCalledWith(usuarioNuevo);
+      expect((authSec as { languageCode?: string }).languageCode).toBe('es');
+    });
+
+    it('lo envía después de guardar la empresa, no antes', async () => {
+      const orden: string[] = [];
+      commit.mockImplementation(async () => void orden.push('guardar'));
+      vi.mocked(sendEmailVerification).mockImplementation(async () => void orden.push('correo'));
+
+      await registrarAdminConEmpresa(datos);
+
+      expect(orden).toEqual(['guardar', 'correo']);
+    });
+
+    it('si el envío del correo falla, el registro igual se completa', async () => {
+      vi.mocked(sendEmailVerification).mockRejectedValue(new Error('auth/too-many-requests'));
+
+      await expect(registrarAdminConEmpresa(datos)).resolves.toBeUndefined();
+
+      expect(deleteUser).not.toHaveBeenCalled();
+      expect(signInWithEmailAndPassword).toHaveBeenCalled();
+    });
+
+    it('si el lote falla, no se envía ningún correo', async () => {
+      commit.mockRejectedValue(new Error('permission-denied'));
+
+      await expect(registrarAdminConEmpresa(datos)).rejects.toThrow();
+
+      expect(sendEmailVerification).not.toHaveBeenCalled();
+    });
   });
 });
 
@@ -204,6 +243,14 @@ describe('registro con Google', () => {
         departamento: 'Logística',
         debeCambiarClave: false,
       });
+    });
+
+    it('no envía correo de verificación: Google ya verificó la cuenta', async () => {
+      authSec.currentUser = { uid: 'uid-google', email: 'ana@gmail.com' };
+
+      await completarRegistroGoogle(datosPaso2);
+
+      expect(sendEmailVerification).not.toHaveBeenCalled();
     });
 
     it('al terminar entra en la principal con la misma credencial, sin abrir otra ventana', async () => {

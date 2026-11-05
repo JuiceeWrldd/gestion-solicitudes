@@ -4,6 +4,7 @@ import {
   createUserWithEmailAndPassword,
   deleteUser,
   getAdditionalUserInfo,
+  sendEmailVerification,
   signInWithCredential,
   signInWithEmailAndPassword,
   signInWithPopup,
@@ -52,6 +53,7 @@ export interface DatosRegistro extends DatosEmpresaAdmin {
 
 export async function registrarAdminConEmpresa({ clave, ...datos }: DatosRegistro) {
   const authSecundario = getAuthSecundario();
+  authSecundario.languageCode = 'es'; // el correo de verificación llega en español
 
   try {
     const { user } = await createUserWithEmailAndPassword(authSecundario, datos.email, clave);
@@ -59,6 +61,9 @@ export async function registrarAdminConEmpresa({ clave, ...datos }: DatosRegistr
     try {
       await updateProfile(user, { displayName: datos.nombre });
       await crearEmpresaYPerfil(user, datos);
+      // Hasta verificar el correo no tendrá poderes de admin. Si el envío falla no se cancela el registro:
+      // desde la pantalla de verificación se puede reenviar.
+      await sendEmailVerification(user).catch(() => undefined);
     } catch (error) {
       // Si algo falla, se borra la cuenta recién creada para que pueda volver a intentarlo con el mismo correo
       await deleteUser(user).catch(() => undefined);
