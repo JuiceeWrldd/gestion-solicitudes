@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { AlertTriangle, CheckCircle2, ChevronDown, FileText } from 'lucide-react';
 import { statusConfig } from '../../config/solicitudes';
 import { SolicitudDetalle } from './SolicitudDetalle';
+import { FiltrosSolicitudes } from './FiltrosSolicitudes';
+import { SIN_FILTROS, filtrarSolicitudes, hayFiltros, type Filtros } from '../../utils/filtros';
 import type { EstadoSolicitud, Solicitud } from '../../types';
 
 interface SolicitudesTablaProps {
@@ -16,6 +18,9 @@ interface SolicitudesTablaProps {
 
 export function SolicitudesTabla({ solicitudes, cargando, esAdmin, onCambiarEstado, onResponder, onEditar, onEliminar }: SolicitudesTablaProps) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [filtros, setFiltros] = useState<Filtros>(SIN_FILTROS);
+
+  const visibles = filtrarSolicitudes(solicitudes, filtros);
 
   const eliminar = async (id: string) => {
     if (!window.confirm('¿Eliminar esta solicitud? No se puede deshacer.')) return;
@@ -27,6 +32,10 @@ export function SolicitudesTabla({ solicitudes, cargando, esAdmin, onCambiarEsta
       <div className="flex items-center justify-between mb-7">
         <h1 style={{ color: '#111827', fontSize: '26px', fontWeight: 800 }}>{esAdmin ? 'Solicitudes de la empresa' : 'Mis solicitudes'}</h1>
       </div>
+
+      {!cargando && solicitudes.length > 0 && (
+        <FiltrosSolicitudes filtros={filtros} onCambiar={setFiltros} total={solicitudes.length} mostrando={visibles.length} />
+      )}
 
       <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100">
         <div className="hidden sm:flex items-center px-5 py-3 bg-gray-50 border-b border-gray-100">
@@ -40,8 +49,17 @@ export function SolicitudesTabla({ solicitudes, cargando, esAdmin, onCambiarEsta
           <div className="p-10 flex justify-center text-gray-400">Cargando...</div>
         ) : solicitudes.length === 0 ? (
           <div className="p-10 text-center text-gray-400">Aún no hay solicitudes.</div>
+        ) : visibles.length === 0 ? (
+          <div className="p-10 text-center text-gray-400">
+            Ninguna solicitud coincide con lo que buscas.
+            {hayFiltros(filtros) && (
+              <button onClick={() => setFiltros(SIN_FILTROS)} className="block mx-auto mt-2 text-sm font-semibold text-indigo-600 hover:underline">
+                Limpiar filtros
+              </button>
+            )}
+          </div>
         ) : (
-          solicitudes.map((req) => {
+          visibles.map((req) => {
             const isExpanded = expandedId === req.id;
 
             return (
