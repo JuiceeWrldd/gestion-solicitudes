@@ -1,8 +1,9 @@
 import { CheckCircle2, Clock, AlertTriangle } from 'lucide-react';
-import type { Prioridad } from '../types';
+import type { EstadoSolicitud, Prioridad } from '../types';
 
 export const TIPOS = ['Soporte Técnico', 'Administrativa', 'Recursos Humanos', 'Financiera', 'Logística', 'Otro'];
 export const PRIORIDADES: Prioridad[] = ['Alta', 'Media', 'Baja'];
+export const ESTADOS: EstadoSolicitud[] = ['En revisión', 'Aprobada', 'Rechazada', 'Pendiente'];
 
 // Colores e ícono de cada estado
 export const statusConfig: Record<string, { color: string; bg: string; icon: React.ReactNode }> = {
