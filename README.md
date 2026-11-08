@@ -8,6 +8,7 @@ Proyecto final del SENA: una aplicación web para la gestión de solicitudes, co
 - Inicio de sesión con correo y contraseña o con Google. Los integrantes no se registran solos: los agrega el administrador de su empresa.
 - Recuperación de contraseña.
 - Rol de **usuario**: crear, editar y eliminar sus propias solicitudes.
+- Inicio con el total de solicitudes y gráficas de cómo se reparten por estado y por categoría, con vista de tabla.
 - Búsqueda y filtros en la lista de solicitudes: por texto (sin importar mayúsculas ni tildes), estado, prioridad y categoría.
 - Rol de **administrador**: ver las solicitudes de su empresa, aprobarlas o rechazarlas, y responder a ellas.
 - El administrador también agrega integrantes a su empresa (con una contraseña temporal que cada persona cambia en su primer ingreso), define en qué oficina está cada uno y puede desactivarlos.

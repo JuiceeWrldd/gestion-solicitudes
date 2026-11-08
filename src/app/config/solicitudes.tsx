@@ -5,6 +5,18 @@ export const TIPOS = ['Soporte Técnico', 'Administrativa', 'Recursos Humanos', 
 export const PRIORIDADES: Prioridad[] = ['Alta', 'Media', 'Baja'];
 export const ESTADOS: EstadoSolicitud[] = ['En revisión', 'Aprobada', 'Rechazada', 'Pendiente'];
 
+// Color de cada estado en las gráficas (paleta de estados: bueno, advertencia, crítico y neutro).
+// Siempre se muestran junto al nombre y al ícono del estado, nunca solos.
+export const colorGraficoEstado: Record<EstadoSolicitud, string> = {
+  'En revisión': '#fab219',
+  'Aprobada': '#0ca30c',
+  'Rechazada': '#d03b3b',
+  'Pendiente': '#898781',
+};
+
+// Azul de las barras que cuentan una sola serie (por ejemplo, solicitudes por categoría)
+export const COLOR_GRAFICO_SERIE = '#2a78d6';
+
 // Colores e ícono de cada estado
 export const statusConfig: Record<string, { color: string; bg: string; icon: React.ReactNode }> = {
   'En revisión': { color: '#B45309', bg: '#FEF3C7', icon: <Clock size={12} /> },
