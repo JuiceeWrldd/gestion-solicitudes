@@ -1,5 +1,6 @@
 import { TrendingUp } from 'lucide-react';
 import { auth } from '../../config/firebase';
+import { CambiarClavePerfil } from './CambiarClavePerfil';
 import type { Organizacion, PerfilUsuario } from '../../types';
 
 interface PerfilSectionProps {
@@ -44,6 +45,8 @@ export function PerfilSection({ perfil, organizacion }: PerfilSectionProps) {
           ))}
         </div>
       </div>
+
+      <CambiarClavePerfil />
     </div>
   );
 }
