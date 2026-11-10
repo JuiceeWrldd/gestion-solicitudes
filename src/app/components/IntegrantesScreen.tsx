@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { collection, doc, getDocs, query, setDoc, updateDoc, where } from 'firebase/firestore';
-import { createUserWithEmailAndPassword, signOut, updateProfile } from 'firebase/auth';
+import { createUserWithEmailAndPassword, deleteUser, signOut, updateProfile, type User } from 'firebase/auth';
 import { FirebaseError } from 'firebase/app';
 import { Copy, UserPlus, X } from 'lucide-react';
 import { db, getAuthSecundario } from '../config/firebase';
@@ -79,14 +79,13 @@ export function IntegrantesScreen({ orgId, adminUid }: IntegrantesScreenProps) {
     setError(null);
     const clave = generarClave();
     const authSecundario = getAuthSecundario();
-    let cuentaCreada = false;
+    let cuenta: User | null = null;
 
     try {
-      const credencial = await createUserWithEmailAndPassword(authSecundario, email, clave);
-      cuentaCreada = true;
-      await updateProfile(credencial.user, { displayName: nombre });
+      cuenta = (await createUserWithEmailAndPassword(authSecundario, email, clave)).user;
+      await updateProfile(cuenta, { displayName: nombre });
 
-      await setDoc(doc(db, 'usuarios', credencial.user.uid), {
+      await setDoc(doc(db, 'usuarios', cuenta.uid), {
         nombre,
         email,
         departamento: form.departamento,
@@ -103,10 +102,13 @@ export function IntegrantesScreen({ orgId, adminUid }: IntegrantesScreenProps) {
       cargarIntegrantes();
     } catch (err) {
       console.error('Error al crear integrante:', err);
+      // Si la cuenta alcanzó a crearse, se borra: sin perfil no sirve y dejaría ese correo ocupado
+      const quedoHuerfana = cuenta !== null && !(await deleteUser(cuenta).then(() => true, () => false));
+
       if (err instanceof FirebaseError && err.code === 'auth/email-already-in-use') {
         setError('Ya existe una cuenta con ese correo.');
-      } else if (cuentaCreada) {
-        setError('La cuenta se creó, pero no se pudo guardar su perfil. Revisa los permisos e inténtalo de nuevo.');
+      } else if (quedoHuerfana) {
+        setError('La cuenta se creó, pero no se pudo guardar su perfil ni deshacer el cambio. Ese correo quedó ocupado: bórralo desde la consola de Firebase.');
       } else {
         setError('No se pudo crear el integrante. Revisa los datos e intenta de nuevo.');
       }

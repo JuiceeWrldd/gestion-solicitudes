@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { createUserWithEmailAndPassword, signOut, updateProfile } from 'firebase/auth';
+import { createUserWithEmailAndPassword, deleteUser, signOut, updateProfile } from 'firebase/auth';
 import { getDocs, setDoc, updateDoc, where } from 'firebase/firestore';
 import { FirebaseError } from 'firebase/app';
 import { IntegrantesScreen } from '../app/components/IntegrantesScreen';
@@ -10,6 +10,7 @@ const authSecundario = vi.hoisted(() => ({ nombre: 'auth-secundario' }));
 vi.mock('firebase/auth', () => ({
   createUserWithEmailAndPassword: vi.fn(),
   updateProfile: vi.fn(),
+  deleteUser: vi.fn(),
   signOut: vi.fn(),
 }));
 vi.mock('firebase/firestore', () => ({
@@ -58,6 +59,7 @@ describe('IntegrantesScreen', () => {
     vi.mocked(createUserWithEmailAndPassword).mockResolvedValue({ user: { uid: 'uid-nuevo' } } as never);
     vi.mocked(updateProfile).mockResolvedValue(undefined);
     vi.mocked(signOut).mockResolvedValue(undefined);
+    vi.mocked(deleteUser).mockResolvedValue(undefined);
     vi.mocked(setDoc).mockResolvedValue(undefined);
     vi.mocked(updateDoc).mockResolvedValue(undefined);
     render(<IntegrantesScreen orgId="gestiosync" adminUid="admin1" />);
@@ -185,14 +187,35 @@ describe('IntegrantesScreen', () => {
       expect(signOut).toHaveBeenCalled();
     });
 
-    it('avisa si la cuenta se creó pero el perfil no se pudo guardar', async () => {
+    it('si el perfil no se puede guardar, borra la cuenta recién creada para que el correo quede libre', async () => {
       vi.mocked(setDoc).mockRejectedValue(new Error('permission-denied'));
       await screen.findByText('Equipo (2)');
       llenarFormulario('Luis Pérez', 'luis@empresa.com', 'Logística');
       crear();
 
-      expect(await screen.findByRole('alert')).toHaveTextContent('La cuenta se creó, pero no se pudo guardar su perfil');
+      expect(await screen.findByRole('alert')).toHaveTextContent('No se pudo crear el integrante');
+      expect(deleteUser).toHaveBeenCalledWith({ uid: 'uid-nuevo' });
       expect(screen.queryByText('ClaveTemporal1')).not.toBeInTheDocument(); // sin perfil no se entrega la clave
+    });
+
+    it('si tampoco se puede borrar la cuenta, avisa que el correo quedó ocupado', async () => {
+      vi.mocked(setDoc).mockRejectedValue(new Error('permission-denied'));
+      vi.mocked(deleteUser).mockRejectedValue(new Error('sin internet'));
+      await screen.findByText('Equipo (2)');
+      llenarFormulario('Luis Pérez', 'luis@empresa.com', 'Logística');
+      crear();
+
+      expect(await screen.findByRole('alert')).toHaveTextContent('Ese correo quedó ocupado');
+    });
+
+    it('no intenta borrar nada si la cuenta no llegó a crearse', async () => {
+      vi.mocked(createUserWithEmailAndPassword).mockRejectedValue(new FirebaseError('auth/email-already-in-use', 'x'));
+      await screen.findByText('Equipo (2)');
+      llenarFormulario('Luis Pérez', 'luis@empresa.com', 'Logística');
+      crear();
+
+      await screen.findByRole('alert');
+      expect(deleteUser).not.toHaveBeenCalled();
     });
 
     it('muestra un mensaje general si falla por otro motivo', async () => {
