@@ -13,6 +13,8 @@ import { FirebaseError } from 'firebase/app';
 import { auth } from '../config/firebase';
 import { GoogleIcon } from './GoogleIcon';
 
+const VENTANA_CERRADA = ['auth/popup-closed-by-user', 'auth/cancelled-popup-request'];
+
 interface LoginScreenProps {
   onNavigateToForgot: () => void;
   onNavigateToRegister: () => void;
@@ -37,7 +39,8 @@ export function LoginScreen({ onNavigateToForgot, onNavigateToRegister }: LoginS
   };
 
   // Manejadores de autenticación
-  const handleLogin = async () => {
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
@@ -69,6 +72,8 @@ export function LoginScreen({ onNavigateToForgot, onNavigateToRegister }: LoginS
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider);
     } catch (error) {
+      // Si la persona cierra la ventana de Google no hace falta mostrar un error
+      if (error instanceof FirebaseError && VENTANA_CERRADA.includes(error.code)) return;
       setErrors({ general: 'No se pudo entrar con Google.' });
     }
   };
@@ -124,13 +129,14 @@ export function LoginScreen({ onNavigateToForgot, onNavigateToRegister }: LoginS
               </div>
             )}
 
-            <div className="flex flex-col gap-5">
+            {/* Al ser un formulario, Enter también inicia sesión */}
+            <form onSubmit={handleLogin} noValidate className="flex flex-col gap-5">
               <div>
                 <label htmlFor="login-email" className="block text-gray-700 text-[13px] font-semibold mb-1.5">Correo</label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><Mail size={18} /></span>
                   <input
-                    id="login-email" type="email"
+                    id="login-email" type="email" autoComplete="email"
                     value={email}
                     onChange={(e) => { setEmail(e.target.value); setErrors(p => ({ ...p, email: undefined })); }}
                     className={`w-full py-3 pl-10 pr-3 border ${errors.email ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-slate-50'} rounded-lg text-sm outline-none focus:border-indigo-600 focus:bg-white transition-colors`}
@@ -142,12 +148,12 @@ export function LoginScreen({ onNavigateToForgot, onNavigateToRegister }: LoginS
               <div>
                 <div className="flex items-center justify-between mb-1.5">
                   <label htmlFor="login-password" className="text-gray-700 text-[13px] font-semibold">Contraseña</label>
-                  <button onClick={onNavigateToForgot} className="text-indigo-600 text-xs font-semibold hover:underline">¿Olvidaste tu contraseña?</button>
+                  <button type="button" onClick={onNavigateToForgot} className="text-indigo-600 text-xs font-semibold hover:underline">¿Olvidaste tu contraseña?</button>
                 </div>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><Lock size={18} /></span>
                   <input
-                    id="login-password" type={showPassword ? 'text' : 'password'}
+                    id="login-password" type={showPassword ? 'text' : 'password'} autoComplete="current-password"
                     value={password}
                     onChange={(e) => { setPassword(e.target.value); setErrors(p => ({ ...p, password: undefined })); }}
                     className={`w-full py-3 pl-10 pr-10 border ${errors.password ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-slate-50'} rounded-lg text-sm outline-none focus:border-indigo-600 focus:bg-white transition-colors`}
@@ -165,7 +171,7 @@ export function LoginScreen({ onNavigateToForgot, onNavigateToRegister }: LoginS
               </div>
 
               <button
-                onClick={handleLogin}
+                type="submit"
                 disabled={loading}
                 className="w-full bg-indigo-600 text-white py-3 rounded-lg text-[15px] font-bold hover:bg-indigo-700 disabled:bg-indigo-300 transition-colors mt-2"
               >
@@ -179,13 +185,14 @@ export function LoginScreen({ onNavigateToForgot, onNavigateToRegister }: LoginS
               </div>
 
               <button
+                type="button"
                 onClick={handleGoogleLogin}
                 className="w-full flex items-center justify-center gap-3 bg-white text-gray-700 border border-gray-200 py-3 rounded-lg text-[14px] font-semibold hover:bg-gray-50 transition-colors shadow-sm"
               >
                 <GoogleIcon />
                 Iniciar sesión con Google
               </button>
-            </div>
+            </form>
           </div>
 
           <div className="text-center text-gray-500 text-sm mt-6 flex flex-col gap-1">
