@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { signInWithEmailAndPassword, setPersistence } from 'firebase/auth';
+import { signInWithEmailAndPassword, setPersistence, signInWithPopup } from 'firebase/auth';
 import { FirebaseError } from 'firebase/app';
 import { LoginScreen } from '../app/components/LoginScreen';
 
@@ -54,6 +54,34 @@ describe('LoginScreen', () => {
 
     await waitFor(() => expect(signInWithEmailAndPassword).toHaveBeenCalledTimes(1));
     expect(signInWithEmailAndPassword).toHaveBeenCalledWith({ nombre: 'auth-falso' }, 'ana@empresa.com', 'secreta123');
+  });
+
+  it('también inicia sesión al presionar Enter en un campo', async () => {
+    llenar('ana@empresa.com', 'secreta123');
+    fireEvent.submit(screen.getByLabelText('Contraseña').closest('form')!);
+
+    await waitFor(() => expect(signInWithEmailAndPassword).toHaveBeenCalledTimes(1));
+  });
+
+  it('los botones de Google y de recuperar contraseña no envían el formulario', () => {
+    expect(screen.getByRole('button', { name: 'Entrar' })).toHaveAttribute('type', 'submit');
+    expect(screen.getByRole('button', { name: 'Iniciar sesión con Google' })).toHaveAttribute('type', 'button');
+    expect(screen.getByRole('button', { name: '¿Olvidaste tu contraseña?' })).toHaveAttribute('type', 'button');
+  });
+
+  it('no muestra error si la persona cierra la ventana de Google', async () => {
+    vi.mocked(signInWithPopup).mockRejectedValue(new FirebaseError('auth/popup-closed-by-user', 'x'));
+    fireEvent.click(screen.getByRole('button', { name: 'Iniciar sesión con Google' }));
+
+    await waitFor(() => expect(signInWithPopup).toHaveBeenCalled());
+    expect(screen.queryByText('No se pudo entrar con Google.')).not.toBeInTheDocument();
+  });
+
+  it('avisa si Google falla por otro motivo', async () => {
+    vi.mocked(signInWithPopup).mockRejectedValue(new Error('sin internet'));
+    fireEvent.click(screen.getByRole('button', { name: 'Iniciar sesión con Google' }));
+
+    expect(await screen.findByText('No se pudo entrar con Google.')).toBeInTheDocument();
   });
 
   it('guarda la sesión solo en esta pestaña por defecto', async () => {
