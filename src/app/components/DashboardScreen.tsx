@@ -30,7 +30,7 @@ export function DashboardScreen({ onNavigateToLogin }: DashboardScreenProps) {
   const [formKey, setFormKey] = useState(0);
   const [correoVerificado, setCorreoVerificado] = useState(auth.currentUser?.emailVerified ?? false);
 
-  const { perfil, setPerfil, organizacion, sinPerfil } = usePerfil();
+  const { perfil, setPerfil, organizacion, sinPerfil, cargando: cargandoPerfil, error: errorPerfil, reintentar } = usePerfil();
   const { solicitudes, cargando, cambiarEstado, responder, eliminar, guardar } = useSolicitudes(perfil, setErrorMsg);
 
   const esAdmin = perfil?.rol === 'admin';
@@ -66,6 +66,26 @@ export function DashboardScreen({ onNavigateToLogin }: DashboardScreenProps) {
   };
 
   // Pantallas que reemplazan al dashboard
+  // Hasta saber quién es y qué rol tiene no se muestra el panel
+  if (cargandoPerfil) {
+    return (
+      <div role="status" aria-label="Cargando" className="h-screen w-screen flex items-center justify-center bg-slate-50">
+        <div className="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (errorPerfil) {
+    return (
+      <AvisoCuentaScreen
+        titulo="No pudimos cargar tu cuenta"
+        mensaje="Revisa tu conexión a internet y vuelve a intentarlo."
+        onReintentar={reintentar}
+        onCerrarSesion={cerrarSesion}
+      />
+    );
+  }
+
   if (sinPerfil) {
     return (
       <AvisoCuentaScreen
