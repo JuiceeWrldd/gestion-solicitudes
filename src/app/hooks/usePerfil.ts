@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { auth } from '../config/firebase';
 import { obtenerOrganizacion, obtenerPerfil } from '../services/perfil';
 import type { Organizacion, PerfilUsuario } from '../types';
@@ -8,28 +8,38 @@ export function usePerfil() {
   const [perfil, setPerfil] = useState<PerfilUsuario | null>(null);
   const [organizacion, setOrganizacion] = useState<Organizacion | null>(null);
   const [sinPerfil, setSinPerfil] = useState(false);
+  const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState(false);
 
-  useEffect(() => {
+  const cargar = useCallback(async () => {
     const user = auth.currentUser;
-    if (!user) return;
+    if (!user) return setCargando(false);
 
-    const cargar = async () => {
+    setCargando(true);
+    setError(false);
+    try {
       const datos = await obtenerPerfil(user.uid);
-      if (!datos) {
-        setSinPerfil(true);
-        return;
-      }
+      if (!datos) return setSinPerfil(true);
+
       setPerfil(datos);
       if (datos.activo === false || !datos.orgId) return;
 
-      try {
-        setOrganizacion(await obtenerOrganizacion(datos.orgId));
-      } catch (error) {
-        console.error('Error al cargar la organización:', error);
-      }
-    };
-    cargar();
+      // Si la empresa no carga se puede seguir trabajando: solo falta su nombre en la cabecera
+      setOrganizacion(await obtenerOrganizacion(datos.orgId).catch((err) => {
+        console.error('Error al cargar la organización:', err);
+        return null;
+      }));
+    } catch (err) {
+      console.error('Error al cargar el perfil:', err);
+      setError(true);
+    } finally {
+      setCargando(false);
+    }
   }, []);
 
-  return { perfil, setPerfil, organizacion, sinPerfil };
+  useEffect(() => {
+    cargar();
+  }, [cargar]);
+
+  return { perfil, setPerfil, organizacion, sinPerfil, cargando, error, reintentar: cargar };
 }

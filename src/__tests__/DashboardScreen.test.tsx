@@ -13,12 +13,23 @@ const sesion = vi.hoisted(() => ({
     getIdToken: vi.fn(),
   },
   perfil: null as unknown,
+  cargando: false,
+  error: false,
+  reintentar: vi.fn(),
 }));
 
 vi.mock('firebase/auth', () => ({ signOut: vi.fn(), sendEmailVerification: vi.fn() }));
 vi.mock('../app/config/firebase', () => ({ auth: { get currentUser() { return sesion.usuario; } }, db: {} }));
 vi.mock('../app/hooks/usePerfil', () => ({
-  usePerfil: () => ({ perfil: sesion.perfil, setPerfil: vi.fn(), organizacion: { nombre: 'GestioSync' }, sinPerfil: false }),
+  usePerfil: () => ({
+    perfil: sesion.perfil,
+    setPerfil: vi.fn(),
+    organizacion: { nombre: 'GestioSync' },
+    sinPerfil: false,
+    cargando: sesion.cargando,
+    error: sesion.error,
+    reintentar: sesion.reintentar,
+  }),
 }));
 vi.mock('../app/hooks/useSolicitudes', () => ({
   useSolicitudes: () => ({
@@ -98,5 +109,36 @@ describe('DashboardScreen: verificación del correo del admin', () => {
 
     expect(await screen.findByRole('alert')).toHaveTextContent('Todavía no aparece verificado');
     expect(screen.getByText('Verifica tu correo')).toBeInTheDocument();
+  });
+});
+
+describe('DashboardScreen: mientras carga el perfil', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    sesion.usuario.emailVerified = true;
+    sesion.cargando = false;
+    sesion.error = false;
+    sesion.perfil = null;
+  });
+
+  it('muestra que está cargando y todavía no el panel', () => {
+    sesion.cargando = true;
+    mostrar();
+
+    expect(screen.getByRole('status', { name: 'Cargando' })).toBeInTheDocument();
+    expect(screen.queryByText('Mis solicitudes')).not.toBeInTheDocument();
+    expect(screen.queryByText('Nueva solicitud')).not.toBeInTheDocument();
+  });
+
+  it('si el perfil no carga, lo dice y deja reintentar o cerrar sesión', () => {
+    sesion.error = true;
+    mostrar();
+
+    expect(screen.getByText('No pudimos cargar tu cuenta')).toBeInTheDocument();
+    expect(screen.queryByText('Mis solicitudes')).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Cerrar sesión' })).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Reintentar' }));
+    expect(sesion.reintentar).toHaveBeenCalledTimes(1);
   });
 });
