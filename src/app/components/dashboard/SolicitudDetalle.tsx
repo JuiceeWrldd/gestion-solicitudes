@@ -37,12 +37,12 @@ export function SolicitudDetalle({ solicitud: req, esAdmin, onResponder, onEdita
 
         <div className="md:col-span-2">
           <h4 className={`${subtitulo} mb-2`}>Detalle</h4>
-          <p className="text-gray-700 text-sm leading-relaxed whitespace-pre-wrap">{req.descripcion}</p>
+          <p className="text-gray-700 text-sm leading-relaxed whitespace-pre-wrap break-words">{req.descripcion}</p>
 
           <div className="mt-6 pt-5 border-t border-gray-100">
             <h4 className={`${subtitulo} mb-3`}><MessageSquare size={12} className="inline mr-1 -mt-0.5" /> Respuesta del administrador</h4>
             {req.respuestaAdmin ? (
-              <div className="bg-blue-50 border border-blue-100 rounded-lg p-4 text-blue-800 text-sm">{req.respuestaAdmin}</div>
+              <div className="bg-blue-50 border border-blue-100 rounded-lg p-4 text-blue-800 text-sm whitespace-pre-wrap break-words">{req.respuestaAdmin}</div>
             ) : esAdmin ? (
               <div className="flex flex-col gap-3">
                 <textarea placeholder="Escribe tu respuesta..." maxLength={LIMITES.respuesta} value={respuesta} onChange={(e) => setRespuesta(e.target.value)} className="w-full p-3 border border-gray-200 rounded-lg text-sm outline-none focus:border-indigo-500 focus:ring-1" rows={3} />
