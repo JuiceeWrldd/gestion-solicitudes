@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 import { SolicitudesTabla } from '../app/components/dashboard/SolicitudesTabla';
 import type { Solicitud } from '../app/types';
 
@@ -179,5 +179,68 @@ describe('SolicitudesTabla', () => {
     fireEvent.click(screen.getByText('Camión para el despacho'));
 
     expect(screen.getByText('Detalle')).toBeInTheDocument();
+  });
+});
+
+describe('SolicitudesTabla: aprobar y rechazar', () => {
+  afterEach(() => vi.restoreAllMocks());
+
+  const mostrarAdmin = () => {
+    const onCambiarEstado = vi.fn();
+    render(
+      <SolicitudesTabla
+        solicitudes={lista}
+        cargando={false}
+        esAdmin
+        onCambiarEstado={onCambiarEstado}
+        onResponder={vi.fn().mockResolvedValue(true)}
+        onEditar={vi.fn()}
+        onEliminar={vi.fn().mockResolvedValue(true)}
+      />
+    );
+    return onCambiarEstado;
+  };
+
+  it('los botones tienen nombre, aunque solo muestren un ícono', () => {
+    mostrarAdmin();
+
+    expect(screen.getByRole('button', { name: 'Aprobar Impresora sin tinta' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Rechazar Impresora sin tinta' })).toBeInTheDocument();
+  });
+
+  it('solo las que siguen en revisión se pueden aprobar o rechazar', () => {
+    mostrarAdmin();
+
+    expect(screen.getAllByRole('button', { name: /^Aprobar / })).toHaveLength(1);
+    expect(screen.getAllByText('Revisada')).toHaveLength(2);
+  });
+
+  it('pregunta antes de aprobar, y aprueba si se confirma', () => {
+    const confirmar = vi.spyOn(window, 'confirm').mockReturnValue(true);
+    const onCambiarEstado = mostrarAdmin();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Aprobar Impresora sin tinta' }));
+
+    expect(confirmar).toHaveBeenCalledWith(expect.stringContaining('¿Aprobar la solicitud "Impresora sin tinta"?'));
+    expect(onCambiarEstado).toHaveBeenCalledWith('a-impresora', 'Aprobada');
+  });
+
+  it('pregunta antes de rechazar, y no hace nada si se cancela', () => {
+    const confirmar = vi.spyOn(window, 'confirm').mockReturnValue(false);
+    const onCambiarEstado = mostrarAdmin();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Rechazar Impresora sin tinta' }));
+
+    expect(confirmar).toHaveBeenCalledWith(expect.stringContaining('¿Rechazar'));
+    expect(onCambiarEstado).not.toHaveBeenCalled();
+  });
+
+  it('al pulsar el botón no se abre el detalle de la solicitud', () => {
+    vi.spyOn(window, 'confirm').mockReturnValue(false);
+    mostrarAdmin();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Aprobar Impresora sin tinta' }));
+
+    expect(screen.queryByText('Detalle')).not.toBeInTheDocument();
   });
 });

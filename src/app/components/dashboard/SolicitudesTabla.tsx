@@ -27,6 +27,13 @@ export function SolicitudesTabla({ solicitudes, cargando, esAdmin, onCambiarEsta
     if (await onEliminar(id)) setExpandedId(null);
   };
 
+  // Aprobar o rechazar se pregunta antes: desde la lista no hay forma de deshacerlo
+  const decidir = (req: Solicitud, estado: 'Aprobada' | 'Rechazada') => {
+    const accion = estado === 'Aprobada' ? 'Aprobar' : 'Rechazar';
+    if (!window.confirm(`¿${accion} la solicitud "${req.title}"? Después no se puede cambiar.`)) return;
+    onCambiarEstado(req.id, estado);
+  };
+
   return (
     <div>
       <div className="flex items-center justify-between mb-7">
@@ -98,8 +105,8 @@ export function SolicitudesTabla({ solicitudes, cargando, esAdmin, onCambiarEsta
                       <div className="flex items-center justify-end gap-2 sm:w-[90px] shrink-0">
                         {req.status === 'En revisión' ? (
                           <>
-                            <button onClick={(e) => { e.stopPropagation(); onCambiarEstado(req.id, 'Aprobada'); }} className="w-9 h-9 sm:w-8 sm:h-8 rounded border border-green-200 text-green-600 bg-green-50 hover:bg-green-100 flex justify-center items-center"><CheckCircle2 size={16} /></button>
-                            <button onClick={(e) => { e.stopPropagation(); onCambiarEstado(req.id, 'Rechazada'); }} className="w-9 h-9 sm:w-8 sm:h-8 rounded border border-red-200 text-red-600 bg-red-50 hover:bg-red-100 flex justify-center items-center"><AlertTriangle size={16} /></button>
+                            <button onClick={(e) => { e.stopPropagation(); decidir(req, 'Aprobada'); }} aria-label={`Aprobar ${req.title}`} title="Aprobar" className="w-9 h-9 sm:w-8 sm:h-8 rounded border border-green-200 text-green-600 bg-green-50 hover:bg-green-100 flex justify-center items-center"><CheckCircle2 size={16} /></button>
+                            <button onClick={(e) => { e.stopPropagation(); decidir(req, 'Rechazada'); }} aria-label={`Rechazar ${req.title}`} title="Rechazar" className="w-9 h-9 sm:w-8 sm:h-8 rounded border border-red-200 text-red-600 bg-red-50 hover:bg-red-100 flex justify-center items-center"><AlertTriangle size={16} /></button>
                           </>
                         ) : <span className="text-xs font-medium text-gray-300 sm:mr-2">Revisada</span>}
                       </div>
