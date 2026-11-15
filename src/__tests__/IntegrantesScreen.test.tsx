@@ -95,8 +95,9 @@ describe('IntegrantesScreen', () => {
       await screen.findByText('Equipo (2)');
       crear();
 
-      expect(screen.getAllByText('Requerido')).toHaveLength(2); // nombre y correo
-      expect(screen.getByText('Seleccione la oficina')).toBeInTheDocument();
+      expect(screen.getByText('Escribe su nombre')).toBeInTheDocument();
+      expect(screen.getByText('Escribe su correo')).toBeInTheDocument();
+      expect(screen.getByText('Elige su oficina')).toBeInTheDocument();
       expect(createUserWithEmailAndPassword).not.toHaveBeenCalled();
     });
 
@@ -105,7 +106,7 @@ describe('IntegrantesScreen', () => {
       llenarFormulario('Luis Pérez', 'esto-no-es-un-correo', 'Logística');
       crear();
 
-      expect(screen.getByText('Formato inválido')).toBeInTheDocument();
+      expect(screen.getByText('Ese correo no parece válido')).toBeInTheDocument();
       expect(createUserWithEmailAndPassword).not.toHaveBeenCalled();
     });
 

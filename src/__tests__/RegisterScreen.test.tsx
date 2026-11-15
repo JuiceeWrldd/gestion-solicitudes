@@ -50,8 +50,12 @@ describe('RegisterScreen', () => {
     it('pide todos los campos si se envía vacío', () => {
       enviar();
 
-      expect(screen.getAllByText('Requerido').length).toBeGreaterThanOrEqual(4);
-      expect(screen.getByText('Seleccione su oficina')).toBeInTheDocument();
+      expect(screen.getByText('Escribe tu nombre')).toBeInTheDocument();
+      expect(screen.getByText('Escribe el nombre de tu empresa')).toBeInTheDocument();
+      expect(screen.getByText('Escribe tu correo')).toBeInTheDocument();
+      expect(screen.getByText('Elige tu oficina')).toBeInTheDocument();
+      expect(screen.getByText('Escribe una contraseña')).toBeInTheDocument();
+      expect(screen.getByText('Vuelve a escribir la contraseña')).toBeInTheDocument();
       expect(registrarAdminConEmpresa).not.toHaveBeenCalled();
     });
 
@@ -59,7 +63,7 @@ describe('RegisterScreen', () => {
       llenar({ ...completo, email: 'no-es-un-correo' });
       enviar();
 
-      expect(screen.getByText('Formato inválido')).toBeInTheDocument();
+      expect(screen.getByText('Ese correo no parece válido')).toBeInTheDocument();
       expect(registrarAdminConEmpresa).not.toHaveBeenCalled();
     });
 
@@ -83,7 +87,7 @@ describe('RegisterScreen', () => {
       llenar({ ...completo, empresa: '<script></script>' });
       enviar();
 
-      expect(screen.getByText('Requerido')).toBeInTheDocument();
+      expect(screen.getByText('Escribe el nombre de tu empresa')).toBeInTheDocument();
       expect(registrarAdminConEmpresa).not.toHaveBeenCalled();
     });
 

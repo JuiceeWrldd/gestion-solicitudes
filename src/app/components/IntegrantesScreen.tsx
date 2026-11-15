@@ -60,11 +60,11 @@ export function IntegrantesScreen({ orgId, adminUid }: IntegrantesScreenProps) {
 
   const validar = (nombre: string, email: string) => {
     const e: Partial<typeof FORM_VACIO> = {};
-    if (!nombre) e.nombre = 'Requerido';
+    if (!nombre) e.nombre = 'Escribe su nombre';
     else if (nombre.length > LIMITES.nombre) e.nombre = `Máximo ${LIMITES.nombre} caracteres`;
-    if (!email) e.email = 'Requerido';
-    else if (!esCorreoValido(email)) e.email = 'Formato inválido';
-    if (!form.departamento) e.departamento = 'Seleccione la oficina';
+    if (!email) e.email = 'Escribe su correo';
+    else if (!esCorreoValido(email)) e.email = 'Ese correo no parece válido';
+    if (!form.departamento) e.departamento = 'Elige su oficina';
     return e;
   };
 

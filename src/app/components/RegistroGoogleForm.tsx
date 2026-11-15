@@ -33,10 +33,10 @@ export function RegistroGoogleForm({ cuenta, onCancelar }: RegistroGoogleFormPro
     const empresa = limpiarTexto(form.empresa);
 
     const e: Partial<Campos> = {};
-    if (!nombre) e.nombre = 'Requerido';
-    if (!empresa) e.empresa = 'Requerido';
+    if (!nombre) e.nombre = 'Escribe tu nombre';
+    if (!empresa) e.empresa = 'Escribe el nombre de tu empresa';
     else if (empresa.length < 2) e.empresa = 'Mínimo 2 caracteres';
-    if (!form.departamento) e.departamento = 'Seleccione su oficina';
+    if (!form.departamento) e.departamento = 'Elige tu oficina';
     if (Object.keys(e).length > 0) return setErrors(e);
 
     setCargando(true);

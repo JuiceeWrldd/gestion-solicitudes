@@ -40,8 +40,8 @@ describe('RegistroGoogleForm', () => {
 
     enviar();
 
-    expect(screen.getByText('Requerido')).toBeInTheDocument(); // empresa
-    expect(screen.getByText('Seleccione su oficina')).toBeInTheDocument();
+    expect(screen.getByText('Escribe el nombre de tu empresa')).toBeInTheDocument();
+    expect(screen.getByText('Elige tu oficina')).toBeInTheDocument();
     expect(completarRegistroGoogle).not.toHaveBeenCalled();
   });
 
@@ -52,7 +52,7 @@ describe('RegistroGoogleForm', () => {
     fireEvent.change(screen.getByLabelText('Tu oficina'), { target: { value: 'Logística' } });
     enviar();
 
-    expect(screen.getByText('Requerido')).toBeInTheDocument();
+    expect(screen.getByText('Escribe tu nombre')).toBeInTheDocument();
     expect(completarRegistroGoogle).not.toHaveBeenCalled();
   });
 

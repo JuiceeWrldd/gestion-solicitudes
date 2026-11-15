@@ -26,7 +26,8 @@ describe('SolicitudForm: validaciones', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Guardar' }));
 
-    expect(screen.getAllByText('Requerido')).toHaveLength(2); // título y detalles
+    expect(screen.getByText('Ponle un título')).toBeInTheDocument();
+    expect(screen.getByText('Cuenta qué necesitas')).toBeInTheDocument();
     expect(p.onGuardar).not.toHaveBeenCalled();
   });
 
@@ -45,10 +46,11 @@ describe('SolicitudForm: validaciones', () => {
     render(<SolicitudForm {...props()} />);
 
     fireEvent.click(screen.getByRole('button', { name: 'Guardar' }));
-    expect(screen.getAllByText('Requerido')).toHaveLength(2);
+    expect(screen.getByText('Ponle un título')).toBeInTheDocument();
 
     fireEvent.change(screen.getByLabelText('Título'), { target: { value: 'Algo' } });
-    expect(screen.getAllByText('Requerido')).toHaveLength(1);
+    expect(screen.queryByText('Ponle un título')).not.toBeInTheDocument();
+    expect(screen.getByText('Cuenta qué necesitas')).toBeInTheDocument();
   });
 });
 
@@ -99,7 +101,7 @@ describe('SolicitudForm: campos de texto', () => {
     llenar('<script></script>', DETALLE_VALIDO);
     fireEvent.click(screen.getByRole('button', { name: 'Guardar' }));
 
-    expect(screen.getByText('Requerido')).toBeInTheDocument();
+    expect(screen.getByText('Ponle un título')).toBeInTheDocument();
     expect(p.onGuardar).not.toHaveBeenCalled();
   });
 });

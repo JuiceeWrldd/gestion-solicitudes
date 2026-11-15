@@ -40,15 +40,15 @@ export function RegisterScreen({ onNavigateToLogin }: RegisterScreenProps) {
 
   const validar = (nombre: string, empresa: string, email: string) => {
     const e: Partial<Campos> = {};
-    if (!nombre) e.nombre = 'Requerido';
-    if (!empresa) e.empresa = 'Requerido';
+    if (!nombre) e.nombre = 'Escribe tu nombre';
+    if (!empresa) e.empresa = 'Escribe el nombre de tu empresa';
     else if (empresa.length < 2) e.empresa = 'Mínimo 2 caracteres';
-    if (!email) e.email = 'Requerido';
-    else if (!esCorreoValido(email)) e.email = 'Formato inválido';
-    if (!form.departamento) e.departamento = 'Seleccione su oficina';
-    if (!form.clave) e.clave = 'Requerida';
+    if (!email) e.email = 'Escribe tu correo';
+    else if (!esCorreoValido(email)) e.email = 'Ese correo no parece válido';
+    if (!form.departamento) e.departamento = 'Elige tu oficina';
+    if (!form.clave) e.clave = 'Escribe una contraseña';
     else if (form.clave.length < 8) e.clave = 'Mínimo 8 caracteres';
-    if (!form.confirmar) e.confirmar = 'Requerido';
+    if (!form.confirmar) e.confirmar = 'Vuelve a escribir la contraseña';
     else if (form.clave !== form.confirmar) e.confirmar = 'Las contraseñas no coinciden';
     return e;
   };

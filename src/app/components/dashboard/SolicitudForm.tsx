@@ -55,10 +55,10 @@ export function SolicitudForm({ inicial, onGuardar, onCancelar, onTerminado }: S
   // Se valida (y se guarda) el texto ya limpio, sin etiquetas HTML ni caracteres raros
   const validar = (titulo: string, descripcion: string) => {
     const e: Partial<Record<keyof FormState, string>> = {};
-    if (!titulo) e.title = 'Requerido';
+    if (!titulo) e.title = 'Ponle un título';
     else if (titulo.length > LIMITES.titulo) e.title = `Máximo ${LIMITES.titulo} caracteres`;
-    if (!form.type) e.type = 'Requerido';
-    if (!descripcion) e.description = 'Requerido';
+    if (!form.type) e.type = 'Elige una categoría';
+    if (!descripcion) e.description = 'Cuenta qué necesitas';
     else if (descripcion.length < MIN_DESCRIPCION) e.description = `Mínimo ${MIN_DESCRIPCION} caracteres`;
     else if (descripcion.length > LIMITES.descripcion) e.description = `Máximo ${LIMITES.descripcion} caracteres`;
     return e;
@@ -118,7 +118,7 @@ export function SolicitudForm({ inicial, onGuardar, onCancelar, onTerminado }: S
             <div>
               <label htmlFor="sol-tipo" style={etiqueta}>Categoría</label>
               <select id="sol-tipo" value={form.type} onChange={(e) => updateForm('type', e.target.value)} style={campo(formErrors.type)}>
-                <option value="" disabled>Seleccione</option>
+                <option value="" disabled>Elige una</option>
                 {TIPOS.map((t) => <option key={t} value={t}>{t}</option>)}
               </select>
             </div>
