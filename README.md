@@ -1,5 +1,7 @@
 # Gestión de Solicitudes
 
+[![Pruebas](https://github.com/JuiceeWrldd/gestion-solicitudes/actions/workflows/pruebas.yml/badge.svg)](https://github.com/JuiceeWrldd/gestion-solicitudes/actions/workflows/pruebas.yml)
+
 Proyecto final del SENA: una aplicación web para la gestión de solicitudes, construida con **React**, **Vite**, **TypeScript**, **Tailwind CSS** y **Firebase** (Authentication y Firestore).
 
 ## Funcionalidades
@@ -71,6 +73,8 @@ Proyecto final del SENA: una aplicación web para la gestión de solicitudes, co
 La app se publica en dos sitios, y cada uno necesita una compilación distinta porque la ruta base cambia
 (`/gestion-solicitudes/` en GitHub Pages y `/` en Firebase). Los dos scripts anteriores ya lo resuelven.
 Las reglas de Firestore (`firestore.rules`) no se publican con estos comandos: se pegan en la consola de Firebase.
+
+En cada push a `main`, GitHub Actions revisa los tipos, corre las pruebas y compila la app (`.github/workflows/pruebas.yml`).
 
 ## Estructura del proyecto
 
