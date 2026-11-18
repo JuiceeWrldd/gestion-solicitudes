@@ -1,15 +1,10 @@
-import { useEffect, useState } from 'react';
-import { collection, doc, getDocs, query, setDoc, updateDoc, where } from 'firebase/firestore';
-import { createUserWithEmailAndPassword, deleteUser, signOut, updateProfile, type User } from 'firebase/auth';
-import { FirebaseError } from 'firebase/app';
+import { useState } from 'react';
 import { Copy, UserPlus, X } from 'lucide-react';
-import { db, getAuthSecundario } from '../config/firebase';
 import { DEPARTAMENTOS } from '../config/departamentos';
 import { LIMITES } from '../config/limites';
-import { generarClave } from '../utils/clave';
+import { useIntegrantes } from '../hooks/useIntegrantes';
 import { limpiarTexto } from '../utils/texto';
 import { esCorreoValido } from '../utils/validaciones';
-import type { Integrante, PerfilUsuario } from '../types';
 
 interface IntegrantesScreenProps {
   orgId: string;
@@ -25,33 +20,13 @@ interface ClaveGenerada {
 const FORM_VACIO = { nombre: '', email: '', departamento: '' };
 
 export function IntegrantesScreen({ orgId, adminUid }: IntegrantesScreenProps) {
-  const [integrantes, setIntegrantes] = useState<Integrante[]>([]);
-  const [cargando, setCargando] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { integrantes, cargando, error, setError, crear, moverDeOficina, activar } = useIntegrantes(orgId);
 
   const [form, setForm] = useState(FORM_VACIO);
   const [formErrors, setFormErrors] = useState<Partial<typeof FORM_VACIO>>({});
   const [creando, setCreando] = useState(false);
   const [claveGenerada, setClaveGenerada] = useState<ClaveGenerada | null>(null);
   const [copiada, setCopiada] = useState(false);
-
-  const cargarIntegrantes = async () => {
-    setCargando(true);
-    try {
-      const snap = await getDocs(query(collection(db, 'usuarios'), where('orgId', '==', orgId)));
-      const lista = snap.docs.map((d) => ({ id: d.id, ...(d.data() as PerfilUsuario) }));
-      setIntegrantes(lista.sort((a, b) => a.nombre.localeCompare(b.nombre)));
-    } catch (err) {
-      console.error('Error al cargar integrantes:', err);
-      setError('No se pudieron cargar los integrantes.');
-    } finally {
-      setCargando(false);
-    }
-  };
-
-  useEffect(() => {
-    cargarIntegrantes();
-  }, [orgId]);
 
   const updateForm = (campo: keyof typeof FORM_VACIO, valor: string) => {
     setForm((p) => ({ ...p, [campo]: valor }));
@@ -76,66 +51,13 @@ export function IntegrantesScreen({ orgId, adminUid }: IntegrantesScreenProps) {
     if (Object.keys(errores).length > 0) return setFormErrors(errores);
 
     setCreando(true);
-    setError(null);
-    const clave = generarClave();
-    const authSecundario = getAuthSecundario();
-    let cuenta: User | null = null;
+    const clave = await crear({ nombre, email, departamento: form.departamento });
+    setCreando(false);
+    if (!clave) return;
 
-    try {
-      cuenta = (await createUserWithEmailAndPassword(authSecundario, email, clave)).user;
-      await updateProfile(cuenta, { displayName: nombre });
-
-      await setDoc(doc(db, 'usuarios', cuenta.uid), {
-        nombre,
-        email,
-        departamento: form.departamento,
-        rol: 'usuario',
-        orgId,
-        activo: true,
-        debeCambiarClave: true,
-        fechaRegistro: new Date(),
-      } satisfies PerfilUsuario);
-
-      setClaveGenerada({ nombre, email, clave });
-      setCopiada(false);
-      setForm(FORM_VACIO);
-      cargarIntegrantes();
-    } catch (err) {
-      console.error('Error al crear integrante:', err);
-      // Si la cuenta alcanzó a crearse, se borra: sin perfil no sirve y dejaría ese correo ocupado
-      const quedoHuerfana = cuenta !== null && !(await deleteUser(cuenta).then(() => true, () => false));
-
-      if (err instanceof FirebaseError && err.code === 'auth/email-already-in-use') {
-        setError('Ya existe una cuenta con ese correo.');
-      } else if (quedoHuerfana) {
-        setError('La cuenta se creó, pero no se pudo guardar su perfil ni deshacer el cambio. Ese correo quedó ocupado: bórralo desde la consola de Firebase.');
-      } else {
-        setError('No se pudo crear el integrante. Revisa los datos e intenta de nuevo.');
-      }
-    } finally {
-      await signOut(authSecundario);
-      setCreando(false);
-    }
-  };
-
-  const cambiarDepartamento = async (id: string, departamento: string) => {
-    try {
-      await updateDoc(doc(db, 'usuarios', id), { departamento });
-      setIntegrantes((prev) => prev.map((i) => (i.id === id ? { ...i, departamento } : i)));
-    } catch (err) {
-      console.error('Error al cambiar la oficina:', err);
-      setError('No se pudo cambiar la oficina.');
-    }
-  };
-
-  const cambiarActivo = async (id: string, activo: boolean) => {
-    try {
-      await updateDoc(doc(db, 'usuarios', id), { activo });
-      setIntegrantes((prev) => prev.map((i) => (i.id === id ? { ...i, activo } : i)));
-    } catch (err) {
-      console.error('Error al cambiar el estado:', err);
-      setError('No se pudo cambiar el estado del integrante.');
-    }
+    setClaveGenerada({ nombre, email, clave });
+    setCopiada(false);
+    setForm(FORM_VACIO);
   };
 
   const copiarClave = async () => {
@@ -230,7 +152,7 @@ export function IntegrantesScreen({ orgId, adminUid }: IntegrantesScreenProps) {
                 </div>
                 <select
                   value={i.departamento}
-                  onChange={(e) => cambiarDepartamento(i.id, e.target.value)}
+                  onChange={(e) => moverDeOficina(i.id, e.target.value)}
                   aria-label={`Oficina de ${i.nombre}`}
                   className="md:w-56 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm outline-none focus:border-indigo-600"
                 >
@@ -239,7 +161,7 @@ export function IntegrantesScreen({ orgId, adminUid }: IntegrantesScreenProps) {
                 </select>
                 {!esYo && (
                   <button
-                    onClick={() => cambiarActivo(i.id, !activo)}
+                    onClick={() => activar(i.id, !activo)}
                     className={`rounded-lg border px-3 py-2 text-sm font-semibold ${activo ? 'border-red-100 bg-red-50 text-red-600 hover:bg-red-100' : 'border-green-200 bg-green-50 text-green-700 hover:bg-green-100'}`}
                   >
                     {activo ? 'Desactivar' : 'Activar'}
