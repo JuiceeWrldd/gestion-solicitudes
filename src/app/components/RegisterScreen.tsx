@@ -9,6 +9,7 @@ import { LIMITES } from '../config/limites';
 import { elegirCuentaGoogle, registrarAdminConEmpresa, type CuentaGoogle } from '../services/registro';
 import { limpiarTexto } from '../utils/texto';
 import { esCorreoValido } from '../utils/validaciones';
+import { AvisoError, ErrorCampo, claseCampo } from './Formulario';
 
 interface RegisterScreenProps {
   onNavigateToLogin: () => void;
@@ -16,9 +17,6 @@ interface RegisterScreenProps {
 
 const FORM_VACIO = { nombre: '', empresa: '', email: '', departamento: '', clave: '', confirmar: '' };
 type Campos = typeof FORM_VACIO;
-
-const inputClase = (hayError?: string) =>
-  `w-full py-3 px-3 border ${hayError ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-slate-50'} rounded-lg text-sm outline-none focus:border-indigo-600 focus:bg-white transition-colors`;
 
 // Cuando la persona cierra la ventana de Google no hace falta mostrar un error
 const VENTANA_CERRADA = ['auth/popup-closed-by-user', 'auth/cancelled-popup-request'];
@@ -101,8 +99,8 @@ export function RegisterScreen({ onNavigateToLogin }: RegisterScreenProps) {
   const campoTexto = (id: string, etiqueta: string, campo: 'nombre' | 'empresa' | 'email', max: number, tipo = 'text') => (
     <div>
       <label htmlFor={id} className="block text-gray-700 text-[13px] font-semibold mb-1.5">{etiqueta}</label>
-      <input id={id} type={tipo} maxLength={max} value={form[campo]} onChange={(e) => update(campo, e.target.value)} className={inputClase(errors[campo])} />
-      {errors[campo] && <p className="text-red-500 text-xs mt-1 font-medium">{errors[campo]}</p>}
+      <input id={id} type={tipo} maxLength={max} value={form[campo]} onChange={(e) => update(campo, e.target.value)} className={claseCampo(errors[campo], 'acceso')} />
+      <ErrorCampo mensaje={errors[campo]} />
     </div>
   );
 
@@ -117,9 +115,7 @@ export function RegisterScreen({ onNavigateToLogin }: RegisterScreenProps) {
           <h2 className="text-gray-900 text-2xl font-extrabold mb-1">Registra tu empresa</h2>
           <p className="text-gray-500 text-sm mb-6">Serás el administrador. Después podrás agregar a tu equipo.</p>
 
-          {errorGeneral && (
-            <div role="alert" className="bg-red-50 text-red-600 p-4 rounded-xl text-sm mb-5 border border-red-100 font-semibold">{errorGeneral}</div>
-          )}
+          <AvisoError mensaje={errorGeneral} className="mb-5" />
 
           {cuentaGoogle ? (
             <RegistroGoogleForm cuenta={cuentaGoogle} onCancelar={() => setCuentaGoogle(null)} />
@@ -148,28 +144,28 @@ export function RegisterScreen({ onNavigateToLogin }: RegisterScreenProps) {
 
                 <div>
                   <label htmlFor="reg-oficina" className="block text-gray-700 text-[13px] font-semibold mb-1.5">Tu oficina</label>
-                  <select id="reg-oficina" value={form.departamento} onChange={(e) => update('departamento', e.target.value)} className={inputClase(errors.departamento)}>
+                  <select id="reg-oficina" value={form.departamento} onChange={(e) => update('departamento', e.target.value)} className={claseCampo(errors.departamento, 'acceso')}>
                     <option value="" disabled>Seleccionar...</option>
                     {DEPARTAMENTOS.map((d) => <option key={d} value={d}>{d}</option>)}
                   </select>
-                  {errors.departamento && <p className="text-red-500 text-xs mt-1 font-medium">{errors.departamento}</p>}
+                  <ErrorCampo mensaje={errors.departamento} />
                 </div>
 
                 <div>
                   <label htmlFor="reg-clave" className="block text-gray-700 text-[13px] font-semibold mb-1.5">Contraseña</label>
                   <div className="relative">
-                    <input id="reg-clave" type={mostrarClave ? 'text' : 'password'} value={form.clave} onChange={(e) => update('clave', e.target.value)} placeholder="Mínimo 8 caracteres" className={`${inputClase(errors.clave)} pr-11`} />
+                    <input id="reg-clave" type={mostrarClave ? 'text' : 'password'} value={form.clave} onChange={(e) => update('clave', e.target.value)} placeholder="Mínimo 8 caracteres" className={`${claseCampo(errors.clave, 'acceso')} pr-11`} />
                     <button type="button" onClick={() => setMostrarClave(!mostrarClave)} aria-label={mostrarClave ? 'Ocultar contraseña' : 'Mostrar contraseña'} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
                       {mostrarClave ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
                   </div>
-                  {errors.clave && <p className="text-red-500 text-xs mt-1 font-medium">{errors.clave}</p>}
+                  <ErrorCampo mensaje={errors.clave} />
                 </div>
 
                 <div>
                   <label htmlFor="reg-confirmar" className="block text-gray-700 text-[13px] font-semibold mb-1.5">Repite la contraseña</label>
-                  <input id="reg-confirmar" type={mostrarClave ? 'text' : 'password'} value={form.confirmar} onChange={(e) => update('confirmar', e.target.value)} className={inputClase(errors.confirmar)} />
-                  {errors.confirmar && <p className="text-red-500 text-xs mt-1 font-medium">{errors.confirmar}</p>}
+                  <input id="reg-confirmar" type={mostrarClave ? 'text' : 'password'} value={form.confirmar} onChange={(e) => update('confirmar', e.target.value)} className={claseCampo(errors.confirmar, 'acceso')} />
+                  <ErrorCampo mensaje={errors.confirmar} />
                 </div>
 
                 <button type="submit" disabled={cargando} className="w-full mt-2 bg-indigo-600 text-white py-3 rounded-lg text-[15px] font-bold hover:bg-indigo-700 disabled:bg-indigo-300 transition-colors">

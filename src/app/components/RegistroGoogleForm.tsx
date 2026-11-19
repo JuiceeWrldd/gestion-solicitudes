@@ -3,6 +3,7 @@ import { DEPARTAMENTOS } from '../config/departamentos';
 import { LIMITES } from '../config/limites';
 import { cancelarRegistroGoogle, completarRegistroGoogle, type CuentaGoogle } from '../services/registro';
 import { limpiarTexto } from '../utils/texto';
+import { AvisoError, ErrorCampo, claseCampo } from './Formulario';
 
 interface RegistroGoogleFormProps {
   cuenta: CuentaGoogle;
@@ -11,9 +12,6 @@ interface RegistroGoogleFormProps {
 
 const FORM_VACIO = { nombre: '', empresa: '', departamento: '' };
 type Campos = typeof FORM_VACIO;
-
-const inputClase = (hayError?: string) =>
-  `w-full py-3 px-3 border ${hayError ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-slate-50'} rounded-lg text-sm outline-none focus:border-indigo-600 focus:bg-white transition-colors`;
 
 // Segundo paso del registro con Google: la cuenta ya está elegida, faltan los datos de la empresa
 export function RegistroGoogleForm({ cuenta, onCancelar }: RegistroGoogleFormProps) {
@@ -60,34 +58,32 @@ export function RegistroGoogleForm({ cuenta, onCancelar }: RegistroGoogleFormPro
     <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
       <p className="text-gray-500 text-sm">Elegiste esta cuenta de Google. Solo faltan los datos de tu empresa.</p>
 
-      {errorGeneral && (
-        <div role="alert" className="bg-red-50 text-red-600 p-4 rounded-xl text-sm border border-red-100 font-semibold">{errorGeneral}</div>
-      )}
+      <AvisoError mensaje={errorGeneral} />
 
       <div>
         <label htmlFor="goo-correo" className="block text-gray-700 text-[13px] font-semibold mb-1.5">Correo (de Google)</label>
-        <input id="goo-correo" value={cuenta.email} disabled readOnly className={`${inputClase()} text-gray-500`} />
+        <input id="goo-correo" value={cuenta.email} disabled readOnly className={`${claseCampo(undefined, 'acceso')} text-gray-500`} />
       </div>
 
       <div>
         <label htmlFor="goo-nombre" className="block text-gray-700 text-[13px] font-semibold mb-1.5">Tu nombre y apellido</label>
-        <input id="goo-nombre" maxLength={LIMITES.nombre} value={form.nombre} onChange={(e) => update('nombre', e.target.value)} className={inputClase(errors.nombre)} />
-        {errors.nombre && <p className="text-red-500 text-xs mt-1 font-medium">{errors.nombre}</p>}
+        <input id="goo-nombre" maxLength={LIMITES.nombre} value={form.nombre} onChange={(e) => update('nombre', e.target.value)} className={claseCampo(errors.nombre, 'acceso')} />
+        <ErrorCampo mensaje={errors.nombre} />
       </div>
 
       <div>
         <label htmlFor="goo-empresa" className="block text-gray-700 text-[13px] font-semibold mb-1.5">Nombre de la empresa</label>
-        <input id="goo-empresa" maxLength={LIMITES.empresa} value={form.empresa} onChange={(e) => update('empresa', e.target.value)} className={inputClase(errors.empresa)} />
-        {errors.empresa && <p className="text-red-500 text-xs mt-1 font-medium">{errors.empresa}</p>}
+        <input id="goo-empresa" maxLength={LIMITES.empresa} value={form.empresa} onChange={(e) => update('empresa', e.target.value)} className={claseCampo(errors.empresa, 'acceso')} />
+        <ErrorCampo mensaje={errors.empresa} />
       </div>
 
       <div>
         <label htmlFor="goo-oficina" className="block text-gray-700 text-[13px] font-semibold mb-1.5">Tu oficina</label>
-        <select id="goo-oficina" value={form.departamento} onChange={(e) => update('departamento', e.target.value)} className={inputClase(errors.departamento)}>
+        <select id="goo-oficina" value={form.departamento} onChange={(e) => update('departamento', e.target.value)} className={claseCampo(errors.departamento, 'acceso')}>
           <option value="" disabled>Seleccionar...</option>
           {DEPARTAMENTOS.map((d) => <option key={d} value={d}>{d}</option>)}
         </select>
-        {errors.departamento && <p className="text-red-500 text-xs mt-1 font-medium">{errors.departamento}</p>}
+        <ErrorCampo mensaje={errors.departamento} />
       </div>
 
       <button type="submit" disabled={cargando} className="w-full mt-1 bg-indigo-600 text-white py-3 rounded-lg text-[15px] font-bold hover:bg-indigo-700 disabled:bg-indigo-300 transition-colors">

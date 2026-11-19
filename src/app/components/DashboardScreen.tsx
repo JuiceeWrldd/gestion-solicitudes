@@ -15,6 +15,7 @@ import { IntegrantesScreen } from './IntegrantesScreen';
 import { CambiarClaveScreen } from './CambiarClaveScreen';
 import { AvisoCuentaScreen } from './AvisoCuentaScreen';
 import { VerificarCorreoScreen } from './VerificarCorreoScreen';
+import { AvisoError } from './Formulario';
 
 interface DashboardScreenProps {
   onNavigateToLogin: () => void;
@@ -216,14 +217,7 @@ export function DashboardScreen({ onNavigateToLogin }: DashboardScreenProps) {
           </div>
         </header>
         <div className="flex-1 p-4 sm:p-8">
-          {errorMsg && (
-            <div role="alert" className="mb-5 flex items-start justify-between gap-3 rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm font-medium text-red-600">
-              <span>{errorMsg}</span>
-              <button onClick={() => setErrorMsg(null)} aria-label="Cerrar aviso" className="shrink-0 text-red-400 hover:text-red-600">
-                <X size={18} />
-              </button>
-            </div>
-          )}
+          <AvisoError mensaje={errorMsg} onCerrar={() => setErrorMsg(null)} className="mb-5" />
           {contenido[activeNav]}
         </div>
       </main>

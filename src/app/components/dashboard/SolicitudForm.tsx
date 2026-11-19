@@ -5,6 +5,7 @@ import { LIMITES, MIN_DESCRIPCION } from '../../config/limites';
 import { limpiarTexto } from '../../utils/texto';
 import type { DatosSolicitud } from '../../services/solicitudes';
 import type { Prioridad, Solicitud } from '../../types';
+import { ErrorCampo } from '../Formulario';
 
 interface FormState {
   title: string;
@@ -112,7 +113,7 @@ export function SolicitudForm({ inicial, onGuardar, onCancelar, onTerminado }: S
           <div>
             <label htmlFor="sol-titulo" style={etiqueta}>Título</label>
             <input id="sol-titulo" type="text" maxLength={LIMITES.titulo} value={form.title} onChange={(e) => updateForm('title', e.target.value)} style={campo(formErrors.title)} />
-            {formErrors.title && <p className="text-red-500 text-xs mt-1 font-medium">{formErrors.title}</p>}
+            <ErrorCampo mensaje={formErrors.title} />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
@@ -140,7 +141,7 @@ export function SolicitudForm({ inicial, onGuardar, onCancelar, onTerminado }: S
           <div>
             <label htmlFor="sol-detalles" style={etiqueta}>Detalles</label>
             <textarea id="sol-detalles" rows={5} maxLength={LIMITES.descripcion} value={form.description} onChange={(e) => updateForm('description', e.target.value)} style={{ ...campo(formErrors.description), resize: 'vertical' }} />
-            {formErrors.description && <p className="text-red-500 text-xs mt-1 font-medium">{formErrors.description}</p>}
+            <ErrorCampo mensaje={formErrors.description} />
             <p className="text-gray-400 text-xs mt-1 text-right">{form.description.length}/{LIMITES.descripcion}</p>
           </div>
           <div className="flex justify-end gap-3 pt-2">

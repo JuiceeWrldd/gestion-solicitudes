@@ -2,12 +2,10 @@ import { useState } from 'react';
 import { EmailAuthProvider, reauthenticateWithCredential, updatePassword } from 'firebase/auth';
 import { FirebaseError } from 'firebase/app';
 import { auth } from '../../config/firebase';
+import { ErrorCampo, claseCampo } from '../Formulario';
 
 const FORM_VACIO = { actual: '', nueva: '', confirmar: '' };
 type Campos = typeof FORM_VACIO;
-
-const inputClase = (hayError?: string) =>
-  `w-full py-2.5 px-3 border ${hayError ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-white'} rounded-lg text-sm outline-none focus:border-indigo-600`;
 
 // Firebase devuelve uno u otro código según la versión cuando la contraseña actual no coincide
 const CLAVE_INCORRECTA = ['auth/wrong-password', 'auth/invalid-credential'];
@@ -79,8 +77,8 @@ export function CambiarClavePerfil() {
   const campo = (id: string, etiqueta: string, nombre: keyof Campos, autoComplete: string) => (
     <div>
       <label htmlFor={id} className="block text-gray-700 text-[13px] font-semibold mb-1.5">{etiqueta}</label>
-      <input id={id} type="password" autoComplete={autoComplete} value={form[nombre]} onChange={(e) => update(nombre, e.target.value)} className={inputClase(errors[nombre])} />
-      {errors[nombre] && <p className="text-red-500 text-xs mt-1 font-medium">{errors[nombre]}</p>}
+      <input id={id} type="password" autoComplete={autoComplete} value={form[nombre]} onChange={(e) => update(nombre, e.target.value)} className={claseCampo(errors[nombre])} />
+      <ErrorCampo mensaje={errors[nombre]} />
     </div>
   );
 

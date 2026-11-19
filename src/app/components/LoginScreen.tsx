@@ -12,6 +12,7 @@ import {
 import { FirebaseError } from 'firebase/app';
 import { auth } from '../config/firebase';
 import { GoogleIcon } from './GoogleIcon';
+import { ErrorCampo } from './Formulario';
 
 const VENTANA_CERRADA = ['auth/popup-closed-by-user', 'auth/cancelled-popup-request'];
 
@@ -142,7 +143,7 @@ export function LoginScreen({ onNavigateToForgot, onNavigateToRegister }: LoginS
                     className={`w-full py-3 pl-10 pr-3 border ${errors.email ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-slate-50'} rounded-lg text-sm outline-none focus:border-indigo-600 focus:bg-white transition-colors`}
                   />
                 </div>
-                {errors.email && <p className="text-red-500 text-xs mt-1 font-medium">{errors.email}</p>}
+                <ErrorCampo mensaje={errors.email} />
               </div>
 
               <div>
@@ -162,7 +163,7 @@ export function LoginScreen({ onNavigateToForgot, onNavigateToRegister }: LoginS
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
                 </div>
-                {errors.password && <p className="text-red-500 text-xs mt-1 font-medium">{errors.password}</p>}
+                <ErrorCampo mensaje={errors.password} />
               </div>
 
               <div className="flex items-center gap-2 mt-1">

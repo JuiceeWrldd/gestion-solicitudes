@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { Copy, UserPlus, X } from 'lucide-react';
+import { Copy, UserPlus } from 'lucide-react';
 import { DEPARTAMENTOS } from '../config/departamentos';
 import { LIMITES } from '../config/limites';
 import { useIntegrantes } from '../hooks/useIntegrantes';
 import { limpiarTexto } from '../utils/texto';
 import { esCorreoValido } from '../utils/validaciones';
+import { AvisoError, ErrorCampo, claseCampo } from './Formulario';
 
 interface IntegrantesScreenProps {
   orgId: string;
@@ -70,22 +71,12 @@ export function IntegrantesScreen({ orgId, adminUid }: IntegrantesScreenProps) {
     }
   };
 
-  const inputClase = (hayError?: string) =>
-    `w-full py-2.5 px-3 border rounded-lg text-sm outline-none focus:border-indigo-600 ${hayError ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-white'}`;
-
   return (
     <div className="max-w-4xl">
       <h1 className="text-gray-900 text-2xl font-extrabold mb-1">Integrantes</h1>
       <p className="text-gray-500 text-sm mb-6">Personas de tu empresa. Aquí las agregas y defines en qué oficina están.</p>
 
-      {error && (
-        <div role="alert" className="mb-5 flex items-start justify-between gap-3 rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm font-medium text-red-600">
-          <span>{error}</span>
-          <button onClick={() => setError(null)} aria-label="Cerrar aviso" className="shrink-0 text-red-400 hover:text-red-600">
-            <X size={18} />
-          </button>
-        </div>
-      )}
+      <AvisoError mensaje={error} onCerrar={() => setError(null)} className="mb-5" />
 
       {claveGenerada && (
         <div className="mb-6 rounded-xl border border-green-200 bg-green-50 p-4">
@@ -108,21 +99,21 @@ export function IntegrantesScreen({ orgId, adminUid }: IntegrantesScreenProps) {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <label htmlFor="int-nombre" className="block text-gray-700 text-[13px] font-semibold mb-1.5">Nombre y apellido</label>
-            <input id="int-nombre" value={form.nombre} maxLength={LIMITES.nombre} onChange={(e) => updateForm('nombre', e.target.value)} className={inputClase(formErrors.nombre)} />
-            {formErrors.nombre && <p className="text-red-500 text-xs mt-1 font-medium">{formErrors.nombre}</p>}
+            <input id="int-nombre" value={form.nombre} maxLength={LIMITES.nombre} onChange={(e) => updateForm('nombre', e.target.value)} className={claseCampo(formErrors.nombre)} />
+            <ErrorCampo mensaje={formErrors.nombre} />
           </div>
           <div>
             <label htmlFor="int-correo" className="block text-gray-700 text-[13px] font-semibold mb-1.5">Correo</label>
-            <input id="int-correo" type="email" value={form.email} maxLength={LIMITES.email} onChange={(e) => updateForm('email', e.target.value)} className={inputClase(formErrors.email)} />
-            {formErrors.email && <p className="text-red-500 text-xs mt-1 font-medium">{formErrors.email}</p>}
+            <input id="int-correo" type="email" value={form.email} maxLength={LIMITES.email} onChange={(e) => updateForm('email', e.target.value)} className={claseCampo(formErrors.email)} />
+            <ErrorCampo mensaje={formErrors.email} />
           </div>
           <div>
             <label htmlFor="int-oficina" className="block text-gray-700 text-[13px] font-semibold mb-1.5">Oficina</label>
-            <select id="int-oficina" value={form.departamento} onChange={(e) => updateForm('departamento', e.target.value)} className={inputClase(formErrors.departamento)}>
+            <select id="int-oficina" value={form.departamento} onChange={(e) => updateForm('departamento', e.target.value)} className={claseCampo(formErrors.departamento)}>
               <option value="" disabled>Seleccionar...</option>
               {DEPARTAMENTOS.map((d) => <option key={d} value={d}>{d}</option>)}
             </select>
-            {formErrors.departamento && <p className="text-red-500 text-xs mt-1 font-medium">{formErrors.departamento}</p>}
+            <ErrorCampo mensaje={formErrors.departamento} />
           </div>
         </div>
         <div className="flex justify-end mt-5">
