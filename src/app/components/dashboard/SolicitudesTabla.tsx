@@ -37,7 +37,7 @@ export function SolicitudesTabla({ solicitudes, cargando, esAdmin, onCambiarEsta
   return (
     <div>
       <div className="flex items-center justify-between mb-7">
-        <h1 style={{ color: '#111827', fontSize: '26px', fontWeight: 800 }}>{esAdmin ? 'Solicitudes de la empresa' : 'Mis solicitudes'}</h1>
+        <h1 className="text-gray-900 text-[26px] font-extrabold">{esAdmin ? 'Solicitudes de la empresa' : 'Mis solicitudes'}</h1>
       </div>
 
       {!cargando && solicitudes.length > 0 && (
@@ -97,7 +97,7 @@ export function SolicitudesTabla({ solicitudes, cargando, esAdmin, onCambiarEsta
 
                   {/* Estado y acciones: en celular van en su propia línea, debajo del título */}
                   <div className="order-3 w-full sm:w-auto flex items-center justify-between sm:justify-start gap-3 sm:gap-4">
-                    <div className="flex items-center gap-1 px-3 py-1 rounded-full shrink-0 sm:w-[120px] justify-center text-xs font-semibold" style={{ background: statusConfig[req.status]?.bg, color: statusConfig[req.status]?.color }}>
+                    <div className={`flex items-center gap-1 px-3 py-1 rounded-full shrink-0 sm:w-[120px] justify-center text-xs font-semibold ${statusConfig[req.status]?.clase ?? ''}`}>
                       {statusConfig[req.status]?.icon} {req.status}
                     </div>
 

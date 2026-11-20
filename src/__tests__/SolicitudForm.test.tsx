@@ -138,6 +138,19 @@ describe('SolicitudForm: guardar', () => {
     expect(p.onGuardar).toHaveBeenCalledWith(expect.objectContaining({ prioridad: 'Alta', tipo: 'Financiera' }));
   });
 
+  it('marca la prioridad elegida, con su color, y solo esa', () => {
+    render(<SolicitudForm {...props()} />);
+
+    expect(screen.getByRole('button', { name: 'Media' })).toHaveAttribute('aria-pressed', 'true');
+    fireEvent.click(screen.getByRole('button', { name: 'Alta' }));
+
+    const alta = screen.getByRole('button', { name: 'Alta' });
+    expect(alta).toHaveAttribute('aria-pressed', 'true');
+    expect(alta).toHaveClass('text-red-600');
+    expect(screen.getByRole('button', { name: 'Media' })).toHaveAttribute('aria-pressed', 'false');
+    expect(screen.getByRole('button', { name: 'Media' })).toHaveClass('text-gray-500');
+  });
+
   it('muestra el mensaje de éxito y avisa que terminó a los 2 segundos', async () => {
     vi.useFakeTimers();
     const p = props();

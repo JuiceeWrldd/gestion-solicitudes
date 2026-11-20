@@ -18,9 +18,9 @@ export function InicioSection({ solicitudes, esAdmin }: InicioSectionProps) {
   const completadas = solicitudes.filter((req) => req.status === 'Aprobada' || req.status === 'Rechazada').length;
 
   const tarjetas = [
-    { label: 'Total', value: total, icon: <FileText size={20} />, color: '#1E3FAE', bg: '#EEF2FF' },
-    { label: 'En revisión', value: pendientes, icon: <Clock size={20} />, color: '#D97706', bg: '#FEF3C7' },
-    { label: 'Resueltas', value: completadas, icon: <CheckCircle2 size={20} />, color: '#059669', bg: '#D1FAE5' },
+    { label: 'Total', value: total, icon: <FileText size={20} />, clase: 'bg-indigo-50 text-[#1E3FAE]' },
+    { label: 'En revisión', value: pendientes, icon: <Clock size={20} />, clase: 'bg-amber-100 text-amber-600' },
+    { label: 'Resueltas', value: completadas, icon: <CheckCircle2 size={20} />, clase: 'bg-emerald-100 text-emerald-600' },
   ];
 
   const porEstado = contarPorEstado(solicitudes).map((c) => ({
@@ -37,19 +37,19 @@ export function InicioSection({ solicitudes, esAdmin }: InicioSectionProps) {
   return (
     <div className="p-8 max-w-7xl mx-auto">
       <div className="mb-8">
-        <h2 style={{ color: '#111827', fontSize: '24px', fontWeight: 700, letterSpacing: '-0.02em' }}>Inicio</h2>
-        <p style={{ color: '#6B7280', fontSize: '14px', marginTop: '4px' }}>
+        <h2 className="text-gray-900 text-2xl font-bold tracking-tight">Inicio</h2>
+        <p className="text-gray-500 text-sm mt-1">
           {esAdmin ? 'Cómo van las solicitudes de tu empresa.' : 'Cómo van tus solicitudes.'}
         </p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         {tarjetas.map((stat) => (
-          <div key={stat.label} className="bg-white p-6 rounded-2xl border" style={{ borderColor: '#F3F4F6' }}>
+          <div key={stat.label} className="bg-white p-6 rounded-2xl border border-gray-100">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: stat.bg, color: stat.color }}>{stat.icon}</div>
+              <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${stat.clase}`}>{stat.icon}</div>
               <div>
-                <div style={{ color: '#6B7280', fontSize: '13px', fontWeight: 500 }}>{stat.label}</div>
-                <div style={{ color: '#111827', fontSize: '24px', fontWeight: 700, marginTop: '2px' }}>{stat.value}</div>
+                <div className="text-gray-500 text-[13px] font-medium">{stat.label}</div>
+                <div className="text-gray-900 text-2xl font-bold mt-0.5">{stat.value}</div>
               </div>
             </div>
           </div>

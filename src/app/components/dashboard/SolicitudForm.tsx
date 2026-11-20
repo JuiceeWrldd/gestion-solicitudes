@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { CheckCircle2 } from 'lucide-react';
-import { TIPOS, PRIORIDADES, getPriorityColors } from '../../config/solicitudes';
+import { TIPOS, PRIORIDADES, clasePrioridad } from '../../config/solicitudes';
 import { LIMITES, MIN_DESCRIPCION } from '../../config/limites';
 import { limpiarTexto } from '../../utils/texto';
 import type { DatosSolicitud } from '../../services/solicitudes';
 import type { Prioridad, Solicitud } from '../../types';
-import { ErrorCampo } from '../Formulario';
+import { claseCampo, ErrorCampo } from '../Formulario';
 
 interface FormState {
   title: string;
@@ -23,14 +23,7 @@ interface SolicitudFormProps {
   onTerminado: () => void;
 }
 
-const etiqueta = { display: 'block', color: '#374151', fontSize: '13px', fontWeight: 600, marginBottom: '6px' } as const;
-const campo = (hayError?: string) => ({
-  width: '100%',
-  padding: '12px 14px',
-  border: `1.5px solid ${hayError ? '#DC3545' : '#E5E7EB'}`,
-  borderRadius: '8px',
-  outline: 'none',
-});
+const etiqueta = 'block text-gray-700 text-[13px] font-semibold mb-1.5';
 
 export function SolicitudForm({ inicial, onGuardar, onCancelar, onTerminado }: SolicitudFormProps) {
   const [esEdicion] = useState(inicial !== null);
@@ -90,10 +83,10 @@ export function SolicitudForm({ inicial, onGuardar, onCancelar, onTerminado }: S
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center max-w-sm">
-          <div className="flex items-center justify-center w-20 h-20 rounded-full mx-auto mb-5" style={{ background: '#DCFCE7' }}>
-            <CheckCircle2 size={44} style={{ color: '#22C55E' }} />
+          <div className="flex items-center justify-center w-20 h-20 rounded-full mx-auto mb-5 bg-green-100">
+            <CheckCircle2 size={44} className="text-green-500" />
           </div>
-          <h2 style={{ color: '#111827', fontSize: '22px', fontWeight: 800, marginBottom: '5px' }}>
+          <h2 className="text-gray-900 text-[22px] font-extrabold mb-1">
             {esEdicion ? 'Solicitud actualizada' : '¡Solicitud enviada!'}
           </h2>
         </div>
@@ -104,33 +97,33 @@ export function SolicitudForm({ inicial, onGuardar, onCancelar, onTerminado }: S
   return (
     <div>
       <div className="mb-7">
-        <h1 style={{ color: '#111827', fontSize: '26px', fontWeight: 800, marginBottom: '5px' }}>
+        <h1 className="text-gray-900 text-[26px] font-extrabold mb-1">
           {esEdicion ? 'Editar solicitud' : 'Nueva solicitud'}
         </h1>
       </div>
-      <div className="bg-white rounded-2xl p-6 lg:p-8 max-w-2xl" style={{ boxShadow: '0 2px 20px rgba(30,63,174,0.08)' }}>
+      <div className="bg-white rounded-2xl p-6 lg:p-8 max-w-2xl shadow-[0_2px_20px_rgba(30,63,174,0.08)]">
         <div className="flex flex-col gap-5">
           <div>
-            <label htmlFor="sol-titulo" style={etiqueta}>Título</label>
-            <input id="sol-titulo" type="text" maxLength={LIMITES.titulo} value={form.title} onChange={(e) => updateForm('title', e.target.value)} style={campo(formErrors.title)} />
+            <label htmlFor="sol-titulo" className={etiqueta}>Título</label>
+            <input id="sol-titulo" type="text" maxLength={LIMITES.titulo} value={form.title} onChange={(e) => updateForm('title', e.target.value)} className={claseCampo(formErrors.title)} />
             <ErrorCampo mensaje={formErrors.title} />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label htmlFor="sol-tipo" style={etiqueta}>Categoría</label>
-              <select id="sol-tipo" value={form.type} onChange={(e) => updateForm('type', e.target.value)} style={campo(formErrors.type)}>
+              <label htmlFor="sol-tipo" className={etiqueta}>Categoría</label>
+              <select id="sol-tipo" value={form.type} onChange={(e) => updateForm('type', e.target.value)} className={claseCampo(formErrors.type)}>
                 <option value="" disabled>Elige una</option>
                 {TIPOS.map((t) => <option key={t} value={t}>{t}</option>)}
               </select>
             </div>
             <div>
-              <label style={etiqueta}>Prioridad</label>
+              <label className={etiqueta}>Prioridad</label>
               <div className="flex gap-2">
                 {PRIORIDADES.map((p) => {
                   const isActive = form.priority === p;
-                  const colors = getPriorityColors(p, isActive);
+                  const colores = isActive ? `${clasePrioridad[p]} font-bold` : 'border-gray-200 bg-gray-50 text-gray-500 font-medium';
                   return (
-                    <button key={p} type="button" onClick={() => updateForm('priority', p)} style={{ flex: 1, padding: '10px 6px', borderRadius: '8px', border: `1.5px solid ${colors.border}`, background: colors.bg, color: colors.text, fontWeight: isActive ? 700 : 500, cursor: 'pointer', transition: 'all 0.2s' }}>
+                    <button key={p} type="button" aria-pressed={isActive} onClick={() => updateForm('priority', p)} className={`flex-1 px-1.5 py-2.5 rounded-lg border-[1.5px] transition-all ${colores}`}>
                       {p}
                     </button>
                   );
@@ -139,8 +132,8 @@ export function SolicitudForm({ inicial, onGuardar, onCancelar, onTerminado }: S
             </div>
           </div>
           <div>
-            <label htmlFor="sol-detalles" style={etiqueta}>Detalles</label>
-            <textarea id="sol-detalles" rows={5} maxLength={LIMITES.descripcion} value={form.description} onChange={(e) => updateForm('description', e.target.value)} style={{ ...campo(formErrors.description), resize: 'vertical' }} />
+            <label htmlFor="sol-detalles" className={etiqueta}>Detalles</label>
+            <textarea id="sol-detalles" rows={5} maxLength={LIMITES.descripcion} value={form.description} onChange={(e) => updateForm('description', e.target.value)} className={`${claseCampo(formErrors.description)} resize-y`} />
             <ErrorCampo mensaje={formErrors.description} />
             <p className="text-gray-400 text-xs mt-1 text-right">{form.description.length}/{LIMITES.descripcion}</p>
           </div>
@@ -150,7 +143,7 @@ export function SolicitudForm({ inicial, onGuardar, onCancelar, onTerminado }: S
                 Cancelar
               </button>
             )}
-            <button onClick={handleSubmit} disabled={submitting} style={{ padding: '12px 24px', borderRadius: '8px', border: 'none', background: submitting ? '#93A8E8' : '#1E3FAE', color: 'white', fontWeight: 700, cursor: submitting ? 'not-allowed' : 'pointer' }}>
+            <button onClick={handleSubmit} disabled={submitting} className="px-6 py-3 rounded-lg bg-[#1E3FAE] text-white font-bold hover:bg-[#19358f] transition-colors disabled:bg-[#93A8E8] disabled:cursor-not-allowed">
               {submitting ? 'Guardando...' : 'Guardar'}
             </button>
           </div>

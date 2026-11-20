@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import type { DocumentData, QueryDocumentSnapshot } from 'firebase/firestore';
 import { aSolicitudes } from '../app/services/solicitudes';
-import { getPriorityColors } from '../app/config/solicitudes';
+import { clasePrioridad, statusConfig } from '../app/config/solicitudes';
 
 // Documento de Firestore de mentira, con la forma que usa aSolicitudes
 const fakeDoc = (id: string, data: DocumentData) =>
@@ -69,15 +69,13 @@ describe('aSolicitudes', () => {
   });
 });
 
-describe('getPriorityColors', () => {
-  it('usa colores neutros cuando el botón no está activo', () => {
-    expect(getPriorityColors('Alta', false)).toEqual(getPriorityColors('Baja', false));
+describe('colores de prioridad y estado', () => {
+  it('cada prioridad tiene su propio color', () => {
+    expect(new Set(Object.values(clasePrioridad)).size).toBe(3);
   });
 
-  it('cada prioridad activa tiene su propio color', () => {
-    const alta = getPriorityColors('Alta', true).text;
-    const media = getPriorityColors('Media', true).text;
-    const baja = getPriorityColors('Baja', true).text;
-    expect(new Set([alta, media, baja]).size).toBe(3);
+  it('cada estado tiene su propio color', () => {
+    const clases = Object.values(statusConfig).map((e) => e.clase);
+    expect(new Set(clases).size).toBe(clases.length);
   });
 });

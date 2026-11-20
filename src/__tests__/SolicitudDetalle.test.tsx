@@ -30,6 +30,12 @@ describe('SolicitudDetalle', () => {
     expect(respuesta).toHaveClass('whitespace-pre-wrap');
   });
 
+  it('pinta la prioridad con su color', () => {
+    mostrar(solicitud({ prioridad: 'Baja' }));
+
+    expect(screen.getByText('Baja')).toHaveClass('text-green-600');
+  });
+
   it('la descripción también respeta los saltos de línea', () => {
     mostrar(solicitud({ descripcion: 'Primera línea\nSegunda línea' }));
 

@@ -17,19 +17,17 @@ export const colorGraficoEstado: Record<EstadoSolicitud, string> = {
 // Azul de las barras que cuentan una sola serie (por ejemplo, solicitudes por categoría)
 export const COLOR_GRAFICO_SERIE = '#2a78d6';
 
-// Colores e ícono de cada estado
-export const statusConfig: Record<string, { color: string; bg: string; icon: React.ReactNode }> = {
-  'En revisión': { color: '#B45309', bg: '#FEF3C7', icon: <Clock size={12} /> },
-  'Aprobada': { color: '#15803D', bg: '#DCFCE7', icon: <CheckCircle2 size={12} /> },
-  'Pendiente': { color: '#6B7280', bg: '#F3F4F6', icon: <Clock size={12} /> },
-  'Rechazada': { color: '#DC3545', bg: '#FEF2F2', icon: <AlertTriangle size={12} /> },
+// Colores (clases de Tailwind) e ícono de cada estado
+export const statusConfig: Record<string, { clase: string; icon: React.ReactNode }> = {
+  'En revisión': { clase: 'bg-amber-100 text-amber-700', icon: <Clock size={12} /> },
+  'Aprobada': { clase: 'bg-green-100 text-green-700', icon: <CheckCircle2 size={12} /> },
+  'Pendiente': { clase: 'bg-gray-100 text-gray-500', icon: <Clock size={12} /> },
+  'Rechazada': { clase: 'bg-red-50 text-red-600', icon: <AlertTriangle size={12} /> },
 };
 
-// Colores de los botones de prioridad (el activo se resalta)
-export const getPriorityColors = (p: string, isActive: boolean) => {
-  if (!isActive) return { border: '#E5E7EB', bg: '#F9FAFB', text: '#6B7280' };
-  if (p === 'Alta') return { border: '#FCA5A5', bg: '#FEF2F2', text: '#DC2626' };
-  if (p === 'Media') return { border: '#FDE68A', bg: '#FEF3C7', text: '#D97706' };
-  if (p === 'Baja') return { border: '#A7F3D0', bg: '#DCFCE7', text: '#16A34A' };
-  return { border: '#E5E7EB', bg: '#F9FAFB', text: '#374151' };
+// Colores de cada prioridad: los usan la etiqueta del detalle y el botón elegido del formulario
+export const clasePrioridad: Record<Prioridad, string> = {
+  Alta: 'border-red-300 bg-red-50 text-red-600',
+  Media: 'border-amber-200 bg-amber-100 text-amber-600',
+  Baja: 'border-emerald-200 bg-green-100 text-green-600',
 };

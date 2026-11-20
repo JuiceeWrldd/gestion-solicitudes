@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { MessageSquare, Pencil, Trash2 } from 'lucide-react';
 import { LIMITES } from '../../config/limites';
+import { clasePrioridad } from '../../config/solicitudes';
 import { limpiarTexto } from '../../utils/texto';
 import type { Solicitud } from '../../types';
 
@@ -13,13 +14,6 @@ interface SolicitudDetalleProps {
 }
 
 const subtitulo = 'text-gray-400 text-[11px] font-bold uppercase tracking-wider';
-
-const colorPrioridad = (p: string) =>
-  p === 'Alta'
-    ? { background: '#FEE2E2', color: '#DC2626' }
-    : p === 'Media'
-      ? { background: '#FEF3C7', color: '#D97706' }
-      : { background: '#DCFCE7', color: '#16A34A' };
 
 // Parte que se despliega al abrir una solicitud de la tabla
 export function SolicitudDetalle({ solicitud: req, esAdmin, onResponder, onEditar, onEliminar }: SolicitudDetalleProps) {
@@ -73,7 +67,7 @@ export function SolicitudDetalle({ solicitud: req, esAdmin, onResponder, onEdita
           </div>
           <div>
             <h4 className={`${subtitulo} mb-1`}>Prioridad</h4>
-            <span className="inline-flex items-center px-2 py-1 rounded text-xs font-bold" style={colorPrioridad(req.prioridad)}>{req.prioridad}</span>
+            <span className={`inline-flex items-center px-2 py-1 rounded text-xs font-bold ${clasePrioridad[req.prioridad]}`}>{req.prioridad}</span>
           </div>
         </div>
 
