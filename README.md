@@ -81,8 +81,13 @@ En cada push a `main`, GitHub Actions revisa los tipos, corre las pruebas y comp
 ```
 src/
 ├── app/
-│   ├── components/   # Pantallas y componentes de la aplicación
-│   └── config/       # Configuración de Firebase
+│   ├── components/   # Pantallas (acceso, registro, panel, integrantes...)
+│   │   └── dashboard/  # Secciones del panel: inicio, formulario, tabla, perfil, menú
+│   ├── config/       # Firebase, categorías, estados, oficinas y límites de texto
+│   ├── hooks/        # Estado y acciones de cada parte (perfil, solicitudes, integrantes)
+│   ├── services/     # Lectura y escritura en Firebase
+│   ├── utils/        # Funciones sueltas: validaciones, filtros, estadísticas, texto
+│   └── types.ts      # Tipos compartidos (usuario, empresa, solicitud)
 ├── styles/           # Estilos globales
 └── __tests__/        # Pruebas unitarias
 ```

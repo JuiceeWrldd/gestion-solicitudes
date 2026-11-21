@@ -30,7 +30,7 @@ export function SolicitudesTabla({ solicitudes, cargando, esAdmin, onCambiarEsta
   // Aprobar o rechazar se pregunta antes: desde la lista no hay forma de deshacerlo
   const decidir = (req: Solicitud, estado: 'Aprobada' | 'Rechazada') => {
     const accion = estado === 'Aprobada' ? 'Aprobar' : 'Rechazar';
-    if (!window.confirm(`¿${accion} la solicitud "${req.title}"? Después no se puede cambiar.`)) return;
+    if (!window.confirm(`¿${accion} la solicitud "${req.titulo}"? Después no se puede cambiar.`)) return;
     onCambiarEstado(req.id, estado);
   };
 
@@ -82,9 +82,9 @@ export function SolicitudesTabla({ solicitudes, cargando, esAdmin, onCambiarEsta
 
                   {/* Título y datos: arriba en celular, junto a la flecha */}
                   <div className="order-1 flex-1 min-w-0">
-                    <div className="text-gray-900 text-sm font-semibold leading-snug break-words sm:truncate">{req.title}</div>
+                    <div className="text-gray-900 text-sm font-semibold leading-snug break-words sm:truncate">{req.titulo}</div>
                     <div className="text-gray-400 text-xs mt-1">
-                      <span className="font-medium">{req.id.slice(0, 8)}</span> · {req.type}
+                      <span className="font-medium">{req.id.slice(0, 8)}</span> · {req.tipo}
                     </div>
                     {esAdmin && (
                       <span className="block w-fit mt-1.5 text-indigo-500 text-xs font-medium bg-indigo-50 px-1.5 py-0.5 rounded max-w-full truncate">De: {req.autorNombre}</span>
@@ -97,16 +97,16 @@ export function SolicitudesTabla({ solicitudes, cargando, esAdmin, onCambiarEsta
 
                   {/* Estado y acciones: en celular van en su propia línea, debajo del título */}
                   <div className="order-3 w-full sm:w-auto flex items-center justify-between sm:justify-start gap-3 sm:gap-4">
-                    <div className={`flex items-center gap-1 px-3 py-1 rounded-full shrink-0 sm:w-[120px] justify-center text-xs font-semibold ${statusConfig[req.status]?.clase ?? ''}`}>
-                      {statusConfig[req.status]?.icon} {req.status}
+                    <div className={`flex items-center gap-1 px-3 py-1 rounded-full shrink-0 sm:w-[120px] justify-center text-xs font-semibold ${statusConfig[req.estado]?.clase ?? ''}`}>
+                      {statusConfig[req.estado]?.icon} {req.estado}
                     </div>
 
                     {esAdmin && (
                       <div className="flex items-center justify-end gap-2 sm:w-[90px] shrink-0">
-                        {req.status === 'En revisión' ? (
+                        {req.estado === 'En revisión' ? (
                           <>
-                            <button onClick={(e) => { e.stopPropagation(); decidir(req, 'Aprobada'); }} aria-label={`Aprobar ${req.title}`} title="Aprobar" className="w-9 h-9 sm:w-8 sm:h-8 rounded border border-green-200 text-green-600 bg-green-50 hover:bg-green-100 flex justify-center items-center"><CheckCircle2 size={16} /></button>
-                            <button onClick={(e) => { e.stopPropagation(); decidir(req, 'Rechazada'); }} aria-label={`Rechazar ${req.title}`} title="Rechazar" className="w-9 h-9 sm:w-8 sm:h-8 rounded border border-red-200 text-red-600 bg-red-50 hover:bg-red-100 flex justify-center items-center"><AlertTriangle size={16} /></button>
+                            <button onClick={(e) => { e.stopPropagation(); decidir(req, 'Aprobada'); }} aria-label={`Aprobar ${req.titulo}`} title="Aprobar" className="w-9 h-9 sm:w-8 sm:h-8 rounded border border-green-200 text-green-600 bg-green-50 hover:bg-green-100 flex justify-center items-center"><CheckCircle2 size={16} /></button>
+                            <button onClick={(e) => { e.stopPropagation(); decidir(req, 'Rechazada'); }} aria-label={`Rechazar ${req.titulo}`} title="Rechazar" className="w-9 h-9 sm:w-8 sm:h-8 rounded border border-red-200 text-red-600 bg-red-50 hover:bg-red-100 flex justify-center items-center"><AlertTriangle size={16} /></button>
                           </>
                         ) : <span className="text-xs font-medium text-gray-300 sm:mr-2">Revisada</span>}
                       </div>

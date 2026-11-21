@@ -4,11 +4,11 @@ import type { Solicitud } from '../app/types';
 
 const solicitud = (extra: Partial<Solicitud>): Solicitud => ({
   id: 'x',
-  title: 'Solicitud',
-  type: 'Otro',
-  status: 'En revisión',
-  date: '1/1/2026',
-  time: '10:00',
+  titulo: 'Solicitud',
+  tipo: 'Otro',
+  estado: 'En revisión',
+  fecha: '1/1/2026',
+  hora: '10:00',
   autorNombre: 'Ana',
   autorEmail: 'ana@test.com',
   descripcion: 'detalle',
@@ -20,10 +20,10 @@ const solicitud = (extra: Partial<Solicitud>): Solicitud => ({
 describe('contarPorEstado', () => {
   it('cuenta cuántas hay en cada estado', () => {
     const r = contarPorEstado([
-      solicitud({ status: 'En revisión' }),
-      solicitud({ status: 'En revisión' }),
-      solicitud({ status: 'Aprobada' }),
-      solicitud({ status: 'Rechazada' }),
+      solicitud({ estado: 'En revisión' }),
+      solicitud({ estado: 'En revisión' }),
+      solicitud({ estado: 'Aprobada' }),
+      solicitud({ estado: 'Rechazada' }),
     ]);
     expect(r).toEqual([
       { nombre: 'En revisión', cantidad: 2 },
@@ -33,22 +33,17 @@ describe('contarPorEstado', () => {
   });
 
   it('ordena de más a menos, y si empatan sigue el orden del flujo', () => {
-    const r = contarPorEstado([solicitud({ status: 'Rechazada' }), solicitud({ status: 'Rechazada' }), solicitud({ status: 'Aprobada' })]);
+    const r = contarPorEstado([solicitud({ estado: 'Rechazada' }), solicitud({ estado: 'Rechazada' }), solicitud({ estado: 'Aprobada' })]);
     expect(r.map((c) => c.nombre)).toEqual(['Rechazada', 'Aprobada', 'En revisión']);
 
-    const empate = contarPorEstado([solicitud({ status: 'Rechazada' }), solicitud({ status: 'Aprobada' })]);
+    const empate = contarPorEstado([solicitud({ estado: 'Rechazada' }), solicitud({ estado: 'Aprobada' })]);
     expect(empate.map((c) => c.nombre)).toEqual(['Aprobada', 'Rechazada', 'En revisión']);
   });
 
   it('los tres estados del flujo salen siempre, aunque estén en cero', () => {
-    const r = contarPorEstado([solicitud({ status: 'Aprobada' })]);
+    const r = contarPorEstado([solicitud({ estado: 'Aprobada' })]);
     expect(r).toHaveLength(3);
     expect(r.find((c) => c.nombre === 'Rechazada')?.cantidad).toBe(0);
-  });
-
-  it('"Pendiente" solo sale si alguna solicitud lo tiene', () => {
-    expect(contarPorEstado([solicitud({})]).map((c) => c.nombre)).not.toContain('Pendiente');
-    expect(contarPorEstado([solicitud({ status: 'Pendiente' })]).map((c) => c.nombre)).toContain('Pendiente');
   });
 
   it('sin solicitudes devuelve los tres estados en cero', () => {
@@ -63,11 +58,11 @@ describe('contarPorEstado', () => {
 describe('contarPorCategoria', () => {
   it('cuenta por categoría y ordena de más a menos', () => {
     const r = contarPorCategoria([
-      solicitud({ type: 'Logística' }),
-      solicitud({ type: 'Financiera' }),
-      solicitud({ type: 'Financiera' }),
-      solicitud({ type: 'Financiera' }),
-      solicitud({ type: 'Logística' }),
+      solicitud({ tipo: 'Logística' }),
+      solicitud({ tipo: 'Financiera' }),
+      solicitud({ tipo: 'Financiera' }),
+      solicitud({ tipo: 'Financiera' }),
+      solicitud({ tipo: 'Logística' }),
     ]);
     expect(r).toEqual([
       { nombre: 'Financiera', cantidad: 3 },
@@ -76,16 +71,16 @@ describe('contarPorCategoria', () => {
   });
 
   it('solo salen las categorías que tienen solicitudes', () => {
-    expect(contarPorCategoria([solicitud({ type: 'Otro' })])).toEqual([{ nombre: 'Otro', cantidad: 1 }]);
+    expect(contarPorCategoria([solicitud({ tipo: 'Otro' })])).toEqual([{ nombre: 'Otro', cantidad: 1 }]);
   });
 
   it('si empatan, ordena por nombre, ignorando las tildes y las mayúsculas', () => {
-    const r = contarPorCategoria([solicitud({ type: 'Soporte Técnico' }), solicitud({ type: 'Administrativa' }), solicitud({ type: 'Otro' })]);
+    const r = contarPorCategoria([solicitud({ tipo: 'Soporte Técnico' }), solicitud({ tipo: 'Administrativa' }), solicitud({ tipo: 'Otro' })]);
     expect(r.map((c) => c.nombre)).toEqual(['Administrativa', 'Otro', 'Soporte Técnico']);
   });
 
   it('incluye categorías que no están en la lista oficial (por ejemplo "Sin tipo")', () => {
-    expect(contarPorCategoria([solicitud({ type: 'Sin tipo' })])).toEqual([{ nombre: 'Sin tipo', cantidad: 1 }]);
+    expect(contarPorCategoria([solicitud({ tipo: 'Sin tipo' })])).toEqual([{ nombre: 'Sin tipo', cantidad: 1 }]);
   });
 
   it('sin solicitudes devuelve una lista vacía', () => {

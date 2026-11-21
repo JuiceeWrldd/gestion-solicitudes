@@ -47,7 +47,7 @@ export function SolicitudDetalle({ solicitud: req, esAdmin, onResponder, onEdita
             )}
           </div>
 
-          {!esAdmin && req.status === 'En revisión' && (
+          {!esAdmin && req.estado === 'En revisión' && (
             <div className="mt-6 pt-5 border-t border-gray-100 flex flex-wrap justify-end gap-3">
               <button onClick={() => onEditar(req)} className="px-4 py-2 border border-gray-300 text-sm font-semibold rounded-lg hover:bg-gray-50 flex items-center gap-2"><Pencil size={14} /> Modificar</button>
               <button onClick={() => onEliminar(req.id)} className="px-4 py-2 bg-red-50 text-red-600 border border-red-100 text-sm font-semibold rounded-lg hover:bg-red-100 flex items-center gap-2"><Trash2 size={14} /> Eliminar</button>
@@ -63,7 +63,7 @@ export function SolicitudDetalle({ solicitud: req, esAdmin, onResponder, onEdita
           </div>
           <div>
             <h4 className={`${subtitulo} mb-1`}>Fecha</h4>
-            <div className="text-gray-700 text-sm font-medium">{req.date} <span className="text-gray-400 font-normal">a las</span> {req.time}</div>
+            <div className="text-gray-700 text-sm font-medium">{req.fecha} <span className="text-gray-400 font-normal">a las</span> {req.hora}</div>
           </div>
           <div>
             <h4 className={`${subtitulo} mb-1`}>Prioridad</h4>

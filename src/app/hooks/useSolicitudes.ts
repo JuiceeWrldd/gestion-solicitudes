@@ -50,7 +50,7 @@ export function useSolicitudes(perfil: PerfilUsuario | null, onError: (mensaje: 
   const cambiarEstado = async (id: string, estado: EstadoSolicitud) => {
     try {
       await actualizarEstadoSolicitud(id, estado);
-      setSolicitudes((prev) => prev.map((s) => (s.id === id ? { ...s, status: estado } : s)));
+      setSolicitudes((prev) => prev.map((s) => (s.id === id ? { ...s, estado } : s)));
     } catch (error) {
       console.error('Error actualizando estado:', error);
       onError('No se pudo cambiar el estado de la solicitud.');

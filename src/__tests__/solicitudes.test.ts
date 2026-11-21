@@ -23,15 +23,15 @@ describe('aSolicitudes', () => {
     const [s] = aSolicitudes([fakeDoc('x', {})]);
     expect(s).toMatchObject({
       id: 'x',
-      title: 'Sin título',
-      type: 'Sin tipo',
-      status: 'En revisión',
+      titulo: 'Sin título',
+      tipo: 'Sin tipo',
+      estado: 'En revisión',
       prioridad: 'Media',
       autorNombre: 'Usuario',
       autorEmail: '',
       respuestaAdmin: null,
-      date: 'Reciente',
-      time: '',
+      fecha: 'Reciente',
+      hora: '',
     });
   });
 
@@ -49,14 +49,23 @@ describe('aSolicitudes', () => {
       }),
     ]);
     expect(s).toMatchObject({
-      title: 'Impresora',
-      type: 'Soporte Técnico',
-      status: 'Aprobada',
+      titulo: 'Impresora',
+      tipo: 'Soporte Técnico',
+      estado: 'Aprobada',
       prioridad: 'Alta',
       autorNombre: 'Ana',
       respuestaAdmin: 'Listo',
     });
-    expect(s.date).not.toBe('Reciente');
+    expect(s.fecha).not.toBe('Reciente');
+  });
+
+  it('un estado que la app no conoce se muestra como "En revisión"', () => {
+    const [vieja, rara] = aSolicitudes([
+      fakeDoc('a', { estado: 'Pendiente', fecha: fecha(2) }),
+      fakeDoc('b', { estado: 123, fecha: fecha(1) }),
+    ]);
+    expect(vieja.estado).toBe('En revisión');
+    expect(rara.estado).toBe('En revisión');
   });
 
   it('no modifica la lista original', () => {

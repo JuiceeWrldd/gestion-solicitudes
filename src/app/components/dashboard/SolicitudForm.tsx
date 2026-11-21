@@ -4,17 +4,10 @@ import { TIPOS, PRIORIDADES, clasePrioridad } from '../../config/solicitudes';
 import { LIMITES, MIN_DESCRIPCION } from '../../config/limites';
 import { limpiarTexto } from '../../utils/texto';
 import type { DatosSolicitud } from '../../services/solicitudes';
-import type { Prioridad, Solicitud } from '../../types';
+import type { Solicitud } from '../../types';
 import { claseCampo, ErrorCampo } from '../Formulario';
 
-interface FormState {
-  title: string;
-  type: string;
-  description: string;
-  priority: Prioridad;
-}
-
-const FORM_VACIO: FormState = { title: '', type: 'Soporte Técnico', description: '', priority: 'Media' };
+const FORM_VACIO: DatosSolicitud = { titulo: '', tipo: 'Soporte Técnico', descripcion: '', prioridad: 'Media' };
 
 interface SolicitudFormProps {
   inicial: Solicitud | null; // la solicitud que se está editando, o null si es nueva
@@ -27,10 +20,10 @@ const etiqueta = 'block text-gray-700 text-[13px] font-semibold mb-1.5';
 
 export function SolicitudForm({ inicial, onGuardar, onCancelar, onTerminado }: SolicitudFormProps) {
   const [esEdicion] = useState(inicial !== null);
-  const [form, setForm] = useState<FormState>(
-    inicial ? { title: inicial.title, type: inicial.type, description: inicial.descripcion, priority: inicial.prioridad } : FORM_VACIO
+  const [form, setForm] = useState<DatosSolicitud>(
+    inicial ? { titulo: inicial.titulo, tipo: inicial.tipo, descripcion: inicial.descripcion, prioridad: inicial.prioridad } : FORM_VACIO
   );
-  const [formErrors, setFormErrors] = useState<Partial<Record<keyof FormState, string>>>({});
+  const [formErrors, setFormErrors] = useState<Partial<Record<keyof DatosSolicitud, string>>>({});
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
@@ -41,26 +34,26 @@ export function SolicitudForm({ inicial, onGuardar, onCancelar, onTerminado }: S
     return () => clearTimeout(timer);
   }, [submitted]);
 
-  const updateForm = <K extends keyof FormState>(field: K, value: FormState[K]) => {
+  const updateForm = <K extends keyof DatosSolicitud>(field: K, value: DatosSolicitud[K]) => {
     setForm((p) => ({ ...p, [field]: value }));
     setFormErrors((p) => ({ ...p, [field]: undefined }));
   };
 
   // Se valida (y se guarda) el texto ya limpio, sin etiquetas HTML ni caracteres raros
   const validar = (titulo: string, descripcion: string) => {
-    const e: Partial<Record<keyof FormState, string>> = {};
-    if (!titulo) e.title = 'Ponle un título';
-    else if (titulo.length > LIMITES.titulo) e.title = `Máximo ${LIMITES.titulo} caracteres`;
-    if (!form.type) e.type = 'Elige una categoría';
-    if (!descripcion) e.description = 'Cuenta qué necesitas';
-    else if (descripcion.length < MIN_DESCRIPCION) e.description = `Mínimo ${MIN_DESCRIPCION} caracteres`;
-    else if (descripcion.length > LIMITES.descripcion) e.description = `Máximo ${LIMITES.descripcion} caracteres`;
+    const e: Partial<Record<keyof DatosSolicitud, string>> = {};
+    if (!titulo) e.titulo = 'Ponle un título';
+    else if (titulo.length > LIMITES.titulo) e.titulo = `Máximo ${LIMITES.titulo} caracteres`;
+    if (!form.tipo) e.tipo = 'Elige una categoría';
+    if (!descripcion) e.descripcion = 'Cuenta qué necesitas';
+    else if (descripcion.length < MIN_DESCRIPCION) e.descripcion = `Mínimo ${MIN_DESCRIPCION} caracteres`;
+    else if (descripcion.length > LIMITES.descripcion) e.descripcion = `Máximo ${LIMITES.descripcion} caracteres`;
     return e;
   };
 
   const handleSubmit = async () => {
-    const titulo = limpiarTexto(form.title);
-    const descripcion = limpiarTexto(form.description, true);
+    const titulo = limpiarTexto(form.titulo);
+    const descripcion = limpiarTexto(form.descripcion, true);
 
     const errores = validar(titulo, descripcion);
     if (Object.keys(errores).length > 0) {
@@ -69,12 +62,7 @@ export function SolicitudForm({ inicial, onGuardar, onCancelar, onTerminado }: S
     }
 
     setSubmitting(true);
-    const ok = await onGuardar({
-      titulo,
-      tipo: form.type,
-      descripcion,
-      prioridad: form.priority,
-    });
+    const ok = await onGuardar({ ...form, titulo, descripcion });
     setSubmitting(false);
     if (ok) setSubmitted(true);
   };
@@ -105,13 +93,13 @@ export function SolicitudForm({ inicial, onGuardar, onCancelar, onTerminado }: S
         <div className="flex flex-col gap-5">
           <div>
             <label htmlFor="sol-titulo" className={etiqueta}>Título</label>
-            <input id="sol-titulo" type="text" maxLength={LIMITES.titulo} value={form.title} onChange={(e) => updateForm('title', e.target.value)} className={claseCampo(formErrors.title)} />
-            <ErrorCampo mensaje={formErrors.title} />
+            <input id="sol-titulo" type="text" maxLength={LIMITES.titulo} value={form.titulo} onChange={(e) => updateForm('titulo', e.target.value)} className={claseCampo(formErrors.titulo)} />
+            <ErrorCampo mensaje={formErrors.titulo} />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label htmlFor="sol-tipo" className={etiqueta}>Categoría</label>
-              <select id="sol-tipo" value={form.type} onChange={(e) => updateForm('type', e.target.value)} className={claseCampo(formErrors.type)}>
+              <select id="sol-tipo" value={form.tipo} onChange={(e) => updateForm('tipo', e.target.value)} className={claseCampo(formErrors.tipo)}>
                 <option value="" disabled>Elige una</option>
                 {TIPOS.map((t) => <option key={t} value={t}>{t}</option>)}
               </select>
@@ -120,10 +108,10 @@ export function SolicitudForm({ inicial, onGuardar, onCancelar, onTerminado }: S
               <label className={etiqueta}>Prioridad</label>
               <div className="flex gap-2">
                 {PRIORIDADES.map((p) => {
-                  const isActive = form.priority === p;
+                  const isActive = form.prioridad === p;
                   const colores = isActive ? `${clasePrioridad[p]} font-bold` : 'border-gray-200 bg-gray-50 text-gray-500 font-medium';
                   return (
-                    <button key={p} type="button" aria-pressed={isActive} onClick={() => updateForm('priority', p)} className={`flex-1 px-1.5 py-2.5 rounded-lg border-[1.5px] transition-all ${colores}`}>
+                    <button key={p} type="button" aria-pressed={isActive} onClick={() => updateForm('prioridad', p)} className={`flex-1 px-1.5 py-2.5 rounded-lg border-[1.5px] transition-all ${colores}`}>
                       {p}
                     </button>
                   );
@@ -133,9 +121,9 @@ export function SolicitudForm({ inicial, onGuardar, onCancelar, onTerminado }: S
           </div>
           <div>
             <label htmlFor="sol-detalles" className={etiqueta}>Detalles</label>
-            <textarea id="sol-detalles" rows={5} maxLength={LIMITES.descripcion} value={form.description} onChange={(e) => updateForm('description', e.target.value)} className={`${claseCampo(formErrors.description)} resize-y`} />
-            <ErrorCampo mensaje={formErrors.description} />
-            <p className="text-gray-400 text-xs mt-1 text-right">{form.description.length}/{LIMITES.descripcion}</p>
+            <textarea id="sol-detalles" rows={5} maxLength={LIMITES.descripcion} value={form.descripcion} onChange={(e) => updateForm('descripcion', e.target.value)} className={`${claseCampo(formErrors.descripcion)} resize-y`} />
+            <ErrorCampo mensaje={formErrors.descripcion} />
+            <p className="text-gray-400 text-xs mt-1 text-right">{form.descripcion.length}/{LIMITES.descripcion}</p>
           </div>
           <div className="flex justify-end gap-3 pt-2">
             {esEdicion && (

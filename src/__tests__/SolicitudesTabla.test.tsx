@@ -5,11 +5,11 @@ import type { Solicitud } from '../app/types';
 
 const solicitud = (extra: Partial<Solicitud>): Solicitud => ({
   id: 'abcdefgh12345',
-  title: 'Solicitud',
-  type: 'Otro',
-  status: 'En revisión',
-  date: '1/1/2026',
-  time: '10:00',
+  titulo: 'Solicitud',
+  tipo: 'Otro',
+  estado: 'En revisión',
+  fecha: '1/1/2026',
+  hora: '10:00',
   autorNombre: 'Ana Gómez',
   autorEmail: 'ana@test.com',
   descripcion: 'detalle',
@@ -19,9 +19,9 @@ const solicitud = (extra: Partial<Solicitud>): Solicitud => ({
 });
 
 const lista: Solicitud[] = [
-  solicitud({ id: 'a-impresora', title: 'Impresora sin tinta', type: 'Soporte Técnico', prioridad: 'Alta' }),
-  solicitud({ id: 'b-vacaciones', title: 'Vacaciones de diciembre', type: 'Recursos Humanos', status: 'Aprobada' }),
-  solicitud({ id: 'c-camion', title: 'Camión para el despacho', type: 'Logística', status: 'Rechazada', prioridad: 'Baja' }),
+  solicitud({ id: 'a-impresora', titulo: 'Impresora sin tinta', tipo: 'Soporte Técnico', prioridad: 'Alta' }),
+  solicitud({ id: 'b-vacaciones', titulo: 'Vacaciones de diciembre', tipo: 'Recursos Humanos', estado: 'Aprobada' }),
+  solicitud({ id: 'c-camion', titulo: 'Camión para el despacho', tipo: 'Logística', estado: 'Rechazada', prioridad: 'Baja' }),
 ];
 
 const mostrar = (extra: { solicitudes?: Solicitud[]; cargando?: boolean; esAdmin?: boolean } = {}) =>

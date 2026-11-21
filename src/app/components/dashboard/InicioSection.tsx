@@ -14,8 +14,8 @@ export function InicioSection({ solicitudes, esAdmin }: InicioSectionProps) {
   const [verTabla, setVerTabla] = useState(false);
 
   const total = solicitudes.length;
-  const pendientes = solicitudes.filter((req) => req.status === 'En revisión').length;
-  const completadas = solicitudes.filter((req) => req.status === 'Aprobada' || req.status === 'Rechazada').length;
+  const pendientes = solicitudes.filter((req) => req.estado === 'En revisión').length;
+  const completadas = solicitudes.filter((req) => req.estado === 'Aprobada' || req.estado === 'Rechazada').length;
 
   const tarjetas = [
     { label: 'Total', value: total, icon: <FileText size={20} />, clase: 'bg-indigo-50 text-[#1E3FAE]' },

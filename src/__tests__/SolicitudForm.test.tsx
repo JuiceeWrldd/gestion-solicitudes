@@ -188,11 +188,11 @@ describe('SolicitudForm: guardar', () => {
 describe('SolicitudForm: edición', () => {
   const existente: Solicitud = {
     id: 'abc',
-    title: 'Teclado roto',
-    type: 'Soporte Técnico',
-    status: 'En revisión',
-    date: '1/1/2026',
-    time: '10:00',
+    titulo: 'Teclado roto',
+    tipo: 'Soporte Técnico',
+    estado: 'En revisión',
+    fecha: '1/1/2026',
+    hora: '10:00',
     autorNombre: 'Ana',
     autorEmail: 'ana@test.com',
     descripcion: 'El teclado del puesto 4 no responde',

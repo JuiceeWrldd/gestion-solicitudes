@@ -20,12 +20,12 @@ export function filtrarSolicitudes(solicitudes: Solicitud[], filtros: Filtros): 
   const palabras = normalizar(filtros.texto).split(/\s+/).filter(Boolean);
 
   return solicitudes.filter((s) => {
-    if (filtros.estado && s.status !== filtros.estado) return false;
+    if (filtros.estado && s.estado !== filtros.estado) return false;
     if (filtros.prioridad && s.prioridad !== filtros.prioridad) return false;
-    if (filtros.tipo && s.type !== filtros.tipo) return false;
+    if (filtros.tipo && s.tipo !== filtros.tipo) return false;
     if (palabras.length === 0) return true;
 
-    const contenido = normalizar([s.title, s.descripcion, s.type, s.autorNombre, s.respuestaAdmin ?? '', s.id.slice(0, 8)].join(' '));
+    const contenido = normalizar([s.titulo, s.descripcion, s.tipo, s.autorNombre, s.respuestaAdmin ?? '', s.id.slice(0, 8)].join(' '));
     return palabras.every((palabra) => contenido.includes(palabra));
   });
 }

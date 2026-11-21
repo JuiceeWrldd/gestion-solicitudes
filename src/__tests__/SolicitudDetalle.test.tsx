@@ -5,11 +5,11 @@ import type { Solicitud } from '../app/types';
 
 const solicitud = (extra: Partial<Solicitud> = {}): Solicitud => ({
   id: 'sol-1',
-  title: 'Impresora sin tinta',
-  type: 'Soporte Técnico',
-  status: 'En revisión',
-  date: '1/1/2026',
-  time: '10:00',
+  titulo: 'Impresora sin tinta',
+  tipo: 'Soporte Técnico',
+  estado: 'En revisión',
+  fecha: '1/1/2026',
+  hora: '10:00',
   autorNombre: 'Ana Gómez',
   autorEmail: 'ana@empresa.com',
   descripcion: 'La impresora del segundo piso no imprime.',

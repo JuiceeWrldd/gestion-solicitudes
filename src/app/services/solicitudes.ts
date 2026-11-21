@@ -12,7 +12,12 @@ import {
   type QueryDocumentSnapshot,
 } from 'firebase/firestore';
 import { auth, db } from '../config/firebase';
+import { ESTADOS } from '../config/solicitudes';
 import type { EstadoSolicitud, Prioridad, Solicitud } from '../types';
+
+// Un estado que la app no conoce (o que falta) se muestra como "En revisión"
+const aEstado = (estado: unknown): EstadoSolicitud =>
+  ESTADOS.includes(estado as EstadoSolicitud) ? (estado as EstadoSolicitud) : 'En revisión';
 
 // Lo que el usuario escribe en el formulario
 export interface DatosSolicitud {
@@ -35,11 +40,11 @@ export function aSolicitudes(docs: QueryDocumentSnapshot<DocumentData>[]): Solic
     const fecha = data.fecha?.toDate();
     return {
       id: d.id,
-      title: data.titulo || 'Sin título',
-      type: data.tipo || 'Sin tipo',
-      status: (data.estado || 'En revisión') as EstadoSolicitud,
-      date: fecha ? fecha.toLocaleDateString('es-CO') : 'Reciente',
-      time: fecha ? fecha.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' }) : '',
+      titulo: data.titulo || 'Sin título',
+      tipo: data.tipo || 'Sin tipo',
+      estado: aEstado(data.estado),
+      fecha: fecha ? fecha.toLocaleDateString('es-CO') : 'Reciente',
+      hora: fecha ? fecha.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' }) : '',
       autorNombre: data.autorNombre || 'Usuario',
       autorEmail: data.autorEmail || '',
       descripcion: data.descripcion || 'Sin descripción detallada.',

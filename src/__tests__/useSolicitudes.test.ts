@@ -27,11 +27,11 @@ const perfil = (extra: Partial<PerfilUsuario> = {}): PerfilUsuario => ({
 
 const solicitud = (id: string, extra: Partial<Solicitud> = {}): Solicitud => ({
   id,
-  title: `Solicitud ${id}`,
-  type: 'Otro',
-  status: 'En revisión',
-  date: '1/1/2026',
-  time: '10:00',
+  titulo: `Solicitud ${id}`,
+  tipo: 'Otro',
+  estado: 'En revisión',
+  fecha: '1/1/2026',
+  hora: '10:00',
   autorNombre: 'Ana',
   autorEmail: 'ana@test.com',
   descripcion: 'detalle',
@@ -112,8 +112,8 @@ describe('useSolicitudes', () => {
       await act(() => result.current.cambiarEstado('a', 'Aprobada'));
 
       expect(api.actualizarEstadoSolicitud).toHaveBeenCalledWith('a', 'Aprobada');
-      expect(result.current.solicitudes.find((s) => s.id === 'a')?.status).toBe('Aprobada');
-      expect(result.current.solicitudes.find((s) => s.id === 'b')?.status).toBe('En revisión');
+      expect(result.current.solicitudes.find((s) => s.id === 'a')?.estado).toBe('Aprobada');
+      expect(result.current.solicitudes.find((s) => s.id === 'b')?.estado).toBe('En revisión');
     });
 
     it('cambiarEstado avisa si falla y deja la lista igual', async () => {
@@ -123,7 +123,7 @@ describe('useSolicitudes', () => {
       await act(() => result.current.cambiarEstado('a', 'Rechazada'));
 
       expect(onError).toHaveBeenCalledWith('No se pudo cambiar el estado de la solicitud.');
-      expect(result.current.solicitudes.find((s) => s.id === 'a')?.status).toBe('En revisión');
+      expect(result.current.solicitudes.find((s) => s.id === 'a')?.estado).toBe('En revisión');
     });
 
     it('responder guarda la respuesta y la muestra', async () => {

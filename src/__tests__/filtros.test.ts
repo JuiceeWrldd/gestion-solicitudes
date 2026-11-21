@@ -4,11 +4,11 @@ import type { Solicitud } from '../app/types';
 
 const solicitud = (extra: Partial<Solicitud>): Solicitud => ({
   id: 'abcdefgh12345',
-  title: 'Solicitud',
-  type: 'Otro',
-  status: 'En revisión',
-  date: '1/1/2026',
-  time: '10:00',
+  titulo: 'Solicitud',
+  tipo: 'Otro',
+  estado: 'En revisión',
+  fecha: '1/1/2026',
+  hora: '10:00',
   autorNombre: 'Ana Gómez',
   autorEmail: 'ana@test.com',
   descripcion: 'detalle',
@@ -18,10 +18,10 @@ const solicitud = (extra: Partial<Solicitud>): Solicitud => ({
 });
 
 const lista: Solicitud[] = [
-  solicitud({ id: 'id-impresora', title: 'Impresora sin tinta', type: 'Soporte Técnico', prioridad: 'Alta', descripcion: 'La del segundo piso no imprime' }),
-  solicitud({ id: 'id-vacaciones', title: 'Vacaciones de diciembre', type: 'Recursos Humanos', status: 'Aprobada', autorNombre: 'Luis Pérez', respuestaAdmin: 'Aprobadas, disfrútalas' }),
-  solicitud({ id: 'id-camion', title: 'Camión para el despacho', type: 'Logística', status: 'Rechazada', prioridad: 'Baja' }),
-  solicitud({ id: 'id-pago', title: 'Pago a proveedores', type: 'Financiera', prioridad: 'Alta' }),
+  solicitud({ id: 'id-impresora', titulo: 'Impresora sin tinta', tipo: 'Soporte Técnico', prioridad: 'Alta', descripcion: 'La del segundo piso no imprime' }),
+  solicitud({ id: 'id-vacaciones', titulo: 'Vacaciones de diciembre', tipo: 'Recursos Humanos', estado: 'Aprobada', autorNombre: 'Luis Pérez', respuestaAdmin: 'Aprobadas, disfrútalas' }),
+  solicitud({ id: 'id-camion', titulo: 'Camión para el despacho', tipo: 'Logística', estado: 'Rechazada', prioridad: 'Baja' }),
+  solicitud({ id: 'id-pago', titulo: 'Pago a proveedores', tipo: 'Financiera', prioridad: 'Alta' }),
 ];
 
 const con = (extra: Partial<Filtros>) => filtrarSolicitudes(lista, { ...SIN_FILTROS, ...extra }).map((s) => s.id);

@@ -5,11 +5,11 @@ import type { Solicitud } from '../app/types';
 
 const solicitud = (extra: Partial<Solicitud>): Solicitud => ({
   id: 'x',
-  title: 'Solicitud',
-  type: 'Otro',
-  status: 'En revisión',
-  date: '1/1/2026',
-  time: '10:00',
+  titulo: 'Solicitud',
+  tipo: 'Otro',
+  estado: 'En revisión',
+  fecha: '1/1/2026',
+  hora: '10:00',
   autorNombre: 'Ana',
   autorEmail: 'ana@test.com',
   descripcion: 'detalle',
@@ -19,10 +19,10 @@ const solicitud = (extra: Partial<Solicitud>): Solicitud => ({
 });
 
 const lista: Solicitud[] = [
-  solicitud({ id: '1', status: 'En revisión', type: 'Soporte Técnico' }),
-  solicitud({ id: '2', status: 'En revisión', type: 'Soporte Técnico' }),
-  solicitud({ id: '3', status: 'Aprobada', type: 'Financiera' }),
-  solicitud({ id: '4', status: 'Rechazada', type: 'Logística' }),
+  solicitud({ id: '1', estado: 'En revisión', tipo: 'Soporte Técnico' }),
+  solicitud({ id: '2', estado: 'En revisión', tipo: 'Soporte Técnico' }),
+  solicitud({ id: '3', estado: 'Aprobada', tipo: 'Financiera' }),
+  solicitud({ id: '4', estado: 'Rechazada', tipo: 'Logística' }),
 ];
 
 // Las tarjetas de arriba: el número que acompaña a cada nombre
@@ -83,7 +83,7 @@ describe('InicioSection', () => {
     });
 
     it('un estado sin solicitudes aparece igual, en cero', () => {
-      mostrar([solicitud({ status: 'Aprobada' })]);
+      mostrar([solicitud({ estado: 'Aprobada' })]);
 
       expect(screen.getByLabelText('Rechazada: 0 solicitudes, 0% del total')).toBeInTheDocument();
     });
