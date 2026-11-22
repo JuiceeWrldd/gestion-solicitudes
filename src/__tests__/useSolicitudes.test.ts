@@ -184,7 +184,7 @@ describe('useSolicitudes', () => {
       });
 
       expect(ok).toBe(true);
-      expect(api.crearSolicitud).toHaveBeenCalledWith(datos, 'gestiosync');
+      expect(api.crearSolicitud).toHaveBeenCalledWith(datos, 'gestiosync', 'Ana');
       expect(api.obtenerSolicitudesDeUsuario).toHaveBeenCalledTimes(1);
     });
 

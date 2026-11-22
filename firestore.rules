@@ -43,8 +43,10 @@ service cloud.firestore {
       return p in ['Alta', 'Media', 'Baja'];
     }
 
-    function estadoValido(e) {
-      return e in ['En revisión', 'Pendiente', 'Aprobada', 'Rechazada'];
+    // el admin decide una sola vez: de "En revisión" a aprobada o rechazada (o deja el estado como está)
+    function decisionValida(antes, despues) {
+      return despues == antes
+        || (antes == 'En revisión' && despues in ['Aprobada', 'Rechazada']);
     }
 
     function departamentoValido(d) {
@@ -129,21 +131,21 @@ service cloud.firestore {
     }
 
     match /solicitudes/{id} {
-      // cada uno ve las suyas; el admin ve las de su empresa
-      allow read: if estaAutenticado()
+      // cada uno ve las suyas; el admin ve las de su empresa. Una cuenta desactivada no ve ni toca nada
+      allow read: if tienePerfil()
         && (resource.data.usuarioId == request.auth.uid
             || (esAdmin() && resource.data.get('orgId', null) == miOrg()));
 
-      // al crear, tiene que ser suya, de su empresa, empezar "En revisión" y no traer campos de más
-      allow create: if estaAutenticado()
-        && miOrg() != null
+      // al crear, tiene que ser suya, de su empresa, empezar "En revisión" y no traer campos de más;
+      // el nombre y el correo del autor son los de su perfil y su cuenta
+      allow create: if miOrg() != null
         && request.resource.data.keys().hasOnly(['titulo', 'tipo', 'descripcion', 'prioridad', 'estado', 'usuarioId', 'orgId', 'autorNombre', 'autorEmail', 'fecha'])
         && request.resource.data.usuarioId == request.auth.uid
         && request.resource.data.orgId == miOrg()
         && request.resource.data.estado == 'En revisión'
         && request.resource.data.fecha == request.time
-        && textoEntre(request.resource.data.autorNombre, 1, 80)
-        && textoEntre(request.resource.data.autorEmail, 0, 254)
+        && request.resource.data.autorNombre == get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.nombre
+        && request.resource.data.autorEmail == request.auth.token.email
         && contenidoSolicitudValido(request.resource.data);
 
       allow update: if
@@ -151,17 +153,17 @@ service cloud.firestore {
         (esAdmin()
           && resource.data.get('orgId', null) == miOrg()
           && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['estado', 'respuestaAdmin'])
-          && estadoValido(request.resource.data.estado)
+          && decisionValida(resource.data.estado, request.resource.data.estado)
           && (!('respuestaAdmin' in request.resource.data) || textoEntre(request.resource.data.respuestaAdmin, 1, 1000)))
         // el dueño solo edita el contenido mientras siga en revisión
-        || (estaAutenticado()
+        || (tienePerfil()
           && resource.data.usuarioId == request.auth.uid
           && resource.data.estado == 'En revisión'
           && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['titulo', 'tipo', 'descripcion', 'prioridad'])
           && contenidoSolicitudValido(request.resource.data));
 
       // solo el dueño borra, y solo si sigue en revisión
-      allow delete: if estaAutenticado()
+      allow delete: if tienePerfil()
         && resource.data.usuarioId == request.auth.uid
         && resource.data.estado == 'En revisión';
     }

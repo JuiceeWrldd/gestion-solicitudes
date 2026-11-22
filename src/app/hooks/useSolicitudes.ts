@@ -91,7 +91,7 @@ export function useSolicitudes(perfil: PerfilUsuario | null, onError: (mensaje: 
           onError('Tu cuenta no tiene una empresa asignada. Pídele a tu administrador que la configure.');
           return false;
         }
-        await crearSolicitud(datos, orgId);
+        await crearSolicitud(datos, orgId, perfil?.nombre ?? '');
       }
       await recargar();
       return true;

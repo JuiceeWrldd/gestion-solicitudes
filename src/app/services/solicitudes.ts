@@ -66,15 +66,16 @@ export async function obtenerSolicitudesDeUsuario(uid: string): Promise<Solicitu
   return aSolicitudes(snap.docs);
 }
 
-export async function crearSolicitud(datos: DatosSolicitud, orgId: string) {
+// El nombre y el correo del autor tienen que ser los de su perfil y su cuenta: las reglas lo comprueban
+export async function crearSolicitud(datos: DatosSolicitud, orgId: string, autorNombre: string) {
   const user = auth.currentUser;
   await addDoc(collection(db, 'solicitudes'), {
     ...datos,
     estado: 'En revisión',
     usuarioId: user?.uid,
     orgId,
-    autorNombre: user?.displayName || 'Usuario',
-    autorEmail: user?.email || '',
+    autorNombre,
+    autorEmail: user?.email ?? '',
     fecha: serverTimestamp(),
   });
 }
