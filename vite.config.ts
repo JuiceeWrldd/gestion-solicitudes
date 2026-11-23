@@ -44,6 +44,7 @@ export default defineConfig(({ mode }) => ({
     globals: true,
     environment: 'jsdom',
     setupFiles: './src/setupTests.ts',
+    include: ['src/**/*.test.{ts,tsx}'], // las de las reglas van aparte (vitest.reglas.config.ts)
     // Con muchos archivos de prueba en paralelo la máquina puede ir lenta, y la primera prueba de cada
     // archivo paga el arranque: el límite por defecto (5 s) hacía fallar pruebas que estaban bien
     testTimeout: 15000,
