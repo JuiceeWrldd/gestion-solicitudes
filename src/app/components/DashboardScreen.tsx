@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { signOut } from 'firebase/auth';
 import { Home, FilePlus, FileText, User, Users, Menu, X } from 'lucide-react';
 import { auth } from '../config/firebase';
@@ -33,6 +33,9 @@ export function DashboardScreen({ onNavigateToLogin }: DashboardScreenProps) {
 
   const { perfil, setPerfil, organizacion, sinPerfil, cargando: cargandoPerfil, error: errorPerfil, reintentar } = usePerfil();
   const { solicitudes, cargando, cambiarEstado, responder, eliminar, guardar } = useSolicitudes(perfil, setErrorMsg);
+
+  // Misma función en cada render, para que el aviso de "Solicitud enviada" no reinicie su espera
+  const irAMisSolicitudes = useCallback(() => setActiveNav('mis'), []);
 
   const esAdmin = perfil?.rol === 'admin';
   const nombre = auth.currentUser?.displayName ?? '';
@@ -155,7 +158,7 @@ export function DashboardScreen({ onNavigateToLogin }: DashboardScreenProps) {
         inicial={editando}
         onGuardar={guardarSolicitud}
         onCancelar={cancelarEdicion}
-        onTerminado={() => setActiveNav('mis')}
+        onTerminado={irAMisSolicitudes}
       />
     ),
     mis: (

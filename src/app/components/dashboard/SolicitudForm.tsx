@@ -32,7 +32,7 @@ export function SolicitudForm({ inicial, onGuardar, onCancelar, onTerminado }: S
     if (!submitted) return;
     const timer = setTimeout(onTerminado, 2000);
     return () => clearTimeout(timer);
-  }, [submitted]);
+  }, [submitted, onTerminado]);
 
   const updateForm = <K extends keyof DatosSolicitud>(field: K, value: DatosSolicitud[K]) => {
     setForm((p) => ({ ...p, [field]: value }));

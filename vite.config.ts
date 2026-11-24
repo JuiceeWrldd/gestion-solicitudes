@@ -4,7 +4,6 @@
  * de Tailwind CSS v4 y la resolución de rutas absolutas.
  */
 
-/// <reference types="vitest/config" />
 import { defineConfig } from 'vitest/config';
 import path from 'path';
 import tailwindcss from '@tailwindcss/vite';
