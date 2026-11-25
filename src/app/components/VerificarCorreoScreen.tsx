@@ -47,7 +47,10 @@ export function VerificarCorreoScreen({ email, onVerificado, onCerrarSesion }: V
     try {
       await user.reload();
       if (!user.emailVerified) {
-        setMensaje({ tipo: 'error', texto: 'Todavía no aparece verificado. Abre el enlace del correo y vuelve a intentar.' });
+        setMensaje({
+          tipo: 'error',
+          texto: 'Todavía no aparece verificado. Abre el enlace del correo y vuelve a intentar.',
+        });
         return;
       }
       await user.getIdToken(true); // renueva la sesión para que el servidor vea el correo verificado
@@ -65,8 +68,8 @@ export function VerificarCorreoScreen({ email, onVerificado, onCerrarSesion }: V
       <div className="bg-white rounded-2xl p-8 w-full max-w-[440px] text-center shadow-[0_8px_40px_rgba(30,63,174,0.12)]">
         <h2 className="text-gray-900 text-xl font-extrabold mb-2">Verifica tu correo</h2>
         <p className="text-gray-500 text-sm leading-relaxed mb-6">
-          Para administrar tu empresa necesitamos confirmar que <strong className="text-gray-900">{email}</strong> es tuyo.
-          Te enviamos un enlace: ábrelo y luego vuelve aquí.
+          Para administrar tu empresa necesitamos confirmar que <strong className="text-gray-900">{email}</strong> es
+          tuyo. Te enviamos un enlace: ábrelo y luego vuelve aquí.
         </p>
 
         {mensaje && (
@@ -79,13 +82,23 @@ export function VerificarCorreoScreen({ email, onVerificado, onCerrarSesion }: V
         )}
 
         <div className="flex flex-col gap-3">
-          <button onClick={yaVerifique} disabled={ocupado} className="w-full bg-indigo-600 text-white py-3 rounded-lg text-[15px] font-bold hover:bg-indigo-700 disabled:bg-indigo-300">
+          <button
+            onClick={yaVerifique}
+            disabled={ocupado}
+            className="w-full bg-indigo-600 text-white py-3 rounded-lg text-[15px] font-bold hover:bg-indigo-700 disabled:bg-indigo-300"
+          >
             Ya lo verifiqué
           </button>
-          <button onClick={reenviar} disabled={ocupado} className="w-full border border-gray-300 text-gray-700 py-3 rounded-lg text-sm font-semibold hover:bg-gray-50 disabled:opacity-60">
+          <button
+            onClick={reenviar}
+            disabled={ocupado}
+            className="w-full border border-gray-300 text-gray-700 py-3 rounded-lg text-sm font-semibold hover:bg-gray-50 disabled:opacity-60"
+          >
             Reenviar correo
           </button>
-          <button onClick={onCerrarSesion} className="text-gray-500 text-sm font-medium hover:underline">Cerrar sesión</button>
+          <button onClick={onCerrarSesion} className="text-gray-500 text-sm font-medium hover:underline">
+            Cerrar sesión
+          </button>
         </div>
       </div>
     </div>

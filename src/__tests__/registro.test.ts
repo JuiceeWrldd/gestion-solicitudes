@@ -115,7 +115,11 @@ describe('registrarAdminConEmpresa (correo y contraseña)', () => {
     await registrarAdminConEmpresa(datos);
 
     expect(signOut).toHaveBeenCalledWith(authSec);
-    expect(signInWithEmailAndPassword).toHaveBeenCalledWith({ nombre: 'auth-principal' }, 'ana@miempresa.com', 'clave-segura-1');
+    expect(signInWithEmailAndPassword).toHaveBeenCalledWith(
+      { nombre: 'auth-principal' },
+      'ana@miempresa.com',
+      'clave-segura-1',
+    );
   });
 
   it('si Firestore rechaza el lote, borra la cuenta creada y no inicia sesión', async () => {
@@ -199,7 +203,13 @@ describe('registro con Google', () => {
     it('devuelve el nombre, el correo y la credencial de una cuenta que todavía no tiene empresa', async () => {
       const r = await elegirCuentaGoogle();
 
-      expect(r).toEqual({ yaRegistrado: false, nombre: 'Ana Google', email: 'ana@gmail.com', credencial, esNueva: true });
+      expect(r).toEqual({
+        yaRegistrado: false,
+        nombre: 'Ana Google',
+        email: 'ana@gmail.com',
+        credencial,
+        esNueva: true,
+      });
       expect(signOut).not.toHaveBeenCalled(); // la sesión secundaria sigue abierta para el paso 2
     });
 
@@ -226,7 +236,12 @@ describe('registro con Google', () => {
   });
 
   describe('completarRegistroGoogle', () => {
-    const datosPaso2 = { nombre: 'Ana Gómez', empresa: 'Mi Empresa', departamento: 'Logística', credencial: credencial as never };
+    const datosPaso2 = {
+      nombre: 'Ana Gómez',
+      empresa: 'Mi Empresa',
+      departamento: 'Logística',
+      credencial: credencial as never,
+    };
 
     it('crea la empresa y el perfil de admin con el correo de la cuenta de Google', async () => {
       authSec.currentUser = { uid: 'uid-google', email: 'ana@gmail.com' };

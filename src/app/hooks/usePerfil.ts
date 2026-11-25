@@ -25,10 +25,12 @@ export function usePerfil() {
       if (datos.activo === false || !datos.orgId) return;
 
       // Si la empresa no carga se puede seguir trabajando: solo falta su nombre en la cabecera
-      setOrganizacion(await obtenerOrganizacion(datos.orgId).catch((err) => {
-        console.error('Error al cargar la organización:', err);
-        return null;
-      }));
+      setOrganizacion(
+        await obtenerOrganizacion(datos.orgId).catch((err) => {
+          console.error('Error al cargar la organización:', err);
+          return null;
+        }),
+      );
     } catch (err) {
       console.error('Error al cargar el perfil:', err);
       setError(true);

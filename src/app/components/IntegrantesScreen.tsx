@@ -74,7 +74,9 @@ export function IntegrantesScreen({ orgId, adminUid }: IntegrantesScreenProps) {
   return (
     <div className="max-w-4xl">
       <h1 className="text-gray-900 text-2xl font-extrabold mb-1">Integrantes</h1>
-      <p className="text-gray-500 text-sm mb-6">Personas de tu empresa. Aquí las agregas y defines en qué oficina están.</p>
+      <p className="text-gray-500 text-sm mb-6">
+        Personas de tu empresa. Aquí las agregas y defines en qué oficina están.
+      </p>
 
       <AvisoError mensaje={error} onCerrar={() => setError(null)} className="mb-5" />
 
@@ -82,42 +84,93 @@ export function IntegrantesScreen({ orgId, adminUid }: IntegrantesScreenProps) {
         <div className="mb-6 rounded-xl border border-green-200 bg-green-50 p-4">
           <p className="text-green-800 text-sm font-semibold mb-1">Integrante creado: {claveGenerada.nombre}</p>
           <p className="text-green-700 text-sm mb-3">
-            Entrégale esta contraseña temporal a <strong>{claveGenerada.email}</strong>. No se vuelve a mostrar, y al entrar tendrá que cambiarla.
+            Entrégale esta contraseña temporal a <strong>{claveGenerada.email}</strong>. No se vuelve a mostrar, y al
+            entrar tendrá que cambiarla.
           </p>
           <div className="flex flex-wrap items-center gap-3">
-            <code className="rounded-lg bg-white border border-green-200 px-3 py-2 text-base font-bold tracking-wider text-gray-900">{claveGenerada.clave}</code>
-            <button onClick={copiarClave} className="flex items-center gap-2 rounded-lg border border-green-300 bg-white px-3 py-2 text-sm font-semibold text-green-700 hover:bg-green-100">
+            <code className="rounded-lg bg-white border border-green-200 px-3 py-2 text-base font-bold tracking-wider text-gray-900">
+              {claveGenerada.clave}
+            </code>
+            <button
+              onClick={copiarClave}
+              className="flex items-center gap-2 rounded-lg border border-green-300 bg-white px-3 py-2 text-sm font-semibold text-green-700 hover:bg-green-100"
+            >
               <Copy size={14} /> {copiada ? 'Copiada' : 'Copiar'}
             </button>
-            <button onClick={() => setClaveGenerada(null)} className="text-sm font-medium text-green-700 hover:underline">Cerrar</button>
+            <button
+              onClick={() => setClaveGenerada(null)}
+              className="text-sm font-medium text-green-700 hover:underline"
+            >
+              Cerrar
+            </button>
           </div>
         </div>
       )}
 
-      <form onSubmit={crearIntegrante} noValidate className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-8">
-        <h2 className="text-gray-900 text-base font-bold mb-4 flex items-center gap-2"><UserPlus size={18} /> Agregar integrante</h2>
+      <form
+        onSubmit={crearIntegrante}
+        noValidate
+        className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-8"
+      >
+        <h2 className="text-gray-900 text-base font-bold mb-4 flex items-center gap-2">
+          <UserPlus size={18} /> Agregar integrante
+        </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label htmlFor="int-nombre" className="block text-gray-700 text-[13px] font-semibold mb-1.5">Nombre y apellido</label>
-            <input id="int-nombre" value={form.nombre} maxLength={LIMITES.nombre} onChange={(e) => updateForm('nombre', e.target.value)} className={claseCampo(formErrors.nombre)} />
+            <label htmlFor="int-nombre" className="block text-gray-700 text-[13px] font-semibold mb-1.5">
+              Nombre y apellido
+            </label>
+            <input
+              id="int-nombre"
+              value={form.nombre}
+              maxLength={LIMITES.nombre}
+              onChange={(e) => updateForm('nombre', e.target.value)}
+              className={claseCampo(formErrors.nombre)}
+            />
             <ErrorCampo mensaje={formErrors.nombre} />
           </div>
           <div>
-            <label htmlFor="int-correo" className="block text-gray-700 text-[13px] font-semibold mb-1.5">Correo</label>
-            <input id="int-correo" type="email" value={form.email} maxLength={LIMITES.email} onChange={(e) => updateForm('email', e.target.value)} className={claseCampo(formErrors.email)} />
+            <label htmlFor="int-correo" className="block text-gray-700 text-[13px] font-semibold mb-1.5">
+              Correo
+            </label>
+            <input
+              id="int-correo"
+              type="email"
+              value={form.email}
+              maxLength={LIMITES.email}
+              onChange={(e) => updateForm('email', e.target.value)}
+              className={claseCampo(formErrors.email)}
+            />
             <ErrorCampo mensaje={formErrors.email} />
           </div>
           <div>
-            <label htmlFor="int-oficina" className="block text-gray-700 text-[13px] font-semibold mb-1.5">Oficina</label>
-            <select id="int-oficina" value={form.departamento} onChange={(e) => updateForm('departamento', e.target.value)} className={claseCampo(formErrors.departamento)}>
-              <option value="" disabled>Seleccionar...</option>
-              {DEPARTAMENTOS.map((d) => <option key={d} value={d}>{d}</option>)}
+            <label htmlFor="int-oficina" className="block text-gray-700 text-[13px] font-semibold mb-1.5">
+              Oficina
+            </label>
+            <select
+              id="int-oficina"
+              value={form.departamento}
+              onChange={(e) => updateForm('departamento', e.target.value)}
+              className={claseCampo(formErrors.departamento)}
+            >
+              <option value="" disabled>
+                Seleccionar...
+              </option>
+              {DEPARTAMENTOS.map((d) => (
+                <option key={d} value={d}>
+                  {d}
+                </option>
+              ))}
             </select>
             <ErrorCampo mensaje={formErrors.departamento} />
           </div>
         </div>
         <div className="flex justify-end mt-5">
-          <button type="submit" disabled={creando} className="rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-indigo-700 disabled:bg-indigo-300">
+          <button
+            type="submit"
+            disabled={creando}
+            className="rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-indigo-700 disabled:bg-indigo-300"
+          >
             {creando ? 'Creando...' : 'Crear integrante'}
           </button>
         </div>
@@ -132,12 +185,23 @@ export function IntegrantesScreen({ orgId, adminUid }: IntegrantesScreenProps) {
             const esYo = i.id === adminUid;
             const activo = i.activo !== false;
             return (
-              <div key={i.id} className={`bg-white rounded-xl border border-gray-100 shadow-sm p-4 flex flex-col md:flex-row md:items-center gap-3 md:gap-5 ${activo ? '' : 'opacity-60'}`}>
+              <div
+                key={i.id}
+                className={`bg-white rounded-xl border border-gray-100 shadow-sm p-4 flex flex-col md:flex-row md:items-center gap-3 md:gap-5 ${activo ? '' : 'opacity-60'}`}
+              >
                 <div className="flex-1 min-w-0">
                   <div className="text-gray-900 text-sm font-semibold truncate">
                     {i.nombre}
-                    {i.rol === 'admin' && <span className="ml-2 rounded bg-indigo-50 px-1.5 py-0.5 text-[11px] font-bold text-indigo-600">Admin</span>}
-                    {!activo && <span className="ml-2 rounded bg-gray-100 px-1.5 py-0.5 text-[11px] font-bold text-gray-500">Desactivado</span>}
+                    {i.rol === 'admin' && (
+                      <span className="ml-2 rounded bg-indigo-50 px-1.5 py-0.5 text-[11px] font-bold text-indigo-600">
+                        Admin
+                      </span>
+                    )}
+                    {!activo && (
+                      <span className="ml-2 rounded bg-gray-100 px-1.5 py-0.5 text-[11px] font-bold text-gray-500">
+                        Desactivado
+                      </span>
+                    )}
                   </div>
                   <div className="text-gray-500 text-xs truncate">{i.email}</div>
                 </div>
@@ -148,7 +212,11 @@ export function IntegrantesScreen({ orgId, adminUid }: IntegrantesScreenProps) {
                   className="md:w-56 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm outline-none focus:border-indigo-600"
                 >
                   {!DEPARTAMENTOS.includes(i.departamento) && <option value={i.departamento}>{i.departamento}</option>}
-                  {DEPARTAMENTOS.map((d) => <option key={d} value={d}>{d}</option>)}
+                  {DEPARTAMENTOS.map((d) => (
+                    <option key={d} value={d}>
+                      {d}
+                    </option>
+                  ))}
                 </select>
                 {!esYo && (
                   <button

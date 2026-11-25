@@ -67,6 +67,8 @@ Proyecto final del SENA: una aplicación web para la gestión de solicitudes, co
 | `npm run test:reglas` | Prueba las reglas de Firestore en el emulador de Firebase (necesita Java 11 o superior). |
 | `npm run typecheck` | Verifica los tipos de TypeScript sin compilar.     |
 | `npm run lint`      | Revisa el código con ESLint (falla si hay errores o avisos). |
+| `npm run format`    | Da formato al código con Prettier.                  |
+| `npm run format:check` | Comprueba que todo el código tenga el formato de Prettier. |
 | `npm run deploy`    | Compila y publica la app en GitHub Pages.          |
 | `npm run deploy:firebase` | Compila y publica la app en Firebase Hosting. |
 
@@ -76,7 +78,7 @@ La app se publica en dos sitios, y cada uno necesita una compilación distinta p
 (`/gestion-solicitudes/` en GitHub Pages y `/` en Firebase). Los dos scripts anteriores ya lo resuelven.
 Las reglas de Firestore (`firestore.rules`) no se publican con estos comandos: se pegan en la consola de Firebase.
 
-En cada push a `main`, GitHub Actions revisa los tipos y el código con ESLint, corre las pruebas, compila la app y prueba las reglas de Firestore en el emulador (`.github/workflows/pruebas.yml`).
+En cada push a `main`, GitHub Actions revisa los tipos, el código con ESLint y el formato con Prettier, corre las pruebas, compila la app y prueba las reglas de Firestore en el emulador (`.github/workflows/pruebas.yml`).
 
 Las pruebas de las reglas están en `pruebas-reglas/` y usan un proyecto de prueba (`demo-gestion-solicitudes`), así que nunca tocan la base de datos real.
 

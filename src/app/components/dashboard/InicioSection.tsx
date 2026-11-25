@@ -20,7 +20,12 @@ export function InicioSection({ solicitudes, esAdmin }: InicioSectionProps) {
   const tarjetas = [
     { label: 'Total', value: total, icon: <FileText size={20} />, clase: 'bg-indigo-50 text-[#1E3FAE]' },
     { label: 'En revisión', value: pendientes, icon: <Clock size={20} />, clase: 'bg-amber-100 text-amber-600' },
-    { label: 'Resueltas', value: completadas, icon: <CheckCircle2 size={20} />, clase: 'bg-emerald-100 text-emerald-600' },
+    {
+      label: 'Resueltas',
+      value: completadas,
+      icon: <CheckCircle2 size={20} />,
+      clase: 'bg-emerald-100 text-emerald-600',
+    },
   ];
 
   const porEstado = contarPorEstado(solicitudes).map((c) => ({
@@ -62,15 +67,35 @@ export function InicioSection({ solicitudes, esAdmin }: InicioSectionProps) {
         <section aria-label="Cómo se reparten las solicitudes">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-gray-900 text-base font-bold">Cómo se reparten</h3>
-            <div role="group" aria-label="Forma de ver los datos" className="inline-flex rounded-lg border border-gray-200 bg-white p-0.5">
-              <button onClick={() => setVerTabla(false)} aria-pressed={!verTabla} className={botonVista(!verTabla)}>Gráfica</button>
-              <button onClick={() => setVerTabla(true)} aria-pressed={verTabla} className={botonVista(verTabla)}>Tabla</button>
+            <div
+              role="group"
+              aria-label="Forma de ver los datos"
+              className="inline-flex rounded-lg border border-gray-200 bg-white p-0.5"
+            >
+              <button onClick={() => setVerTabla(false)} aria-pressed={!verTabla} className={botonVista(!verTabla)}>
+                Gráfica
+              </button>
+              <button onClick={() => setVerTabla(true)} aria-pressed={verTabla} className={botonVista(verTabla)}>
+                Tabla
+              </button>
             </div>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <GraficoBarras titulo="Por estado" descripcion="En qué punto está cada solicitud" columna="Estado" datos={porEstado} verTabla={verTabla} />
-            <GraficoBarras titulo="Por categoría" descripcion="De qué trata cada solicitud" columna="Categoría" datos={porCategoria} verTabla={verTabla} />
+            <GraficoBarras
+              titulo="Por estado"
+              descripcion="En qué punto está cada solicitud"
+              columna="Estado"
+              datos={porEstado}
+              verTabla={verTabla}
+            />
+            <GraficoBarras
+              titulo="Por categoría"
+              descripcion="De qué trata cada solicitud"
+              columna="Categoría"
+              datos={porCategoria}
+              verTabla={verTabla}
+            />
           </div>
         </section>
       )}

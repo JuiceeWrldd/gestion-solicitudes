@@ -31,7 +31,15 @@ export function DashboardScreen({ onNavigateToLogin }: DashboardScreenProps) {
   const [formKey, setFormKey] = useState(0);
   const [correoVerificado, setCorreoVerificado] = useState(auth.currentUser?.emailVerified ?? false);
 
-  const { perfil, setPerfil, organizacion, sinPerfil, cargando: cargandoPerfil, error: errorPerfil, reintentar } = usePerfil();
+  const {
+    perfil,
+    setPerfil,
+    organizacion,
+    sinPerfil,
+    cargando: cargandoPerfil,
+    error: errorPerfil,
+    reintentar,
+  } = usePerfil();
   const { solicitudes, cargando, cambiarEstado, responder, eliminar, guardar } = useSolicitudes(perfil, setErrorMsg);
 
   // Misma función en cada render, para que el aviso de "Solicitud enviada" no reinicie su espera
@@ -73,7 +81,11 @@ export function DashboardScreen({ onNavigateToLogin }: DashboardScreenProps) {
   // Hasta saber quién es y qué rol tiene no se muestra el panel
   if (cargandoPerfil) {
     return (
-      <div role="status" aria-label="Cargando" className="h-screen w-screen flex items-center justify-center bg-slate-50">
+      <div
+        role="status"
+        aria-label="Cargando"
+        className="h-screen w-screen flex items-center justify-center bg-slate-50"
+      >
         <div className="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" />
       </div>
     );
@@ -144,7 +156,7 @@ export function DashboardScreen({ onNavigateToLogin }: DashboardScreenProps) {
       items={items}
       activo={activeNav}
       nombre={nombre}
-      rolTexto={esAdmin ? 'Administrador' : (perfil?.departamento || 'Usuario')}
+      rolTexto={esAdmin ? 'Administrador' : perfil?.departamento || 'Usuario'}
       onSeleccionar={irA}
       onCerrarSesion={cerrarSesion}
     />
@@ -172,9 +184,10 @@ export function DashboardScreen({ onNavigateToLogin }: DashboardScreenProps) {
         onEliminar={eliminar}
       />
     ),
-    integrantes: esAdmin && perfil?.orgId && auth.currentUser
-      ? <IntegrantesScreen orgId={perfil.orgId} adminUid={auth.currentUser.uid} />
-      : null,
+    integrantes:
+      esAdmin && perfil?.orgId && auth.currentUser ? (
+        <IntegrantesScreen orgId={perfil.orgId} adminUid={auth.currentUser.uid} />
+      ) : null,
     perfil: <PerfilSection perfil={perfil} organizacion={organizacion} />,
   };
 

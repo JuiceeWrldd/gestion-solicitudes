@@ -45,19 +45,11 @@ export default function App() {
         />
       )}
 
-      {currentScreen === 'register' && (
-        <RegisterScreen onNavigateToLogin={() => setCurrentScreen('login')} />
-      )}
+      {currentScreen === 'register' && <RegisterScreen onNavigateToLogin={() => setCurrentScreen('login')} />}
 
-      {currentScreen === 'dashboard' && (
-        <DashboardScreen onNavigateToLogin={() => setCurrentScreen('login')} />
-      )}
+      {currentScreen === 'dashboard' && <DashboardScreen onNavigateToLogin={() => setCurrentScreen('login')} />}
 
-      {currentScreen === 'forgot' && (
-        <ForgotPasswordScreen
-          onNavigateToLogin={() => setCurrentScreen('login')}
-        />
-      )}
+      {currentScreen === 'forgot' && <ForgotPasswordScreen onNavigateToLogin={() => setCurrentScreen('login')} />}
     </>
   );
 }

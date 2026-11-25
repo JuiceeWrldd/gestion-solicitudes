@@ -16,7 +16,15 @@ interface SolicitudesTablaProps {
   onEliminar: (id: string) => Promise<boolean>;
 }
 
-export function SolicitudesTabla({ solicitudes, cargando, esAdmin, onCambiarEstado, onResponder, onEditar, onEliminar }: SolicitudesTablaProps) {
+export function SolicitudesTabla({
+  solicitudes,
+  cargando,
+  esAdmin,
+  onCambiarEstado,
+  onResponder,
+  onEditar,
+  onEliminar,
+}: SolicitudesTablaProps) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [filtros, setFiltros] = useState<Filtros>(SIN_FILTROS);
 
@@ -37,11 +45,18 @@ export function SolicitudesTabla({ solicitudes, cargando, esAdmin, onCambiarEsta
   return (
     <div>
       <div className="flex items-center justify-between mb-7">
-        <h1 className="text-gray-900 text-[26px] font-extrabold">{esAdmin ? 'Solicitudes de la empresa' : 'Mis solicitudes'}</h1>
+        <h1 className="text-gray-900 text-[26px] font-extrabold">
+          {esAdmin ? 'Solicitudes de la empresa' : 'Mis solicitudes'}
+        </h1>
       </div>
 
       {!cargando && solicitudes.length > 0 && (
-        <FiltrosSolicitudes filtros={filtros} onCambiar={setFiltros} total={solicitudes.length} mostrando={visibles.length} />
+        <FiltrosSolicitudes
+          filtros={filtros}
+          onCambiar={setFiltros}
+          total={solicitudes.length}
+          mostrando={visibles.length}
+        />
       )}
 
       <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100">
@@ -60,7 +75,10 @@ export function SolicitudesTabla({ solicitudes, cargando, esAdmin, onCambiarEsta
           <div className="p-10 text-center text-gray-400">
             Ninguna solicitud coincide con lo que buscas.
             {hayFiltros(filtros) && (
-              <button onClick={() => setFiltros(SIN_FILTROS)} className="block mx-auto mt-2 text-sm font-semibold text-indigo-600 hover:underline">
+              <button
+                onClick={() => setFiltros(SIN_FILTROS)}
+                className="block mx-auto mt-2 text-sm font-semibold text-indigo-600 hover:underline"
+              >
                 Limpiar filtros
               </button>
             )}
@@ -82,22 +100,31 @@ export function SolicitudesTabla({ solicitudes, cargando, esAdmin, onCambiarEsta
 
                   {/* Título y datos: arriba en celular, junto a la flecha */}
                   <div className="order-1 flex-1 min-w-0">
-                    <div className="text-gray-900 text-sm font-semibold leading-snug break-words sm:truncate">{req.titulo}</div>
+                    <div className="text-gray-900 text-sm font-semibold leading-snug break-words sm:truncate">
+                      {req.titulo}
+                    </div>
                     <div className="text-gray-400 text-xs mt-1">
                       <span className="font-medium">{req.id.slice(0, 8)}</span> · {req.tipo}
                     </div>
                     {esAdmin && (
-                      <span className="block w-fit mt-1.5 text-indigo-500 text-xs font-medium bg-indigo-50 px-1.5 py-0.5 rounded max-w-full truncate">De: {req.autorNombre}</span>
+                      <span className="block w-fit mt-1.5 text-indigo-500 text-xs font-medium bg-indigo-50 px-1.5 py-0.5 rounded max-w-full truncate">
+                        De: {req.autorNombre}
+                      </span>
                     )}
                   </div>
 
                   <div className="order-2 sm:order-4 w-8 flex justify-end text-gray-300 shrink-0">
-                    <ChevronDown size={18} className={`transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`} />
+                    <ChevronDown
+                      size={18}
+                      className={`transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}
+                    />
                   </div>
 
                   {/* Estado y acciones: en celular van en su propia línea, debajo del título */}
                   <div className="order-3 w-full sm:w-auto flex items-center justify-between sm:justify-start gap-3 sm:gap-4">
-                    <div className={`flex items-center gap-1 px-3 py-1 rounded-full shrink-0 sm:w-[120px] justify-center text-xs font-semibold ${statusConfig[req.estado]?.clase ?? ''}`}>
+                    <div
+                      className={`flex items-center gap-1 px-3 py-1 rounded-full shrink-0 sm:w-[120px] justify-center text-xs font-semibold ${statusConfig[req.estado]?.clase ?? ''}`}
+                    >
                       {statusConfig[req.estado]?.icon} {req.estado}
                     </div>
 
@@ -105,17 +132,45 @@ export function SolicitudesTabla({ solicitudes, cargando, esAdmin, onCambiarEsta
                       <div className="flex items-center justify-end gap-2 sm:w-[90px] shrink-0">
                         {req.estado === 'En revisión' ? (
                           <>
-                            <button onClick={(e) => { e.stopPropagation(); decidir(req, 'Aprobada'); }} aria-label={`Aprobar ${req.titulo}`} title="Aprobar" className="w-9 h-9 sm:w-8 sm:h-8 rounded border border-green-200 text-green-600 bg-green-50 hover:bg-green-100 flex justify-center items-center"><CheckCircle2 size={16} /></button>
-                            <button onClick={(e) => { e.stopPropagation(); decidir(req, 'Rechazada'); }} aria-label={`Rechazar ${req.titulo}`} title="Rechazar" className="w-9 h-9 sm:w-8 sm:h-8 rounded border border-red-200 text-red-600 bg-red-50 hover:bg-red-100 flex justify-center items-center"><AlertTriangle size={16} /></button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                decidir(req, 'Aprobada');
+                              }}
+                              aria-label={`Aprobar ${req.titulo}`}
+                              title="Aprobar"
+                              className="w-9 h-9 sm:w-8 sm:h-8 rounded border border-green-200 text-green-600 bg-green-50 hover:bg-green-100 flex justify-center items-center"
+                            >
+                              <CheckCircle2 size={16} />
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                decidir(req, 'Rechazada');
+                              }}
+                              aria-label={`Rechazar ${req.titulo}`}
+                              title="Rechazar"
+                              className="w-9 h-9 sm:w-8 sm:h-8 rounded border border-red-200 text-red-600 bg-red-50 hover:bg-red-100 flex justify-center items-center"
+                            >
+                              <AlertTriangle size={16} />
+                            </button>
                           </>
-                        ) : <span className="text-xs font-medium text-gray-300 sm:mr-2">Revisada</span>}
+                        ) : (
+                          <span className="text-xs font-medium text-gray-300 sm:mr-2">Revisada</span>
+                        )}
                       </div>
                     )}
                   </div>
                 </div>
 
                 {isExpanded && (
-                  <SolicitudDetalle solicitud={req} esAdmin={esAdmin} onResponder={onResponder} onEditar={onEditar} onEliminar={eliminar} />
+                  <SolicitudDetalle
+                    solicitud={req}
+                    esAdmin={esAdmin}
+                    onResponder={onResponder}
+                    onEditar={onEditar}
+                    onEliminar={eliminar}
+                  />
                 )}
               </div>
             );

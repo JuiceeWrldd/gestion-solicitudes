@@ -7,12 +7,43 @@ export function LogoIcon({ size = 48 }: LogoIconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect width="48" height="48" rx="12" fill="#1E3FAE" />
-      <rect x="7" y="12" width="34" height="24" rx="4" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.25)" strokeWidth="1" />
+      <rect
+        x="7"
+        y="12"
+        width="34"
+        height="24"
+        rx="4"
+        fill="rgba(255,255,255,0.12)"
+        stroke="rgba(255,255,255,0.25)"
+        strokeWidth="1"
+      />
       <circle cx="7" cy="24" r="4" fill="#1E3FAE" />
       <circle cx="41" cy="24" r="4" fill="#1E3FAE" />
       <line x1="11" y1="24" x2="37" y2="24" stroke="rgba(255,255,255,0.2)" strokeWidth="1" strokeDasharray="2.5 2" />
-      <text x="24" y="21" textAnchor="middle" dominantBaseline="middle" fontSize="13" fontWeight="800" fill="white" fontFamily="Inter, Arial, sans-serif">G</text>
-      <text x="24" y="32" textAnchor="middle" dominantBaseline="middle" fontSize="13" fontWeight="800" fill="white" fontFamily="Inter, Arial, sans-serif">S</text>
+      <text
+        x="24"
+        y="21"
+        textAnchor="middle"
+        dominantBaseline="middle"
+        fontSize="13"
+        fontWeight="800"
+        fill="white"
+        fontFamily="Inter, Arial, sans-serif"
+      >
+        G
+      </text>
+      <text
+        x="24"
+        y="32"
+        textAnchor="middle"
+        dominantBaseline="middle"
+        fontSize="13"
+        fontWeight="800"
+        fill="white"
+        fontFamily="Inter, Arial, sans-serif"
+      >
+        S
+      </text>
     </svg>
   );
 }

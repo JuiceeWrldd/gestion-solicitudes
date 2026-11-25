@@ -114,7 +114,12 @@ export async function elegirCuentaGoogle(): Promise<ResultadoGoogle> {
 }
 
 // Paso 2: crea la empresa y el perfil de admin, y entra con la misma cuenta de Google (sin otra ventana)
-export async function completarRegistroGoogle({ nombre, empresa, departamento, credencial }: {
+export async function completarRegistroGoogle({
+  nombre,
+  empresa,
+  departamento,
+  credencial,
+}: {
   nombre: string;
   empresa: string;
   departamento: string;

@@ -1,6 +1,6 @@
 /**
  * Vite Configuration
- * Configuración central del bundler. Integra React, el compilador 
+ * Configuración central del bundler. Integra React, el compilador
  * de Tailwind CSS v4 y la resolución de rutas absolutas.
  */
 
@@ -28,11 +28,7 @@ export default defineConfig(({ mode }) => ({
   // (se compila con "vite build --mode firebase")
   base: mode === 'firebase' ? '/' : '/gestion-solicitudes/',
 
-  plugins: [
-    figmaAssetResolver(),
-    react(),
-    tailwindcss(),
-  ],
+  plugins: [figmaAssetResolver(), react(), tailwindcss()],
   resolve: {
     alias: {
       // Configuración de alias '@' para importaciones limpias
@@ -49,4 +45,3 @@ export default defineConfig(({ mode }) => ({
     testTimeout: 15000,
   },
 }));
-

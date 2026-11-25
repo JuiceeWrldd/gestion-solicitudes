@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { Mail, Lock, Eye, EyeOff, Shield } from 'lucide-react';
 import { LogoBrand, LogoBrandWhite } from './LogoMark';
-import { 
-  signInWithEmailAndPassword, 
-  setPersistence, 
-  browserLocalPersistence, 
+import {
+  signInWithEmailAndPassword,
+  setPersistence,
+  browserLocalPersistence,
   browserSessionPersistence,
   GoogleAuthProvider,
-  signInWithPopup
+  signInWithPopup,
 } from 'firebase/auth';
 import { FirebaseError } from 'firebase/app';
 import { auth } from '../config/firebase';
@@ -47,7 +47,7 @@ export function LoginScreen({ onNavigateToForgot, onNavigateToRegister }: LoginS
       setErrors(validationErrors);
       return;
     }
-    
+
     setErrors({});
     setLoading(true);
 
@@ -56,12 +56,16 @@ export function LoginScreen({ onNavigateToForgot, onNavigateToRegister }: LoginS
       await signInWithEmailAndPassword(auth, email, password);
     } catch (error) {
       setLoading(false);
-      let mensajeError = "No pudimos iniciar sesión. Intenta de nuevo.";
+      let mensajeError = 'No pudimos iniciar sesión. Intenta de nuevo.';
       if (error instanceof FirebaseError) {
-        if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
-          mensajeError = "Correo o contraseña incorrectos.";
+        if (
+          error.code === 'auth/invalid-credential' ||
+          error.code === 'auth/user-not-found' ||
+          error.code === 'auth/wrong-password'
+        ) {
+          mensajeError = 'Correo o contraseña incorrectos.';
         } else if (error.code === 'auth/too-many-requests') {
-          mensajeError = "Demasiados intentos. Espera un momento y vuelve a probar.";
+          mensajeError = 'Demasiados intentos. Espera un momento y vuelve a probar.';
         }
       }
       setErrors({ general: mensajeError });
@@ -83,12 +87,11 @@ export function LoginScreen({ onNavigateToForgot, onNavigateToRegister }: LoginS
 
   return (
     <div className="min-h-screen flex font-sans bg-indigo-50">
-      
       {/* Panel Hero (Solo Escritorio) */}
       <div className="hidden lg:flex flex-col justify-between w-[52%] relative overflow-hidden p-12 bg-gradient-to-br from-indigo-700 to-indigo-900">
         <div className="absolute -top-20 -left-20 w-80 h-80 rounded-full bg-white opacity-10" />
         <div className="absolute bottom-10 -right-16 w-96 h-96 rounded-full bg-white opacity-10" />
-        
+
         <LogoBrandWhite iconSize={52} />
 
         <div className="relative z-10">
@@ -97,7 +100,8 @@ export function LoginScreen({ onNavigateToForgot, onNavigateToRegister }: LoginS
             <span className="text-white/70 text-sm font-medium">Cada empresa ve solo lo suyo</span>
           </div>
           <h1 className="text-white text-4xl font-extrabold leading-tight mb-4">
-            Gestión de Solicitudes<br />
+            Gestión de Solicitudes
+            <br />
             <span className="text-white/75 font-normal text-3xl">Todo en un solo lugar</span>
           </h1>
           <p className="text-white/65 text-[15px] leading-relaxed max-w-[380px]">
@@ -105,9 +109,7 @@ export function LoginScreen({ onNavigateToForgot, onNavigateToRegister }: LoginS
           </p>
         </div>
 
-        <div className="text-white/35 text-xs">
-          © 2026 GestioSync
-        </div>
+        <div className="text-white/35 text-xs">© 2026 GestioSync</div>
       </div>
 
       {/* Panel Formulario */}
@@ -133,13 +135,22 @@ export function LoginScreen({ onNavigateToForgot, onNavigateToRegister }: LoginS
             {/* Al ser un formulario, Enter también inicia sesión */}
             <form onSubmit={handleLogin} noValidate className="flex flex-col gap-5">
               <div>
-                <label htmlFor="login-email" className="block text-gray-700 text-[13px] font-semibold mb-1.5">Correo</label>
+                <label htmlFor="login-email" className="block text-gray-700 text-[13px] font-semibold mb-1.5">
+                  Correo
+                </label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><Mail size={18} /></span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                    <Mail size={18} />
+                  </span>
                   <input
-                    id="login-email" type="email" autoComplete="email"
+                    id="login-email"
+                    type="email"
+                    autoComplete="email"
                     value={email}
-                    onChange={(e) => { setEmail(e.target.value); setErrors(p => ({ ...p, email: undefined })); }}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      setErrors((p) => ({ ...p, email: undefined }));
+                    }}
                     className={`w-full py-3 pl-10 pr-3 border ${errors.email ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-slate-50'} rounded-lg text-sm outline-none focus:border-indigo-600 focus:bg-white transition-colors`}
                   />
                 </div>
@@ -148,18 +159,37 @@ export function LoginScreen({ onNavigateToForgot, onNavigateToRegister }: LoginS
 
               <div>
                 <div className="flex items-center justify-between mb-1.5">
-                  <label htmlFor="login-password" className="text-gray-700 text-[13px] font-semibold">Contraseña</label>
-                  <button type="button" onClick={onNavigateToForgot} className="text-indigo-600 text-xs font-semibold hover:underline">¿Olvidaste tu contraseña?</button>
+                  <label htmlFor="login-password" className="text-gray-700 text-[13px] font-semibold">
+                    Contraseña
+                  </label>
+                  <button
+                    type="button"
+                    onClick={onNavigateToForgot}
+                    className="text-indigo-600 text-xs font-semibold hover:underline"
+                  >
+                    ¿Olvidaste tu contraseña?
+                  </button>
                 </div>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><Lock size={18} /></span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                    <Lock size={18} />
+                  </span>
                   <input
-                    id="login-password" type={showPassword ? 'text' : 'password'} autoComplete="current-password"
+                    id="login-password"
+                    type={showPassword ? 'text' : 'password'}
+                    autoComplete="current-password"
                     value={password}
-                    onChange={(e) => { setPassword(e.target.value); setErrors(p => ({ ...p, password: undefined })); }}
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                      setErrors((p) => ({ ...p, password: undefined }));
+                    }}
                     className={`w-full py-3 pl-10 pr-10 border ${errors.password ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-slate-50'} rounded-lg text-sm outline-none focus:border-indigo-600 focus:bg-white transition-colors`}
                   />
-                  <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
+                  >
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
                 </div>
@@ -167,8 +197,16 @@ export function LoginScreen({ onNavigateToForgot, onNavigateToRegister }: LoginS
               </div>
 
               <div className="flex items-center gap-2 mt-1">
-                <input type="checkbox" id="remember" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} className="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500" />
-                <label htmlFor="remember" className="text-gray-600 text-sm font-medium select-none cursor-pointer">Mantener sesión iniciada</label>
+                <input
+                  type="checkbox"
+                  id="remember"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                  className="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500"
+                />
+                <label htmlFor="remember" className="text-gray-600 text-sm font-medium select-none cursor-pointer">
+                  Mantener sesión iniciada
+                </label>
               </div>
 
               <button
@@ -200,7 +238,9 @@ export function LoginScreen({ onNavigateToForgot, onNavigateToRegister }: LoginS
             <p>¿Eres parte de una empresa? Pídele a tu administrador que te agregue.</p>
             <p>
               ¿Vas a administrar una empresa nueva?{' '}
-              <button onClick={onNavigateToRegister} className="text-indigo-600 font-semibold hover:underline">Regístrala aquí</button>
+              <button onClick={onNavigateToRegister} className="text-indigo-600 font-semibold hover:underline">
+                Regístrala aquí
+              </button>
             </p>
           </div>
         </div>

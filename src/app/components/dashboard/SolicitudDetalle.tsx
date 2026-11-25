@@ -16,7 +16,13 @@ interface SolicitudDetalleProps {
 const subtitulo = 'text-gray-400 text-[11px] font-bold uppercase tracking-wider';
 
 // Parte que se despliega al abrir una solicitud de la tabla
-export function SolicitudDetalle({ solicitud: req, esAdmin, onResponder, onEditar, onEliminar }: SolicitudDetalleProps) {
+export function SolicitudDetalle({
+  solicitud: req,
+  esAdmin,
+  onResponder,
+  onEditar,
+  onEliminar,
+}: SolicitudDetalleProps) {
   const [respuesta, setRespuesta] = useState('');
 
   const enviar = async () => {
@@ -28,19 +34,35 @@ export function SolicitudDetalle({ solicitud: req, esAdmin, onResponder, onEdita
   return (
     <div className="px-3 sm:px-5 pb-4 sm:pb-5 bg-indigo-50/10">
       <div className="bg-white p-4 sm:p-5 rounded-xl border border-gray-100 shadow-sm grid grid-cols-1 md:grid-cols-3 gap-6">
-
         <div className="md:col-span-2">
           <h4 className={`${subtitulo} mb-2`}>Detalle</h4>
           <p className="text-gray-700 text-sm leading-relaxed whitespace-pre-wrap break-words">{req.descripcion}</p>
 
           <div className="mt-6 pt-5 border-t border-gray-100">
-            <h4 className={`${subtitulo} mb-3`}><MessageSquare size={12} className="inline mr-1 -mt-0.5" /> Respuesta del administrador</h4>
+            <h4 className={`${subtitulo} mb-3`}>
+              <MessageSquare size={12} className="inline mr-1 -mt-0.5" /> Respuesta del administrador
+            </h4>
             {req.respuestaAdmin ? (
-              <div className="bg-blue-50 border border-blue-100 rounded-lg p-4 text-blue-800 text-sm whitespace-pre-wrap break-words">{req.respuestaAdmin}</div>
+              <div className="bg-blue-50 border border-blue-100 rounded-lg p-4 text-blue-800 text-sm whitespace-pre-wrap break-words">
+                {req.respuestaAdmin}
+              </div>
             ) : esAdmin ? (
               <div className="flex flex-col gap-3">
-                <textarea placeholder="Escribe tu respuesta..." maxLength={LIMITES.respuesta} value={respuesta} onChange={(e) => setRespuesta(e.target.value)} className="w-full p-3 border border-gray-200 rounded-lg text-sm outline-none focus:border-indigo-500 focus:ring-1" rows={3} />
-                <button onClick={enviar} disabled={!respuesta.trim()} className="self-end px-4 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-lg hover:bg-indigo-700 disabled:opacity-50">Responder</button>
+                <textarea
+                  placeholder="Escribe tu respuesta..."
+                  maxLength={LIMITES.respuesta}
+                  value={respuesta}
+                  onChange={(e) => setRespuesta(e.target.value)}
+                  className="w-full p-3 border border-gray-200 rounded-lg text-sm outline-none focus:border-indigo-500 focus:ring-1"
+                  rows={3}
+                />
+                <button
+                  onClick={enviar}
+                  disabled={!respuesta.trim()}
+                  className="self-end px-4 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-lg hover:bg-indigo-700 disabled:opacity-50"
+                >
+                  Responder
+                </button>
               </div>
             ) : (
               <p className="text-gray-400 text-sm italic">Todavía no hay respuesta.</p>
@@ -49,8 +71,18 @@ export function SolicitudDetalle({ solicitud: req, esAdmin, onResponder, onEdita
 
           {!esAdmin && req.estado === 'En revisión' && (
             <div className="mt-6 pt-5 border-t border-gray-100 flex flex-wrap justify-end gap-3">
-              <button onClick={() => onEditar(req)} className="px-4 py-2 border border-gray-300 text-sm font-semibold rounded-lg hover:bg-gray-50 flex items-center gap-2"><Pencil size={14} /> Modificar</button>
-              <button onClick={() => onEliminar(req.id)} className="px-4 py-2 bg-red-50 text-red-600 border border-red-100 text-sm font-semibold rounded-lg hover:bg-red-100 flex items-center gap-2"><Trash2 size={14} /> Eliminar</button>
+              <button
+                onClick={() => onEditar(req)}
+                className="px-4 py-2 border border-gray-300 text-sm font-semibold rounded-lg hover:bg-gray-50 flex items-center gap-2"
+              >
+                <Pencil size={14} /> Modificar
+              </button>
+              <button
+                onClick={() => onEliminar(req.id)}
+                className="px-4 py-2 bg-red-50 text-red-600 border border-red-100 text-sm font-semibold rounded-lg hover:bg-red-100 flex items-center gap-2"
+              >
+                <Trash2 size={14} /> Eliminar
+              </button>
             </div>
           )}
         </div>
@@ -63,14 +95,19 @@ export function SolicitudDetalle({ solicitud: req, esAdmin, onResponder, onEdita
           </div>
           <div>
             <h4 className={`${subtitulo} mb-1`}>Fecha</h4>
-            <div className="text-gray-700 text-sm font-medium">{req.fecha} <span className="text-gray-400 font-normal">a las</span> {req.hora}</div>
+            <div className="text-gray-700 text-sm font-medium">
+              {req.fecha} <span className="text-gray-400 font-normal">a las</span> {req.hora}
+            </div>
           </div>
           <div>
             <h4 className={`${subtitulo} mb-1`}>Prioridad</h4>
-            <span className={`inline-flex items-center px-2 py-1 rounded text-xs font-bold ${clasePrioridad[req.prioridad]}`}>{req.prioridad}</span>
+            <span
+              className={`inline-flex items-center px-2 py-1 rounded text-xs font-bold ${clasePrioridad[req.prioridad]}`}
+            >
+              {req.prioridad}
+            </span>
           </div>
         </div>
-
       </div>
     </div>
   );

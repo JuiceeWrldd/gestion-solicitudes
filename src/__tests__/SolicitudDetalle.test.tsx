@@ -19,7 +19,15 @@ const solicitud = (extra: Partial<Solicitud> = {}): Solicitud => ({
 });
 
 const mostrar = (req: Solicitud, esAdmin = false, onResponder = vi.fn().mockResolvedValue(true)) =>
-  render(<SolicitudDetalle solicitud={req} esAdmin={esAdmin} onResponder={onResponder} onEditar={vi.fn()} onEliminar={vi.fn()} />);
+  render(
+    <SolicitudDetalle
+      solicitud={req}
+      esAdmin={esAdmin}
+      onResponder={onResponder}
+      onEditar={vi.fn()}
+      onEliminar={vi.fn()}
+    />,
+  );
 
 describe('SolicitudDetalle', () => {
   it('la respuesta del admin respeta los saltos de línea', () => {
@@ -46,7 +54,9 @@ describe('SolicitudDetalle', () => {
     const onResponder = vi.fn().mockResolvedValue(true);
     mostrar(solicitud(), true, onResponder);
 
-    fireEvent.change(screen.getByPlaceholderText('Escribe tu respuesta...'), { target: { value: 'Hola Ana.\n\nYa pedimos la tinta.' } });
+    fireEvent.change(screen.getByPlaceholderText('Escribe tu respuesta...'), {
+      target: { value: 'Hola Ana.\n\nYa pedimos la tinta.' },
+    });
     fireEvent.click(screen.getByRole('button', { name: 'Responder' }));
 
     await waitFor(() => expect(onResponder).toHaveBeenCalledWith('sol-1', 'Hola Ana.\n\nYa pedimos la tinta.'));

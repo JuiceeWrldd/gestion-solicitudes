@@ -85,13 +85,19 @@ beforeEach(async () => {
     const db = ctx.firestore();
     await setDoc(doc(db, 'organizaciones/org1'), { nombre: 'Empresa Uno', adminId: 'admin1' });
     await setDoc(doc(db, 'organizaciones/org2'), { nombre: 'Empresa Dos', adminId: 'admin2' });
-    await setDoc(doc(db, 'usuarios/admin1'), perfil('Admin Uno', 'admin1@uno.com', { rol: 'admin', departamento: 'Dirección General' }));
+    await setDoc(
+      doc(db, 'usuarios/admin1'),
+      perfil('Admin Uno', 'admin1@uno.com', { rol: 'admin', departamento: 'Dirección General' }),
+    );
     await setDoc(doc(db, 'usuarios/ana'), perfil('Ana Gómez', 'ana@uno.com'));
     await setDoc(doc(db, 'usuarios/beto'), perfil('Beto Ruiz', 'beto@uno.com', { activo: false }));
     await setDoc(doc(db, 'usuarios/admin2'), perfil('Admin Dos', 'admin2@dos.com', { rol: 'admin', orgId: 'org2' }));
     await setDoc(doc(db, 'solicitudes/de-ana'), solicitud());
     await setDoc(doc(db, 'solicitudes/aprobada'), solicitud({ estado: 'Aprobada' }));
-    await setDoc(doc(db, 'solicitudes/de-beto'), solicitud({ usuarioId: 'beto', autorNombre: 'Beto Ruiz', autorEmail: 'beto@uno.com' }));
+    await setDoc(
+      doc(db, 'solicitudes/de-beto'),
+      solicitud({ usuarioId: 'beto', autorNombre: 'Beto Ruiz', autorEmail: 'beto@uno.com' }),
+    );
   });
 });
 
@@ -151,15 +157,21 @@ describe('solicitudes: crear', () => {
   });
 
   it('una cuenta desactivada o sin sesión no crea', async () => {
-    await assertFails(addDoc(collection(como('beto'), 'solicitudes'),
-      nuevaSolicitud({ usuarioId: 'beto', autorNombre: 'Beto Ruiz', autorEmail: 'beto@uno.com' })));
+    await assertFails(
+      addDoc(
+        collection(como('beto'), 'solicitudes'),
+        nuevaSolicitud({ usuarioId: 'beto', autorNombre: 'Beto Ruiz', autorEmail: 'beto@uno.com' }),
+      ),
+    );
     await assertFails(addDoc(collection(env.unauthenticatedContext().firestore(), 'solicitudes'), nuevaSolicitud()));
   });
 });
 
 describe('solicitudes: el dueño edita y borra', () => {
   it('edita el contenido mientras sigue en revisión', async () => {
-    await assertSucceeds(updateDoc(doc(como('ana'), 'solicitudes/de-ana'), { titulo: 'Impresora sin tóner', prioridad: 'Alta' }));
+    await assertSucceeds(
+      updateDoc(doc(como('ana'), 'solicitudes/de-ana'), { titulo: 'Impresora sin tóner', prioridad: 'Alta' }),
+    );
   });
 
   it('no edita una ya decidida, ni cambia el estado ni la respuesta', async () => {
@@ -187,7 +199,9 @@ describe('solicitudes: el dueño edita y borra', () => {
 describe('solicitudes: el admin decide y responde', () => {
   it('aprueba o rechaza una en revisión, con respuesta', async () => {
     const db = como('admin1');
-    await assertSucceeds(updateDoc(doc(db, 'solicitudes/de-ana'), { estado: 'Aprobada', respuestaAdmin: 'Ya pedimos la tinta.' }));
+    await assertSucceeds(
+      updateDoc(doc(db, 'solicitudes/de-ana'), { estado: 'Aprobada', respuestaAdmin: 'Ya pedimos la tinta.' }),
+    );
     await assertSucceeds(updateDoc(doc(db, 'solicitudes/de-beto'), { estado: 'Rechazada' }));
   });
 
@@ -244,7 +258,9 @@ describe('usuarios', () => {
   });
 
   it('un usuario normal no crea perfiles', async () => {
-    await assertFails(setDoc(doc(como('ana'), 'usuarios/carla'), perfil('Carla Díaz', 'carla@uno.com', { debeCambiarClave: true })));
+    await assertFails(
+      setDoc(doc(como('ana'), 'usuarios/carla'), perfil('Carla Díaz', 'carla@uno.com', { debeCambiarClave: true })),
+    );
   });
 
   it('el admin cambia la oficina y activa o desactiva a los de su empresa', async () => {
@@ -282,8 +298,16 @@ describe('organizaciones y registro', () => {
   const registrar = (uid: keyof typeof CUENTAS, empresa: DocumentData = {}, admin: DocumentData = {}) => {
     const db = como(uid);
     const lote = writeBatch(db);
-    lote.set(doc(db, 'organizaciones/org-nueva'), { nombre: 'Empresa Tres', adminId: uid, fechaCreacion: serverTimestamp(), ...empresa });
-    lote.set(doc(db, `usuarios/${uid}`), perfil('Nuevo Admin', CUENTAS[uid].email, { rol: 'admin', orgId: 'org-nueva', ...admin }));
+    lote.set(doc(db, 'organizaciones/org-nueva'), {
+      nombre: 'Empresa Tres',
+      adminId: uid,
+      fechaCreacion: serverTimestamp(),
+      ...empresa,
+    });
+    lote.set(
+      doc(db, `usuarios/${uid}`),
+      perfil('Nuevo Admin', CUENTAS[uid].email, { rol: 'admin', orgId: 'org-nueva', ...admin }),
+    );
     return lote.commit();
   };
 
@@ -309,7 +333,9 @@ describe('organizaciones y registro', () => {
 
   it('el perfil de admin solo, sin crear la empresa, no pasa', async () => {
     const db = como('nuevo');
-    await assertFails(setDoc(doc(db, 'usuarios/nuevo'), perfil('Nuevo Admin', 'nuevo@tres.com', { rol: 'admin', orgId: 'org1' })));
+    await assertFails(
+      setDoc(doc(db, 'usuarios/nuevo'), perfil('Nuevo Admin', 'nuevo@tres.com', { rol: 'admin', orgId: 'org1' })),
+    );
   });
 
   it('una empresa ya creada no se modifica ni se borra', async () => {

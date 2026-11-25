@@ -46,7 +46,13 @@ export async function crearIntegrante({ nombre, email, departamento, orgId }: Nu
     return clave;
   } catch (error) {
     // Si la cuenta alcanzó a crearse, se borra: sin perfil no sirve y dejaría ese correo ocupado
-    if (cuenta && !(await deleteUser(cuenta).then(() => true, () => false))) {
+    if (
+      cuenta &&
+      !(await deleteUser(cuenta).then(
+        () => true,
+        () => false,
+      ))
+    ) {
       console.error('No se pudo guardar el perfil:', error);
       throw new CuentaSinPerfilError('No se pudo guardar el perfil ni borrar la cuenta');
     }
@@ -59,5 +65,4 @@ export async function crearIntegrante({ nombre, email, departamento, orgId }: Nu
 export const cambiarDepartamento = (id: string, departamento: string) =>
   updateDoc(doc(db, 'usuarios', id), { departamento });
 
-export const cambiarActivo = (id: string, activo: boolean) =>
-  updateDoc(doc(db, 'usuarios', id), { activo });
+export const cambiarActivo = (id: string, activo: boolean) => updateDoc(doc(db, 'usuarios', id), { activo });

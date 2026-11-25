@@ -4,7 +4,9 @@ import { AvisoCuentaScreen } from '../app/components/AvisoCuentaScreen';
 
 describe('AvisoCuentaScreen', () => {
   it('muestra el título y el mensaje que reciba', () => {
-    render(<AvisoCuentaScreen titulo="Cuenta desactivada" mensaje="Habla con tu administrador." onCerrarSesion={vi.fn()} />);
+    render(
+      <AvisoCuentaScreen titulo="Cuenta desactivada" mensaje="Habla con tu administrador." onCerrarSesion={vi.fn()} />,
+    );
 
     expect(screen.getByText('Cuenta desactivada')).toBeInTheDocument();
     expect(screen.getByText('Habla con tu administrador.')).toBeInTheDocument();

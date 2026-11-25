@@ -34,7 +34,9 @@ export function useSolicitudes(perfil: PerfilUsuario | null, onError: (mensaje: 
         return;
       }
       // El admin ve las de su empresa; el usuario, solo las suyas
-      setSolicitudes(esAdmin && orgId ? await obtenerSolicitudesDeEmpresa(orgId) : await obtenerSolicitudesDeUsuario(user.uid));
+      setSolicitudes(
+        esAdmin && orgId ? await obtenerSolicitudesDeEmpresa(orgId) : await obtenerSolicitudesDeUsuario(user.uid),
+      );
     } catch (error) {
       console.error('Error al obtener datos:', error);
       onError('No se pudieron cargar las solicitudes. Intenta de nuevo.');

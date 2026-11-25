@@ -24,7 +24,9 @@ export function CambiarClavePerfil() {
     return (
       <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mt-6">
         <h2 className="text-gray-900 text-base font-bold mb-1">Contraseña</h2>
-        <p className="text-gray-500 text-sm">Entras con tu cuenta de Google, así que tu contraseña se cambia desde Google.</p>
+        <p className="text-gray-500 text-sm">
+          Entras con tu cuenta de Google, así que tu contraseña se cambia desde Google.
+        </p>
       </div>
     );
   }
@@ -76,8 +78,17 @@ export function CambiarClavePerfil() {
 
   const campo = (id: string, etiqueta: string, nombre: keyof Campos, autoComplete: string) => (
     <div>
-      <label htmlFor={id} className="block text-gray-700 text-[13px] font-semibold mb-1.5">{etiqueta}</label>
-      <input id={id} type="password" autoComplete={autoComplete} value={form[nombre]} onChange={(e) => update(nombre, e.target.value)} className={claseCampo(errors[nombre])} />
+      <label htmlFor={id} className="block text-gray-700 text-[13px] font-semibold mb-1.5">
+        {etiqueta}
+      </label>
+      <input
+        id={id}
+        type="password"
+        autoComplete={autoComplete}
+        value={form[nombre]}
+        onChange={(e) => update(nombre, e.target.value)}
+        className={claseCampo(errors[nombre])}
+      />
       <ErrorCampo mensaje={errors[nombre]} />
     </div>
   );
@@ -100,7 +111,11 @@ export function CambiarClavePerfil() {
         {campo('perfil-clave-nueva', 'Nueva contraseña', 'nueva', 'new-password')}
         {campo('perfil-clave-confirmar', 'Repite la nueva contraseña', 'confirmar', 'new-password')}
 
-        <button type="submit" disabled={guardando} className="self-start rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-indigo-700 disabled:bg-indigo-300">
+        <button
+          type="submit"
+          disabled={guardando}
+          className="self-start rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-indigo-700 disabled:bg-indigo-300"
+        >
           {guardando ? 'Guardando...' : 'Cambiar contraseña'}
         </button>
       </div>

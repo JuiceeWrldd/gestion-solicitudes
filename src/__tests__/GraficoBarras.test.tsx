@@ -10,7 +10,13 @@ const datos: DatoBarra[] = [
 
 const mostrar = (extra: { datos?: DatoBarra[]; verTabla?: boolean } = {}) =>
   render(
-    <GraficoBarras titulo="Por categoría" descripcion="De qué trata cada solicitud" columna="Categoría" datos={extra.datos ?? datos} verTabla={extra.verTabla ?? false} />
+    <GraficoBarras
+      titulo="Por categoría"
+      descripcion="De qué trata cada solicitud"
+      columna="Categoría"
+      datos={extra.datos ?? datos}
+      verTabla={extra.verTabla ?? false}
+    />,
   );
 
 // La barra de una fila: el div con el alto fijo que se pinta con el color
@@ -74,7 +80,9 @@ describe('GraficoBarras (vista de gráfica)', () => {
     });
 
     it('muestra el ícono junto al nombre cuando se le da uno', () => {
-      mostrar({ datos: [{ nombre: 'Aprobada', cantidad: 2, color: '#0ca30c', icono: <svg data-testid="icono-aprobada" /> }] });
+      mostrar({
+        datos: [{ nombre: 'Aprobada', cantidad: 2, color: '#0ca30c', icono: <svg data-testid="icono-aprobada" /> }],
+      });
       expect(within(screen.getByLabelText(/^Aprobada:/)).getByTestId('icono-aprobada')).toBeInTheDocument();
     });
   });
@@ -142,7 +150,9 @@ describe('GraficoBarras (vista de gráfica)', () => {
   });
 
   it('un nombre con etiquetas HTML se muestra como texto y no crea elementos', () => {
-    const { container } = mostrar({ datos: [{ nombre: '<img src=x onerror=alert(1)>', cantidad: 2, color: '#2a78d6' }] });
+    const { container } = mostrar({
+      datos: [{ nombre: '<img src=x onerror=alert(1)>', cantidad: 2, color: '#2a78d6' }],
+    });
 
     expect(screen.getAllByText('<img src=x onerror=alert(1)>').length).toBeGreaterThan(0);
     expect(container.querySelector('img')).toBeNull();

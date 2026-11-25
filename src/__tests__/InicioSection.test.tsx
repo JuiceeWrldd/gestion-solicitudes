@@ -27,11 +27,14 @@ const lista: Solicitud[] = [
 
 // Las tarjetas de arriba: el número que acompaña a cada nombre
 const tarjeta = (nombre: string) => {
-  const etiqueta = screen.getAllByText(nombre).find((e) => e.nextElementSibling !== null && /^\d+$/.test(e.nextElementSibling.textContent ?? ''));
+  const etiqueta = screen
+    .getAllByText(nombre)
+    .find((e) => e.nextElementSibling !== null && /^\d+$/.test(e.nextElementSibling.textContent ?? ''));
   return etiqueta?.nextElementSibling?.textContent;
 };
 
-const mostrar = (solicitudes: Solicitud[] = lista, esAdmin = true) => render(<InicioSection solicitudes={solicitudes} esAdmin={esAdmin} />);
+const mostrar = (solicitudes: Solicitud[] = lista, esAdmin = true) =>
+  render(<InicioSection solicitudes={solicitudes} esAdmin={esAdmin} />);
 
 describe('InicioSection', () => {
   describe('tarjetas con los totales', () => {
@@ -92,7 +95,8 @@ describe('InicioSection', () => {
       mostrar();
       const color = (nombre: string) => {
         const fila = screen.getByLabelText(new RegExp(`^${nombre}:`));
-        return (Array.from(fila.querySelectorAll('div')).find((d) => d.style.height === '16px') as HTMLElement).style.background;
+        return (Array.from(fila.querySelectorAll('div')).find((d) => d.style.height === '16px') as HTMLElement).style
+          .background;
       };
 
       expect(color('Aprobada')).toBe('rgb(12, 163, 12)');
@@ -104,7 +108,11 @@ describe('InicioSection', () => {
       mostrar();
       const colores = within(screen.getByRole('list', { name: 'Por categoría' }))
         .getAllByRole('listitem')
-        .map((li) => (Array.from(li.querySelectorAll('div')).find((d) => d.style.height === '16px') as HTMLElement).style.background);
+        .map(
+          (li) =>
+            (Array.from(li.querySelectorAll('div')).find((d) => d.style.height === '16px') as HTMLElement).style
+              .background,
+        );
 
       expect(new Set(colores).size).toBe(1);
       expect(colores[0]).toBe('rgb(42, 120, 214)');

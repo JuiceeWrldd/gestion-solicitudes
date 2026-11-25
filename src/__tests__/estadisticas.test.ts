@@ -33,7 +33,11 @@ describe('contarPorEstado', () => {
   });
 
   it('ordena de más a menos, y si empatan sigue el orden del flujo', () => {
-    const r = contarPorEstado([solicitud({ estado: 'Rechazada' }), solicitud({ estado: 'Rechazada' }), solicitud({ estado: 'Aprobada' })]);
+    const r = contarPorEstado([
+      solicitud({ estado: 'Rechazada' }),
+      solicitud({ estado: 'Rechazada' }),
+      solicitud({ estado: 'Aprobada' }),
+    ]);
     expect(r.map((c) => c.nombre)).toEqual(['Rechazada', 'Aprobada', 'En revisión']);
 
     const empate = contarPorEstado([solicitud({ estado: 'Rechazada' }), solicitud({ estado: 'Aprobada' })]);
@@ -75,7 +79,11 @@ describe('contarPorCategoria', () => {
   });
 
   it('si empatan, ordena por nombre, ignorando las tildes y las mayúsculas', () => {
-    const r = contarPorCategoria([solicitud({ tipo: 'Soporte Técnico' }), solicitud({ tipo: 'Administrativa' }), solicitud({ tipo: 'Otro' })]);
+    const r = contarPorCategoria([
+      solicitud({ tipo: 'Soporte Técnico' }),
+      solicitud({ tipo: 'Administrativa' }),
+      solicitud({ tipo: 'Otro' }),
+    ]);
     expect(r.map((c) => c.nombre)).toEqual(['Administrativa', 'Otro', 'Soporte Técnico']);
   });
 

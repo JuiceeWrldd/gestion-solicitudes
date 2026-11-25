@@ -8,7 +8,15 @@ const authFalso = vi.hoisted(() => ({ currentUser: { uid: 'u1' } as { uid: strin
 vi.mock('../app/config/firebase', () => ({ auth: authFalso }));
 vi.mock('../app/services/perfil', () => ({ obtenerPerfil: vi.fn(), obtenerOrganizacion: vi.fn() }));
 
-const perfil = { nombre: 'Ana', email: 'ana@empresa.com', departamento: 'Logística', rol: 'usuario' as const, orgId: 'gestiosync', activo: true, fechaRegistro: new Date() };
+const perfil = {
+  nombre: 'Ana',
+  email: 'ana@empresa.com',
+  departamento: 'Logística',
+  rol: 'usuario' as const,
+  orgId: 'gestiosync',
+  activo: true,
+  fechaRegistro: new Date(),
+};
 const empresa = { nombre: 'GestioSync', adminId: 'admin1' };
 
 describe('usePerfil', () => {

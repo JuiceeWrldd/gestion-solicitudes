@@ -235,7 +235,9 @@ describe('IntegrantesScreen', () => {
 
       fireEvent.change(screen.getByLabelText('Oficina de Ana Gómez'), { target: { value: 'Recursos Humanos' } });
 
-      await waitFor(() => expect(updateDoc).toHaveBeenCalledWith({ ruta: 'usuarios/ana' }, { departamento: 'Recursos Humanos' }));
+      await waitFor(() =>
+        expect(updateDoc).toHaveBeenCalledWith({ ruta: 'usuarios/ana' }, { departamento: 'Recursos Humanos' }),
+      );
       expect(screen.getByLabelText('Oficina de Ana Gómez')).toHaveValue('Recursos Humanos');
     });
 

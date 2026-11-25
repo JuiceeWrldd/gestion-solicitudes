@@ -23,7 +23,7 @@ export function ForgotPasswordScreen({ onNavigateToLogin }: ForgotPasswordScreen
       setError('Escribe tu correo.');
       return;
     }
-    
+
     setLoading(true);
     setError('');
 
@@ -79,8 +79,7 @@ export function ForgotPasswordScreen({ onNavigateToLogin }: ForgotPasswordScreen
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow-sm sm:rounded-2xl sm:px-10 border border-gray-100">
-          
-          <button 
+          <button
             onClick={onNavigateToLogin}
             className="flex items-center text-sm font-medium text-gray-500 hover:text-gray-900 mb-6 transition-colors"
           >
@@ -111,7 +110,9 @@ export function ForgotPasswordScreen({ onNavigateToLogin }: ForgotPasswordScreen
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className={`block w-full pl-10 py-3 sm:text-sm border rounded-lg outline-none transition-colors ${
-                    error ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-200 focus:ring-indigo-500 focus:border-indigo-500'
+                    error
+                      ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
+                      : 'border-gray-200 focus:ring-indigo-500 focus:border-indigo-500'
                   }`}
                   placeholder="tucorreo@ejemplo.com"
                 />

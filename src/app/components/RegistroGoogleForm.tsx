@@ -40,7 +40,12 @@ export function RegistroGoogleForm({ cuenta, onCancelar }: RegistroGoogleFormPro
     setCargando(true);
     setErrorGeneral(null);
     try {
-      await completarRegistroGoogle({ nombre, empresa, departamento: form.departamento, credencial: cuenta.credencial });
+      await completarRegistroGoogle({
+        nombre,
+        empresa,
+        departamento: form.departamento,
+        credencial: cuenta.credencial,
+      });
       // Al iniciar sesión, la app pasa sola al dashboard
     } catch (error) {
       console.error('Registro con Google fallido:', error);
@@ -61,35 +66,81 @@ export function RegistroGoogleForm({ cuenta, onCancelar }: RegistroGoogleFormPro
       <AvisoError mensaje={errorGeneral} />
 
       <div>
-        <label htmlFor="goo-correo" className="block text-gray-700 text-[13px] font-semibold mb-1.5">Correo (de Google)</label>
-        <input id="goo-correo" value={cuenta.email} disabled readOnly className={`${claseCampo(undefined, 'acceso')} text-gray-500`} />
+        <label htmlFor="goo-correo" className="block text-gray-700 text-[13px] font-semibold mb-1.5">
+          Correo (de Google)
+        </label>
+        <input
+          id="goo-correo"
+          value={cuenta.email}
+          disabled
+          readOnly
+          className={`${claseCampo(undefined, 'acceso')} text-gray-500`}
+        />
       </div>
 
       <div>
-        <label htmlFor="goo-nombre" className="block text-gray-700 text-[13px] font-semibold mb-1.5">Tu nombre y apellido</label>
-        <input id="goo-nombre" maxLength={LIMITES.nombre} value={form.nombre} onChange={(e) => update('nombre', e.target.value)} className={claseCampo(errors.nombre, 'acceso')} />
+        <label htmlFor="goo-nombre" className="block text-gray-700 text-[13px] font-semibold mb-1.5">
+          Tu nombre y apellido
+        </label>
+        <input
+          id="goo-nombre"
+          maxLength={LIMITES.nombre}
+          value={form.nombre}
+          onChange={(e) => update('nombre', e.target.value)}
+          className={claseCampo(errors.nombre, 'acceso')}
+        />
         <ErrorCampo mensaje={errors.nombre} />
       </div>
 
       <div>
-        <label htmlFor="goo-empresa" className="block text-gray-700 text-[13px] font-semibold mb-1.5">Nombre de la empresa</label>
-        <input id="goo-empresa" maxLength={LIMITES.empresa} value={form.empresa} onChange={(e) => update('empresa', e.target.value)} className={claseCampo(errors.empresa, 'acceso')} />
+        <label htmlFor="goo-empresa" className="block text-gray-700 text-[13px] font-semibold mb-1.5">
+          Nombre de la empresa
+        </label>
+        <input
+          id="goo-empresa"
+          maxLength={LIMITES.empresa}
+          value={form.empresa}
+          onChange={(e) => update('empresa', e.target.value)}
+          className={claseCampo(errors.empresa, 'acceso')}
+        />
         <ErrorCampo mensaje={errors.empresa} />
       </div>
 
       <div>
-        <label htmlFor="goo-oficina" className="block text-gray-700 text-[13px] font-semibold mb-1.5">Tu oficina</label>
-        <select id="goo-oficina" value={form.departamento} onChange={(e) => update('departamento', e.target.value)} className={claseCampo(errors.departamento, 'acceso')}>
-          <option value="" disabled>Seleccionar...</option>
-          {DEPARTAMENTOS.map((d) => <option key={d} value={d}>{d}</option>)}
+        <label htmlFor="goo-oficina" className="block text-gray-700 text-[13px] font-semibold mb-1.5">
+          Tu oficina
+        </label>
+        <select
+          id="goo-oficina"
+          value={form.departamento}
+          onChange={(e) => update('departamento', e.target.value)}
+          className={claseCampo(errors.departamento, 'acceso')}
+        >
+          <option value="" disabled>
+            Seleccionar...
+          </option>
+          {DEPARTAMENTOS.map((d) => (
+            <option key={d} value={d}>
+              {d}
+            </option>
+          ))}
         </select>
         <ErrorCampo mensaje={errors.departamento} />
       </div>
 
-      <button type="submit" disabled={cargando} className="w-full mt-1 bg-indigo-600 text-white py-3 rounded-lg text-[15px] font-bold hover:bg-indigo-700 disabled:bg-indigo-300 transition-colors">
+      <button
+        type="submit"
+        disabled={cargando}
+        className="w-full mt-1 bg-indigo-600 text-white py-3 rounded-lg text-[15px] font-bold hover:bg-indigo-700 disabled:bg-indigo-300 transition-colors"
+      >
         {cargando ? 'Creando tu empresa...' : 'Crear empresa'}
       </button>
-      <button type="button" onClick={cancelar} disabled={cargando} className="text-gray-500 text-sm font-medium hover:underline">
+      <button
+        type="button"
+        onClick={cancelar}
+        disabled={cargando}
+        className="text-gray-500 text-sm font-medium hover:underline"
+      >
         Usar otra cuenta
       </button>
     </form>

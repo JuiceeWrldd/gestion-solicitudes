@@ -10,7 +10,8 @@ interface FiltrosSolicitudesProps {
   mostrando: number;
 }
 
-const selectClase = 'w-full rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 outline-none focus:border-indigo-600';
+const selectClase =
+  'w-full rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 outline-none focus:border-indigo-600';
 
 export function FiltrosSolicitudes({ filtros, onCambiar, total, mostrando }: FiltrosSolicitudesProps) {
   const activos = hayFiltros(filtros);
@@ -30,24 +31,56 @@ export function FiltrosSolicitudes({ filtros, onCambiar, total, mostrando }: Fil
       </div>
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-        <select aria-label="Filtrar por estado" value={filtros.estado} onChange={(e) => onCambiar({ ...filtros, estado: e.target.value as EstadoSolicitud | '' })} className={selectClase}>
+        <select
+          aria-label="Filtrar por estado"
+          value={filtros.estado}
+          onChange={(e) => onCambiar({ ...filtros, estado: e.target.value as EstadoSolicitud | '' })}
+          className={selectClase}
+        >
           <option value="">Todos los estados</option>
-          {ESTADOS.map((e) => <option key={e} value={e}>{e}</option>)}
+          {ESTADOS.map((e) => (
+            <option key={e} value={e}>
+              {e}
+            </option>
+          ))}
         </select>
-        <select aria-label="Filtrar por prioridad" value={filtros.prioridad} onChange={(e) => onCambiar({ ...filtros, prioridad: e.target.value as Prioridad | '' })} className={selectClase}>
+        <select
+          aria-label="Filtrar por prioridad"
+          value={filtros.prioridad}
+          onChange={(e) => onCambiar({ ...filtros, prioridad: e.target.value as Prioridad | '' })}
+          className={selectClase}
+        >
           <option value="">Todas las prioridades</option>
-          {PRIORIDADES.map((p) => <option key={p} value={p}>{p}</option>)}
+          {PRIORIDADES.map((p) => (
+            <option key={p} value={p}>
+              {p}
+            </option>
+          ))}
         </select>
-        <select aria-label="Filtrar por categoría" value={filtros.tipo} onChange={(e) => onCambiar({ ...filtros, tipo: e.target.value })} className={selectClase}>
+        <select
+          aria-label="Filtrar por categoría"
+          value={filtros.tipo}
+          onChange={(e) => onCambiar({ ...filtros, tipo: e.target.value })}
+          className={selectClase}
+        >
           <option value="">Todas las categorías</option>
-          {TIPOS.map((t) => <option key={t} value={t}>{t}</option>)}
+          {TIPOS.map((t) => (
+            <option key={t} value={t}>
+              {t}
+            </option>
+          ))}
         </select>
       </div>
 
       <div className="flex min-h-[28px] items-center justify-between text-xs text-gray-500">
-        <span aria-live="polite">{activos ? `Mostrando ${mostrando} de ${total}` : `${total} ${total === 1 ? 'solicitud' : 'solicitudes'}`}</span>
+        <span aria-live="polite">
+          {activos ? `Mostrando ${mostrando} de ${total}` : `${total} ${total === 1 ? 'solicitud' : 'solicitudes'}`}
+        </span>
         {activos && (
-          <button onClick={() => onCambiar(SIN_FILTROS)} className="flex items-center gap-1 font-semibold text-indigo-600 hover:underline">
+          <button
+            onClick={() => onCambiar(SIN_FILTROS)}
+            className="flex items-center gap-1 font-semibold text-indigo-600 hover:underline"
+          >
             <X size={14} /> Limpiar filtros
           </button>
         )}

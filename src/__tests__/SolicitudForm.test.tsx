@@ -79,7 +79,7 @@ describe('SolicitudForm: campos de texto', () => {
     });
 
     expect(p.onGuardar).toHaveBeenCalledWith(
-      expect.objectContaining({ titulo: 'Impresora rota', descripcion: `alert(1)${DETALLE_VALIDO}` })
+      expect.objectContaining({ titulo: 'Impresora rota', descripcion: `alert(1)${DETALLE_VALIDO}` }),
     );
   });
 

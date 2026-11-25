@@ -18,9 +18,28 @@ const solicitud = (extra: Partial<Solicitud>): Solicitud => ({
 });
 
 const lista: Solicitud[] = [
-  solicitud({ id: 'id-impresora', titulo: 'Impresora sin tinta', tipo: 'Soporte Técnico', prioridad: 'Alta', descripcion: 'La del segundo piso no imprime' }),
-  solicitud({ id: 'id-vacaciones', titulo: 'Vacaciones de diciembre', tipo: 'Recursos Humanos', estado: 'Aprobada', autorNombre: 'Luis Pérez', respuestaAdmin: 'Aprobadas, disfrútalas' }),
-  solicitud({ id: 'id-camion', titulo: 'Camión para el despacho', tipo: 'Logística', estado: 'Rechazada', prioridad: 'Baja' }),
+  solicitud({
+    id: 'id-impresora',
+    titulo: 'Impresora sin tinta',
+    tipo: 'Soporte Técnico',
+    prioridad: 'Alta',
+    descripcion: 'La del segundo piso no imprime',
+  }),
+  solicitud({
+    id: 'id-vacaciones',
+    titulo: 'Vacaciones de diciembre',
+    tipo: 'Recursos Humanos',
+    estado: 'Aprobada',
+    autorNombre: 'Luis Pérez',
+    respuestaAdmin: 'Aprobadas, disfrútalas',
+  }),
+  solicitud({
+    id: 'id-camion',
+    titulo: 'Camión para el despacho',
+    tipo: 'Logística',
+    estado: 'Rechazada',
+    prioridad: 'Baja',
+  }),
   solicitud({ id: 'id-pago', titulo: 'Pago a proveedores', tipo: 'Financiera', prioridad: 'Alta' }),
 ];
 

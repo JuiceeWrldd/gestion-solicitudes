@@ -44,7 +44,9 @@ export function useIntegrantes(orgId: string) {
       if (err instanceof FirebaseError && err.code === 'auth/email-already-in-use') {
         setError('Ya existe una cuenta con ese correo.');
       } else if (err instanceof CuentaSinPerfilError) {
-        setError('La cuenta se creó, pero no se pudo guardar su perfil ni deshacer el cambio. Ese correo quedó ocupado: bórralo desde la consola de Firebase.');
+        setError(
+          'La cuenta se creó, pero no se pudo guardar su perfil ni deshacer el cambio. Ese correo quedó ocupado: bórralo desde la consola de Firebase.',
+        );
       } else {
         setError('No se pudo crear el integrante. Revisa los datos e intenta de nuevo.');
       }

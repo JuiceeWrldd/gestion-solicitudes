@@ -69,10 +69,7 @@ describe('aSolicitudes', () => {
   });
 
   it('no modifica la lista original', () => {
-    const docs = [
-      fakeDoc('a', { fecha: fecha(1) }),
-      fakeDoc('b', { fecha: fecha(2) }),
-    ];
+    const docs = [fakeDoc('a', { fecha: fecha(1) }), fakeDoc('b', { fecha: fecha(2) })];
     aSolicitudes(docs);
     expect(docs.map((d) => d.id)).toEqual(['a', 'b']);
   });

@@ -19,7 +19,14 @@ const sesion = vi.hoisted(() => ({
 }));
 
 vi.mock('firebase/auth', () => ({ signOut: vi.fn(), sendEmailVerification: vi.fn() }));
-vi.mock('../app/config/firebase', () => ({ auth: { get currentUser() { return sesion.usuario; } }, db: {} }));
+vi.mock('../app/config/firebase', () => ({
+  auth: {
+    get currentUser() {
+      return sesion.usuario;
+    },
+  },
+  db: {},
+}));
 vi.mock('../app/hooks/usePerfil', () => ({
   usePerfil: () => ({
     perfil: sesion.perfil,

@@ -19,8 +19,7 @@ export function contarPorEstado(solicitudes: Solicitud[]) {
 
   const posicionEnElFlujo = (nombre: string) => ESTADOS.findIndex((estado) => estado === nombre);
 
-  return conteos
-    .sort((a, b) => b.cantidad - a.cantidad || posicionEnElFlujo(a.nombre) - posicionEnElFlujo(b.nombre));
+  return conteos.sort((a, b) => b.cantidad - a.cantidad || posicionEnElFlujo(a.nombre) - posicionEnElFlujo(b.nombre));
 }
 
 // Cuántas solicitudes hay en cada categoría. Solo salen las que tienen alguna.

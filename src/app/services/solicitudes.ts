@@ -32,7 +32,7 @@ export interface DatosSolicitud {
 export function aSolicitudes(docs: QueryDocumentSnapshot<DocumentData>[]): Solicitud[] {
   const ahora = Date.now();
   const ordenados = [...docs].sort(
-    (a, b) => (b.data().fecha?.toMillis() ?? ahora) - (a.data().fecha?.toMillis() ?? ahora)
+    (a, b) => (b.data().fecha?.toMillis() ?? ahora) - (a.data().fecha?.toMillis() ?? ahora),
   );
 
   return ordenados.map((d) => {

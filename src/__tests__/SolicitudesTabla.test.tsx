@@ -21,7 +21,13 @@ const solicitud = (extra: Partial<Solicitud>): Solicitud => ({
 const lista: Solicitud[] = [
   solicitud({ id: 'a-impresora', titulo: 'Impresora sin tinta', tipo: 'Soporte Técnico', prioridad: 'Alta' }),
   solicitud({ id: 'b-vacaciones', titulo: 'Vacaciones de diciembre', tipo: 'Recursos Humanos', estado: 'Aprobada' }),
-  solicitud({ id: 'c-camion', titulo: 'Camión para el despacho', tipo: 'Logística', estado: 'Rechazada', prioridad: 'Baja' }),
+  solicitud({
+    id: 'c-camion',
+    titulo: 'Camión para el despacho',
+    tipo: 'Logística',
+    estado: 'Rechazada',
+    prioridad: 'Baja',
+  }),
 ];
 
 const mostrar = (extra: { solicitudes?: Solicitud[]; cargando?: boolean; esAdmin?: boolean } = {}) =>
@@ -34,10 +40,11 @@ const mostrar = (extra: { solicitudes?: Solicitud[]; cargando?: boolean; esAdmin
       onResponder={vi.fn().mockResolvedValue(true)}
       onEditar={vi.fn()}
       onEliminar={vi.fn().mockResolvedValue(true)}
-    />
+    />,
   );
 
-const buscar = (texto: string) => fireEvent.change(screen.getByLabelText('Buscar solicitudes'), { target: { value: texto } });
+const buscar = (texto: string) =>
+  fireEvent.change(screen.getByLabelText('Buscar solicitudes'), { target: { value: texto } });
 
 describe('SolicitudesTabla', () => {
   describe('lista', () => {
@@ -196,7 +203,7 @@ describe('SolicitudesTabla: aprobar y rechazar', () => {
         onResponder={vi.fn().mockResolvedValue(true)}
         onEditar={vi.fn()}
         onEliminar={vi.fn().mockResolvedValue(true)}
-      />
+      />,
     );
     return onCambiarEstado;
   };

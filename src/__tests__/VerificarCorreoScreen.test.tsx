@@ -28,7 +28,9 @@ describe('VerificarCorreoScreen', () => {
     authFalso.currentUser = usuario;
     authFalso.languageCode = null;
     vi.mocked(sendEmailVerification).mockResolvedValue(undefined);
-    render(<VerificarCorreoScreen email="ana@empresa.com" onVerificado={onVerificado} onCerrarSesion={onCerrarSesion} />);
+    render(
+      <VerificarCorreoScreen email="ana@empresa.com" onVerificado={onVerificado} onCerrarSesion={onCerrarSesion} />,
+    );
   });
 
   it('explica qué correo hay que verificar', () => {

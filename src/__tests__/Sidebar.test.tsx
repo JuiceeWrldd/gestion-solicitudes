@@ -10,7 +10,14 @@ const items: ItemMenu[] = [
 
 const mostrar = (onSeleccionar = vi.fn(), onCerrarSesion = vi.fn()) =>
   render(
-    <Sidebar items={items} activo="nueva" nombre="Ana Gómez" rolTexto="Sistemas" onSeleccionar={onSeleccionar} onCerrarSesion={onCerrarSesion} />
+    <Sidebar
+      items={items}
+      activo="nueva"
+      nombre="Ana Gómez"
+      rolTexto="Sistemas"
+      onSeleccionar={onSeleccionar}
+      onCerrarSesion={onCerrarSesion}
+    />,
   );
 
 describe('Sidebar', () => {

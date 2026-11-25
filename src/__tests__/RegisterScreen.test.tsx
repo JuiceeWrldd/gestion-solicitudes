@@ -11,7 +11,9 @@ vi.mock('../app/services/registro', () => ({
   cancelarRegistroGoogle: vi.fn(),
 }));
 
-const llenar = (campos: Partial<Record<'nombre' | 'empresa' | 'email' | 'oficina' | 'clave' | 'confirmar', string>>) => {
+const llenar = (
+  campos: Partial<Record<'nombre' | 'empresa' | 'email' | 'oficina' | 'clave' | 'confirmar', string>>,
+) => {
   const etiquetas = {
     nombre: 'Tu nombre y apellido',
     empresa: 'Nombre de la empresa',
@@ -140,7 +142,13 @@ describe('RegisterScreen', () => {
   });
 
   describe('registro con Google', () => {
-    const cuentaGoogle = { yaRegistrado: false as const, nombre: 'Ana Google', email: 'ana@gmail.com', credencial: {} as never, esNueva: true };
+    const cuentaGoogle = {
+      yaRegistrado: false as const,
+      nombre: 'Ana Google',
+      email: 'ana@gmail.com',
+      credencial: {} as never,
+      esNueva: true,
+    };
 
     it('ofrece el botón de Google en el registro', () => {
       expect(screen.getByRole('button', { name: 'Registrarme con Google' })).toBeInTheDocument();

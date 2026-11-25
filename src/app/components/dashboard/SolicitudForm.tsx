@@ -21,7 +21,9 @@ const etiqueta = 'block text-gray-700 text-[13px] font-semibold mb-1.5';
 export function SolicitudForm({ inicial, onGuardar, onCancelar, onTerminado }: SolicitudFormProps) {
   const [esEdicion] = useState(inicial !== null);
   const [form, setForm] = useState<DatosSolicitud>(
-    inicial ? { titulo: inicial.titulo, tipo: inicial.tipo, descripcion: inicial.descripcion, prioridad: inicial.prioridad } : FORM_VACIO
+    inicial
+      ? { titulo: inicial.titulo, tipo: inicial.tipo, descripcion: inicial.descripcion, prioridad: inicial.prioridad }
+      : FORM_VACIO,
   );
   const [formErrors, setFormErrors] = useState<Partial<Record<keyof DatosSolicitud, string>>>({});
   const [submitting, setSubmitting] = useState(false);
@@ -92,16 +94,38 @@ export function SolicitudForm({ inicial, onGuardar, onCancelar, onTerminado }: S
       <div className="bg-white rounded-2xl p-6 lg:p-8 max-w-2xl shadow-[0_2px_20px_rgba(30,63,174,0.08)]">
         <div className="flex flex-col gap-5">
           <div>
-            <label htmlFor="sol-titulo" className={etiqueta}>Título</label>
-            <input id="sol-titulo" type="text" maxLength={LIMITES.titulo} value={form.titulo} onChange={(e) => updateForm('titulo', e.target.value)} className={claseCampo(formErrors.titulo)} />
+            <label htmlFor="sol-titulo" className={etiqueta}>
+              Título
+            </label>
+            <input
+              id="sol-titulo"
+              type="text"
+              maxLength={LIMITES.titulo}
+              value={form.titulo}
+              onChange={(e) => updateForm('titulo', e.target.value)}
+              className={claseCampo(formErrors.titulo)}
+            />
             <ErrorCampo mensaje={formErrors.titulo} />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label htmlFor="sol-tipo" className={etiqueta}>Categoría</label>
-              <select id="sol-tipo" value={form.tipo} onChange={(e) => updateForm('tipo', e.target.value)} className={claseCampo(formErrors.tipo)}>
-                <option value="" disabled>Elige una</option>
-                {TIPOS.map((t) => <option key={t} value={t}>{t}</option>)}
+              <label htmlFor="sol-tipo" className={etiqueta}>
+                Categoría
+              </label>
+              <select
+                id="sol-tipo"
+                value={form.tipo}
+                onChange={(e) => updateForm('tipo', e.target.value)}
+                className={claseCampo(formErrors.tipo)}
+              >
+                <option value="" disabled>
+                  Elige una
+                </option>
+                {TIPOS.map((t) => (
+                  <option key={t} value={t}>
+                    {t}
+                  </option>
+                ))}
               </select>
             </div>
             <div>
@@ -109,9 +133,17 @@ export function SolicitudForm({ inicial, onGuardar, onCancelar, onTerminado }: S
               <div className="flex gap-2">
                 {PRIORIDADES.map((p) => {
                   const isActive = form.prioridad === p;
-                  const colores = isActive ? `${clasePrioridad[p]} font-bold` : 'border-gray-200 bg-gray-50 text-gray-500 font-medium';
+                  const colores = isActive
+                    ? `${clasePrioridad[p]} font-bold`
+                    : 'border-gray-200 bg-gray-50 text-gray-500 font-medium';
                   return (
-                    <button key={p} type="button" aria-pressed={isActive} onClick={() => updateForm('prioridad', p)} className={`flex-1 px-1.5 py-2.5 rounded-lg border-[1.5px] transition-all ${colores}`}>
+                    <button
+                      key={p}
+                      type="button"
+                      aria-pressed={isActive}
+                      onClick={() => updateForm('prioridad', p)}
+                      className={`flex-1 px-1.5 py-2.5 rounded-lg border-[1.5px] transition-all ${colores}`}
+                    >
                       {p}
                     </button>
                   );
@@ -120,18 +152,36 @@ export function SolicitudForm({ inicial, onGuardar, onCancelar, onTerminado }: S
             </div>
           </div>
           <div>
-            <label htmlFor="sol-detalles" className={etiqueta}>Detalles</label>
-            <textarea id="sol-detalles" rows={5} maxLength={LIMITES.descripcion} value={form.descripcion} onChange={(e) => updateForm('descripcion', e.target.value)} className={`${claseCampo(formErrors.descripcion)} resize-y`} />
+            <label htmlFor="sol-detalles" className={etiqueta}>
+              Detalles
+            </label>
+            <textarea
+              id="sol-detalles"
+              rows={5}
+              maxLength={LIMITES.descripcion}
+              value={form.descripcion}
+              onChange={(e) => updateForm('descripcion', e.target.value)}
+              className={`${claseCampo(formErrors.descripcion)} resize-y`}
+            />
             <ErrorCampo mensaje={formErrors.descripcion} />
-            <p className="text-gray-400 text-xs mt-1 text-right">{form.descripcion.length}/{LIMITES.descripcion}</p>
+            <p className="text-gray-400 text-xs mt-1 text-right">
+              {form.descripcion.length}/{LIMITES.descripcion}
+            </p>
           </div>
           <div className="flex justify-end gap-3 pt-2">
             {esEdicion && (
-              <button onClick={onCancelar} className="px-6 py-3 rounded-lg border border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 transition-colors">
+              <button
+                onClick={onCancelar}
+                className="px-6 py-3 rounded-lg border border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 transition-colors"
+              >
                 Cancelar
               </button>
             )}
-            <button onClick={handleSubmit} disabled={submitting} className="px-6 py-3 rounded-lg bg-[#1E3FAE] text-white font-bold hover:bg-[#19358f] transition-colors disabled:bg-[#93A8E8] disabled:cursor-not-allowed">
+            <button
+              onClick={handleSubmit}
+              disabled={submitting}
+              className="px-6 py-3 rounded-lg bg-[#1E3FAE] text-white font-bold hover:bg-[#19358f] transition-colors disabled:bg-[#93A8E8] disabled:cursor-not-allowed"
+            >
               {submitting ? 'Guardando...' : 'Guardar'}
             </button>
           </div>

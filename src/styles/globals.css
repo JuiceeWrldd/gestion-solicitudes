@@ -47,13 +47,17 @@
       line-height: 1.5;
     }
 
-    p, label, button, input {
+    p,
+    label,
+    button,
+    input {
       font-size: var(--text-base);
       font-weight: var(--font-weight-normal);
       line-height: 1.5;
     }
 
-    label, button {
+    label,
+    button {
       font-weight: var(--font-weight-medium);
     }
   }

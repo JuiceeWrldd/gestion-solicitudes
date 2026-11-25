@@ -14,13 +14,21 @@ export function AvisoCuentaScreen({ titulo, mensaje, onCerrarSesion, onReintenta
         <p className="text-gray-500 text-sm leading-relaxed mb-6">{mensaje}</p>
         {onReintentar ? (
           <div className="flex flex-col gap-3">
-            <button onClick={onReintentar} className="w-full bg-indigo-600 text-white py-3 rounded-lg text-[15px] font-bold hover:bg-indigo-700">
+            <button
+              onClick={onReintentar}
+              className="w-full bg-indigo-600 text-white py-3 rounded-lg text-[15px] font-bold hover:bg-indigo-700"
+            >
               Reintentar
             </button>
-            <button onClick={onCerrarSesion} className="text-gray-500 text-sm font-medium hover:underline">Cerrar sesión</button>
+            <button onClick={onCerrarSesion} className="text-gray-500 text-sm font-medium hover:underline">
+              Cerrar sesión
+            </button>
           </div>
         ) : (
-          <button onClick={onCerrarSesion} className="w-full bg-indigo-600 text-white py-3 rounded-lg text-[15px] font-bold hover:bg-indigo-700">
+          <button
+            onClick={onCerrarSesion}
+            className="w-full bg-indigo-600 text-white py-3 rounded-lg text-[15px] font-bold hover:bg-indigo-700"
+          >
             Cerrar sesión
           </button>
         )}

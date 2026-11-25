@@ -31,7 +31,9 @@ export function Sidebar({ items, activo, nombre, rolTexto, onSeleccionar, onCerr
             onClick={() => onSeleccionar(item.id)}
             aria-current={activo === item.id ? 'page' : undefined}
             className={`flex items-center gap-3 w-full px-4 py-3 rounded-xl mb-1 text-left text-sm transition-all ${
-              activo === item.id ? 'bg-white/20 text-white font-semibold' : 'text-white/65 hover:bg-white/10 hover:text-white'
+              activo === item.id
+                ? 'bg-white/20 text-white font-semibold'
+                : 'text-white/65 hover:bg-white/10 hover:text-white'
             }`}
           >
             <span className={activo === item.id ? '' : 'opacity-70'}>{item.icon}</span>
