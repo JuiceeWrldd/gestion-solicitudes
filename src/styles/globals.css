@@ -1,10 +1,8 @@
 /**
  * Global Base Styles
- * Importación de fuentes corporativas y reset de capas base
- * para mantener consistencia tipográfica en todo el proyecto.
+ * Reset de capas base para mantener consistencia tipográfica en todo el proyecto.
+ * La fuente Inter se carga desde index.html.
  */
-
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 @custom-variant dark (&:is(.dark *));
 
