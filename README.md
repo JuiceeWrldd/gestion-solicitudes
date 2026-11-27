@@ -4,6 +4,20 @@
 
 Proyecto final del SENA: una aplicación web para la gestión de solicitudes, construida con **React**, **Vite**, **TypeScript**, **Tailwind CSS** y **Firebase** (Authentication y Firestore).
 
+**App en línea:** [GitHub Pages](https://juiceewrldd.github.io/gestion-solicitudes/) · [Firebase Hosting](https://gestion-de-solicitudes-7ca4f.web.app)
+
+## Capturas
+
+| Acceso | Inicio del administrador |
+| --- | --- |
+| ![Pantalla de acceso](docs/capturas/acceso.png) | ![Inicio con totales y gráficas](docs/capturas/inicio.png) |
+| **Solicitudes de la empresa** | **Nueva solicitud** |
+| ![Lista de solicitudes con una abierta](docs/capturas/solicitudes.png) | ![Formulario de nueva solicitud](docs/capturas/nueva-solicitud.png) |
+| **Integrantes** | **En el celular** |
+| ![Integrantes de la empresa](docs/capturas/integrantes.png) | <img src="docs/capturas/celular.png" alt="Inicio en el celular" width="220" /> |
+
+Las capturas son del modo demo, con datos de ejemplo (ver [Probar sin cuenta](#probar-sin-cuenta-modo-demo)).
+
 ## Funcionalidades
 
 - Registro de empresas nuevas, con correo y contraseña o con Google: quien se registra crea su empresa y queda como su administrador. Con correo y contraseña, el administrador debe verificar su correo para poder administrar (con Google ya viene verificado).
@@ -56,11 +70,27 @@ Proyecto final del SENA: una aplicación web para la gestión de solicitudes, co
 
    En Firebase, habilita los métodos de inicio de sesión **Correo/contraseña** y **Google** en Authentication, y crea una base de datos en Firestore.
 
+## Probar sin cuenta (modo demo)
+
+```bash
+npm run demo
+```
+
+Enciende los emuladores de Firebase en tu equipo, los llena con una empresa de ejemplo ("Distribuidora Andina") y deja la app lista en http://localhost:5173/gestion-solicitudes/. No necesita `.env` ni tocar el proyecto real de Firebase, pero sí Java 11 o superior (lo usa el emulador de Firestore).
+
+Cuentas de prueba (contraseña de todas: `demo1234`):
+
+- `admin@demo.test`: Laura Méndez, administradora.
+- `carlos@demo.test` y `ana@demo.test`: usuarios.
+
+Los datos viven solo mientras la demo está encendida; al cerrarla (Ctrl + C) se borran, y la próxima vez arranca de nuevo con los mismos ejemplos. Los datos de ejemplo están en `scripts/datos-demo.mjs`.
+
 ## Scripts disponibles
 
 | Comando           | Descripción                                      |
 | ----------------- | ------------------------------------------------- |
 | `npm run dev`       | Levanta el servidor de desarrollo de Vite.         |
+| `npm run demo`      | Levanta la app con los emuladores y datos de ejemplo (ver arriba). |
 | `npm run build`     | Verifica los tipos con TypeScript y genera la build de producción. |
 | `npm run preview`   | Sirve localmente la build de producción.           |
 | `npm test`          | Ejecuta las pruebas unitarias con Vitest.          |
@@ -96,6 +126,9 @@ src/
 │   └── types.ts      # Tipos compartidos (usuario, empresa, solicitud)
 ├── styles/           # Estilos globales
 └── __tests__/        # Pruebas unitarias
+pruebas-reglas/       # Pruebas de firestore.rules con el emulador
+scripts/              # Datos de ejemplo del modo demo
+docs/capturas/        # Imágenes de este README
 ```
 
 ## Modelo de datos (Firestore)

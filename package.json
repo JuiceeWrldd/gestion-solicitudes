@@ -6,6 +6,7 @@
   "homepage": "https://juiceewrldd.github.io/gestion-solicitudes/",
   "scripts": {
     "dev": "vite",
+    "demo": "firebase emulators:exec --only auth,firestore --project demo-gestion-solicitudes \"node scripts/datos-demo.mjs && vite --mode emulador\"",
     "build": "tsc && vite build",
     "test": "vitest",
     "test:reglas": "firebase emulators:exec --only firestore --project demo-gestion-solicitudes \"vitest run --config vitest.reglas.config.ts\"",
